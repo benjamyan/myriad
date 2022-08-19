@@ -1,0 +1,82 @@
+@import '../../utils/styles/colors';
+@import '../../utils/styles/sizes';
+
+.app__window {
+    position: absolute;
+    z-index: 2;
+    border: 1px solid $menu_borderColor;
+    border-bottom-width: 3px;
+    border-right-width: 3px;
+    background-color: white;
+    resize: both;
+    &--menubar {
+        width: calc(100% - 10px);
+        height: 25px;
+        padding: 2.5px 5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgb(19, 18, 36);
+        background-color: rgb(203, 203, 203);
+        i {
+            height: 15px;
+            min-width: 15px;
+            display: inline-block;
+            border: 2px solid $menu_outlineColor;
+            background-color: $menu_iconColor;
+        }
+        > p {
+            width: 100%;
+            margin-right: -20px;
+            font-weight: 600;
+            text-align: center;
+            pointer-events: none;
+        }
+        > div {
+            display: inherit;
+            i:last-child {
+                margin-left: 5px;
+            }
+            i:nth-of-type(2) {
+                &::before,
+                &::after {
+                    content: ' ';
+                    width: 100%;
+                    height: 2px;
+                    margin-top: 2px;
+                    display: block;
+                    background-color: $menu_outlineColor;
+                }
+                &::before {
+                    margin-top: 7px;
+                }
+            }
+        }
+        
+    }
+    &--content {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        height: calc(100% - 31px);
+        &-article {
+            width: 100%;
+            max-width: calc(100% - (20px + $borderSize));
+            max-height: calc(100% - (20px + $borderSize));
+            overflow: hidden;
+            &-inner {
+                padding: 12.5px;
+            };
+        }
+    }
+    &--resize {
+        &-both {
+            border: 0px solid $menu_borderColor;
+            border-top-width: $borderSize;
+            border-left-width: $borderSize;
+            bottom: 0 !important;
+            right: 0 !important;
+            background-color: $menu_fgColor;
+        }
+    }
+}
