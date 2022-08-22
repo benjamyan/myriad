@@ -1,36 +1,32 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Blog } from './views/Blog'
+import { Blog } from './views/Blog';
 
-// window.custom = {};
-
-// export initCustomRender
-
-(function() {
-    (window as any).initCustomRender = function(target: Document, mountId: string) {
+try {
+    const customElement = document.getElementsByTagName('myriad-blog')[0].shadowRoot;
+    if (customElement !== null) {
         ReactDOM.render(
             <React.StrictMode>
-                <>
-                    Hello blog!
-                    <Blog />
-                </>
+                <Blog />
             </React.StrictMode>,
-            target.getElementById(mountId)
+            customElement.getElementById("myriad-blog")
+        );
+    } else {
+        throw new Error('Cannot find shadow document')
+    }
+} catch (err) {
+    console.log(err)
+
+    const targetElement = document.getElementById("myriad-blog")
+    if (targetElement !== null) {
+        ReactDOM.render(
+            <React.StrictMode>
+                <Blog />
+            </React.StrictMode>,
+            targetElement
         );
     }
-})();
-
-
-
-// try {
-//     ReactDOM.render(
-//         <React.StrictMode>
-//             <>Hello blog!</>
-//         </React.StrictMode>,
-//         document.getElementById("myriad-blog")
-//     );
-// } catch (err) {
-//     console.log(err)
-// } finally {
-//     console.log(document)
-// }
+    
+} finally {
+    // console.log(document)
+}

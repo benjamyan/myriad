@@ -1,18 +1,15 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { HTML5Backend } from 'react-dnd-html5-backend'
-import { DndProvider } from 'react-dnd';
-import { ApplicationContextProvider, NavigationContextProvider } from './providers';
+import { ApplicationContextProvider } from './providers';
+// import { Generic } from "./utils";
 
 import Desktop from "./views/Desktop";
 
 ReactDOM.render(
     <React.StrictMode>
-        {/* <NavigationContextProvider> */}
-            <ApplicationContextProvider>
-                <Desktop />
-            </ApplicationContextProvider>
-        {/* </NavigationContextProvider> */}
+        <ApplicationContextProvider>
+            <Desktop />
+        </ApplicationContextProvider>
     </React.StrictMode>,
     document.getElementById("root")
 );

@@ -9,10 +9,8 @@
 </head>
 
 <body >
-	
-	<!-- <div>loading...</div> -->
+	<!-- inline_css_plugin -->
 	<div id="mount"></div>
-
 </body>
 <script>
 	// https://stackoverflow.com/questions/35564154/why-doesnt-custom-element-work-properly-on-static-page
@@ -33,25 +31,28 @@
 				class CustomWebComponent extends HTMLElement {
 					constructor() {
 						super();
-						this.attachShadow({ mode: 'open' });
-						if (!!style) {
-							this.shadowRoot.append(style);
-						};
-						if (!!component) {
-							this.shadowRoot.append(component);
-						};
-						if (!!script) {
-							this.shadowRoot.append(script);
-							const x = window.eval(this.shadowRoot.querySelector('script').innerText);
-							window.initCustomRender(this.shadowRoot, givenId)
-						};
+					}
+					connectedCallback() {
+						if (this.isConnected) {
+							this.attachShadow({ mode: 'open' });
+							if (!!style) {
+								this.shadowRoot.append(style);
+							};
+							if (!!component) {
+								this.shadowRoot.append(component);
+							};
+							if (!!script) {
+								this.shadowRoot.append(script);
+								window.eval(this.shadowRoot.querySelector('script').innerText);
+								// window.initCustomRender(this.shadowRoot, givenId)
+							};
+						}
 					}
 				}
 				customElements.define(givenId, CustomWebComponent);
 
 				
 				const customElementReference = customElements.get(givenId);
-				let ceDomReference = document.getElementById('mount');
 				
 				document.getElementById('mount').appendChild(new customElementReference);
 				

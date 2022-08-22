@@ -1,6 +1,9 @@
 const path = require("path");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
+const HTMLInlineCSSWebpackPlugin = require('html-inline-css-webpack-plugin').default; // Require the plugin
+
 
 module.exports = {
     entry: "./src/index.tsx",
@@ -32,7 +35,12 @@ module.exports = {
             },
             {
                 test: /\.(css|scss|sass)$/,
-                use: ["style-loader", "css-loader", "sass-loader"],
+                exclude: /node_modules/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    "css-loader",
+                    "sass-loader"
+                ],
             },
             {
                 test: /\.(jpg|jpeg|png|gif|mp3|svg)$/,
@@ -41,19 +49,34 @@ module.exports = {
         ],
     },
     output: {
-        publicPath: "",
+        publicPath: ""
     },
     plugins: [
-        new HtmlWebpackPlugin({  // Also generate a test.html
+        new MiniCssExtractPlugin({
+            filename: "[name].css",
+            chunkFilename: "[id].css"
+        }),
+        new HtmlWebpackPlugin({
             inject: 'body',
             filename: 'component.html',
-            template: path.join(__dirname, "public", "component.html")
+            template: path.join(__dirname, "public", "component.html"),
+            minify: {
+                collapseWhitespace: true
+            }
         }),
         new HtmlWebpackPlugin({
             inject: false,
             template: path.join(__dirname, "public", "index.html")
         }),
-        new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/\.(ts|js)$/]),
+        new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/\.(ts|js|scss|css)$/]),
+        new HTMLInlineCSSWebpackPlugin({
+            leaveCSSFile: false,
+            replace: {
+                target: '<!-- inline_css_plugin -->',
+                position: 'after',
+                removeTarget: true
+            }
+        })
         
     ]
 };

@@ -7,6 +7,7 @@ import { reactRnd } from '../../libs'
 import { ActiveApplication } from '../../types';
 import { useApplicationContext } from '../../providers';
 import './_ApplicationWindow.scss';
+import ReactDOM from 'react-dom';
 
 const { appItemsById } = applications;
 const applicationWindowClassName: string = 'app__window';
@@ -30,18 +31,22 @@ export const ApplicationWindow = (appProps: AppWindowProps) => {
     } = appProps;
     const { appContextState, appContextDispatch } = useApplicationContext();
     const applicationItem = appItemsById[appContextItem.appId];
+
+    const [ appState, setAppState ] = React.useState<'INIT' | 'LOAD' | 'COMPLETE' | 'ERR'>('INIT');
+    const unmountRef = React.useRef<any>(null);
     const mountRef = React.useRef<any>(null);
-    
-    const [applicationContent, setApplicationContent] = React.useState<React.ReactElement>(<div>baseline</div>)
 
     const onMenuBarIconClickHandler = (event: React.MouseEvent, action: 'CLOSE' | 'MINIMIZE' | 'MAXIMIZE')=> {
         event.stopPropagation();
         switch (action) {
             case 'CLOSE': {
-                appContextDispatch({
-                    type:'REMOVE',
-                    payload: applicationItem.appId
-                })
+                console.log(mountRef)
+                console.log(unmountRef)
+                ReactDOM.unmountComponentAtNode(mountRef.current);
+                // appContextDispatch({
+                //     type:'REMOVE',
+                //     payload: applicationItem.appId
+                // });
                 break;
             }
             case 'MAXIMIZE': {
@@ -95,82 +100,99 @@ export const ApplicationWindow = (appProps: AppWindowProps) => {
         [ appContextState.active ]
     );
     
-
     React.useEffect(()=>{
-        (function() {
-            const fn = async ()=> {
-                try {
-                    const appDefinition = applicationItem;
-                    if (appDefinition !== undefined && appDefinition.sourceUrl !== undefined && appDefinition.sourceUrl.length > 0) {
-                        const appRemoteData = (
-                            await fetch(appDefinition.sourceUrl)
-                                .then(res=> res.text() )
-                                .then((html)=> {
-                                    /** Load the HTML */
-                                    const remoteHtml = new DOMParser().parseFromString(html, "text/html");
-                                    
-                                    const style = remoteHtml.getElementsByTagName('style')[0];
-                                    const component = remoteHtml.getElementsByTagName('section')[0];
-                                    const script = remoteHtml.getElementsByTagName('script')[0];
-                                    
-                                    const givenId = component.id;
-                                    
-                                    class CustomWebComponent extends HTMLElement implements React.ReactElement{
-                                        props: {};
-                                        type: React.ReactHTML['div'];
-                                        key: 'fgdafgasdgfdagdfgsdfg';
-                                        constructor() {
-                                            super();
-                                            this.attachShadow({ mode: 'open' });
-                                            this.props = {};
-                                            this.key = 'fgdafgasdgfdagdfgsdfg';
-                                            this.type = React.createFactory('div')
-                                            if (!!style) {
-                                                this.shadowRoot?.append(style);
-                                            };
-                                            if (!!component) {
-                                                this.shadowRoot?.append(component);
-                                            };
-                                            if (!!script) {
-                                                this.shadowRoot?.append(script);
-                                                window.eval(this.shadowRoot?.querySelector('script')?.innerText || '');
-                                                (window as any).initCustomRender(this.shadowRoot, givenId)
-                                            };
-                                        }
-                                    }
-                                    customElements.define(givenId, CustomWebComponent);
+        (async function() {
+            try {
+                const appDefinition = applicationItem;
+                if (appDefinition !== undefined && appDefinition.sourceUrl !== undefined && appDefinition.sourceUrl.length > 0) {
+                    setAppState('LOAD')
+                    await fetch(appDefinition.sourceUrl)
+                        .then(res=> res.text() )
+                        .then((html)=> {
+                            /** Load the HTML */
+                            const parsedHTML = new DOMParser().parseFromString(html, "text/html");
 
-                                    
-                                    const customElementReference = customElements.get(givenId);
-                                    
-                                    if (!!customElementReference) {
-                                        // const x = React.createElement('div', new customElementReference);
-                                        // mountRef.current.children = new customElementReference
-                                        // ReactDOM.render(
-                                        //     <React.StrictMode>
-                                        //         { x }
-                                        //     </React.StrictMode>,
-                                        //     mountRef.current
-                                        // )
-                                        // console.log(x)
-                                        return <>{ new customElementReference }</>
+                            const style = parsedHTML.getElementsByTagName('style')[0];
+                            const component = parsedHTML.getElementsByTagName('section')[0];
+                            const script = parsedHTML.getElementsByTagName('script')[0];
+                            
+                            const givenId = component.id;
+                            mountRef.current = React.createElement(
+                                givenId, 
+                                { 
+                                    ref: unmountRef.current, 
+                                    class: _appWindowClasses.articleInner,
+                                    onCompositionEnd() {
+                                        console.log('end')
+                                    },
+                                    onCompositionStart() {
+                                        console.log('start')
+                                    },
+                                    onCompositionUpdate() {
+                                        console.log('update')
+                                    },
+                                    componentWillMount() {
+                                        console.log('mounted')
+                                    },
+                                    componentDidUnmount() {
+                                        console.log('unmount')
                                     }
-                                    throw new Error('no')
-				
-                                })
-                                .catch(err=>{
-                                    console.error(err)
-                                    return setApplicationContent(<>nahhhhh</>)
-                                })
-                        );
-                        return setApplicationContent(<>{appRemoteData}</>);
-                    }
-                } catch (err) {
-                    console.log(err)
-                    return setApplicationContent(<>hahaha</>)
+                                }
+                            );
+                            class CustomWebComponent extends HTMLElement {
+                                constructor() {
+                                    super();
+                                }
+                                connectedCallback() {
+                                    if (this.isConnected) {
+                                        this.attachShadow({ mode: 'open' });
+                                        if (!!style) {
+                                            this.shadowRoot?.appendChild(style);
+                                        };
+                                        if (!!component) {
+                                            this.shadowRoot?.appendChild(component);
+                                        };
+                                        if (!!script) {
+                                            /** Mount the script */
+                                            this.shadowRoot?.appendChild(script);
+                                            /** Eval on the script */
+                                            window.eval(this.shadowRoot?.querySelector('script')?.innerText || '');
+                                        };
+                                        console.log(-1)
+                                    } else {
+                                        console.log(0)
+                                    }
+                                }
+                                adoptedCallback() {
+                                    console.log(99)
+                                }
+                                disconnectCallback() {
+                                    console.log(1)
+                                    if (!this.isConnected) {
+                                        console.log(2)
+                                    }
+                                }
+                            }
+                            if (!customElements.get(givenId)) {
+                                customElements.define(givenId, CustomWebComponent);
+                            }
+                            if (!!customElements.get(givenId) && mountRef.current !== null) {
+                                setAppState('COMPLETE')
+                                return
+                            }
+                            throw new Error(`Failed mounting custom component ${givenId} in ${appDefinition.appId}`)
+                        })
+                        .catch(err=>{
+                            console.error(err)
+                            setAppState('ERR')
+                        });
+                } else {
+                    setAppState('COMPLETE')
                 }
+            } catch (err) {
+                console.log(err)
+                setAppState('ERR')
             }
-            fn()
         })();
     }, [])
 
@@ -212,9 +234,8 @@ export const ApplicationWindow = (appProps: AppWindowProps) => {
                 </nav>
                 <div className={ _appWindowClasses.wrapper }>
                     <article className={_appWindowClasses.article}>
-                        <div ref={mountRef} id={`${applicationItem.appId}-mount`} className={_appWindowClasses.articleInner}>
-                            { applicationContent }
-                        </div>
+                        { appState !== 'COMPLETE' && 'Loading...' }
+                        { mountRef.current }
                     </article>
                     <Scrollbar givenClass={_appWindowClasses.scrollY} direction='VERTICAL' />
                     <Scrollbar givenClass={_appWindowClasses.scrollX} direction='HORIZONTAL' />
