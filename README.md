@@ -2,6 +2,7 @@
 # Myriad
 Site built on a microfrontend to display my portfolio, blog, maybe some dog pictures, etc
 
+
 ## Inspo:
 - https://dev.to/vovacodesca/windows-11-inspired-portfolio-nni
 - https://www.fullstackacademy.com/blog/how-to-create-a-portfolio-website
