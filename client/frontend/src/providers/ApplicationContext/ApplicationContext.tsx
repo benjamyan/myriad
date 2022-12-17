@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { applications } from '../../config';
+// import { applications } from '../../config';
 import { appContextReducer } from './appContextReducer';
-import * as Util from './utils/appContextUtils';
+// import * as Util from './utils/appContextUtils';
 import { AppContextReturnValue, AppContextReducerMediaryActions } from './types';
 
 const ApplicationContext = React.createContext<AppContextReturnValue | undefined>(undefined);
@@ -71,6 +71,8 @@ const useApplicationContext = ()=> {
         return {} as AppContextReturnValue
     }
 }
+
+export type AppContextDispatch = AppContextReturnValue['appContextDispatch'];
 
 export {
     useApplicationContext,

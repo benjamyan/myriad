@@ -16,10 +16,15 @@ const Icon = ({ iconPosition, ...iconProps }: Pick<BasicButtonProps, 'icon' | 'i
 
 export const Basic = (btnProps: BasicButtonProps) => {
     const { type, size, onHover, onSingleClick } = btnProps;
+    
+    /** Classname appending based on our props */
     let _btnClassName = `button button__${type?.toLowerCase() || 'standard'} ${btnProps.className || ''}`;
-
-    if (size) _btnClassName += ` button__size--${size.toLowerCase()}`;
-    if (onHover) _btnClassName += ` button__hover--${onHover.toLowerCase()}`;
+    if (size) {
+        _btnClassName += ` button__size--${size.toLowerCase()}`
+    };
+    if (onHover) {
+        _btnClassName += ` button__hover--${onHover.toLowerCase()}`
+    };
 
     return (
         <button 

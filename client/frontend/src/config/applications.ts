@@ -1,9 +1,12 @@
 import { ApplicationDefinition } from '../types';
+import { default as blog } from "../content/blog.json";
 
 export const aboutMe: ApplicationDefinition = {
     appId: 'about-me',
     displayName: 'About me',
-    sourceUrl: 'http://localhost:3001/component.html'
+    sourceUrl: 'http://localhost:3001/component.html',
+    // sourceUrl: undefined,
+    // sourceContent: blog
 };
 
 export const blogArea: ApplicationDefinition = {

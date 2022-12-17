@@ -1,21 +1,73 @@
+import ReactDOM from 'react-dom';
 import * as React from 'react';
 
-export const WindowMenuBar = (menuBarProps: MenuBarProps) => {
-    
+import { useApplicationContext } from '../../../providers';
+
+export type MenuBarProps = {
+    /** Given classname for our application window */
+    className: string;
+    /** The title to be displayed on client */
+    displayName: string;
+    /** App window ID under its context value */
+    appWindowId: string;
+    /** Menubar classname thats used in multiple places externally */
+    menubarClassname: string;
+    /** The mounted nodes parent for removal from the vDOM */
+    mountNode: Element | DocumentFragment;
+
+    appNode: any;
+}
+
+export const AppWindowMenuBar = (props: MenuBarProps) => {
+    const { appContextDispatch } = useApplicationContext();
+
+    const onMenuBarIconClickHandler = (event: React.MouseEvent, action: 'CLOSE' | 'MINIMIZE' | 'MAXIMIZE')=> {
+        event.stopPropagation();
+        switch (action) {
+            case 'CLOSE': {
+                // console.log(mountRef)
+                // console.log(unmountRef)
+                console.log(props.mountNode.firstElementChild);
+                // console.log(props.mountNode.parentElement)
+                ReactDOM.unmountComponentAtNode(props.mountNode.firstElementChild as Element);
+                console.log(props.appNode.props)
+                console.log(props.appNode.props.unmountComponent)
+                props.appNode.props.unmountComponent()
+                // appContextDispatch({
+                //     type:'REMOVE',
+                //     payload: props.appWindowId
+                // });
+                break;
+            }
+            case 'MAXIMIZE': {
+                appContextDispatch({
+                    type:'MAXIMIZE',
+                    payload: props.appWindowId
+                })
+                break;
+            }
+            case 'MINIMIZE': {
+                appContextDispatch({
+                    type:'MINIMIZE',
+                    payload: props.appWindowId
+                })
+                break;
+            }
+            default: {
+                console.error('Unhandled menu bar action')
+            }
+        }
+    };
 
     return (
-        <nav className={ menuBarProps.className }>
-            <i></i>
-            <p>{ menuBarProps.displayName }</p>
+        <nav className={ props.menubarClassname }>
+            <i onClick={ (event)=> onMenuBarIconClickHandler(event, 'CLOSE') } />
+            <p>{props.displayName}</p>
             <div>
-                <i></i>
-                <i></i>
+                <i onClick={ (event)=> onMenuBarIconClickHandler(event, 'MAXIMIZE') } />
+                <i onClick={ (event)=> onMenuBarIconClickHandler(event, 'MINIMIZE') } />
             </div>
         </nav>
     )
 }
 
-export type MenuBarProps = {
-    className: string;
-    displayName: string;
-}

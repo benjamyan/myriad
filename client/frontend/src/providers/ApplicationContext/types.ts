@@ -68,3 +68,5 @@ export type AppContextReturnValue = {
     appContextDispatch: React.Dispatch<AppContextReducerMediaryActions>;
 }
 
+export type appContextDispatch = AppContextReturnValue['appContextDispatch'];
+

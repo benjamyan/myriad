@@ -3,7 +3,7 @@ import { Factory } from '../../utils'
 import * as Util from './utils/appContextUtils';
 import { ActiveApplication } from '../../types';
 
-const log = (msg: string)=> false ? console.log(msg) : undefined;
+const log = (msg: string)=> false ? undefined : console.log(msg);
 
 export function appContextReducer(appContextState: AppContextState, appContextReducerAction: AppContextReducerActions) {
     const _state = {
@@ -19,7 +19,7 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
             const _payload = payload as string;
             const activeAppIndexById = Util.findAppIndexById(_state.active, _payload);
             if (activeAppIndexById !== -1) {
-                /** If the app is in the current active context */
+                /** If the app is in the currently active context */
                 if (!_state.active[activeAppIndexById]._isVisible) {
                     /** Its closed.. set to open */
                     _state.active[activeAppIndexById]._isVisible = true;
