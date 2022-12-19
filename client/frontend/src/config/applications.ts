@@ -1,18 +1,22 @@
 import { ApplicationDefinition } from '../types';
 import { default as blog } from "../content/blog.json";
+// import { default as aboutme } from '../content/aboutme.md';
 
 export const aboutMe: ApplicationDefinition = {
     appId: 'about-me',
     displayName: 'About me',
-    sourceUrl: 'http://localhost:3001/component.html',
-    // sourceUrl: undefined,
+    // sourceUrl: 'http://localhost:3001/component.html',
+    sourceUrl: 'http://localhost:3000/content/aboutme.md',
+    sourceType: 'MD',
+    dimensions: ['33%', '75%']
     // sourceContent: blog
 };
 
 export const blogArea: ApplicationDefinition = {
     appId: 'news-blog',
     displayName: 'Recents "News"',
-    sourceUrl: ''
+    sourceUrl: '',
+    sourceType: 'MD'
 };
 
 export const appItems: ApplicationDefinition[] = [

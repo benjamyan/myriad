@@ -1,6 +1,6 @@
 import { ActiveApplication, ApplicationDefinition } from "../../../types";
 
-/** Returns the index of the app that matches the suppled ID inside of the supplied array */
+/** Returns the index of the app that matches the suppled ID inside of the supplied array relative to our context state */
 export const findAppIndexById = (givenArr: (ApplicationDefinition | ActiveApplication)[], id: string): number => {
     return givenArr.findIndex( arrItem=> arrItem.appId === id );
 }
@@ -12,3 +12,17 @@ export const findAppIndexById = (givenArr: (ApplicationDefinition | ActiveApplic
 export const moveAppByIndex = ()=> {
     //
 }
+
+export const handleDimensionConversion = (value: string | number, axis: 'x' | 'y'): number => {
+    if (typeof(value) === 'string' && value.indexOf('%') > -1) {
+        const percentage: number = parseInt(value.substring(0, value.length - 1));
+        if (axis === 'x') {
+            return ( window.innerWidth *  percentage) / 100
+        } else {
+            return ( window.innerHeight * percentage ) / 100
+        }
+    } else {
+        return value as number
+    }
+}
+

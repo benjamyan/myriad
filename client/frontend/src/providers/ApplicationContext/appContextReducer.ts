@@ -1,9 +1,11 @@
 import { AppContextState, AppContextReducerActions } from './types';
-import { Factory } from '../../utils'
+// import { Factory } from '../../utils'
 import * as Util from './utils/appContextUtils';
+import * as Factory from './utils/contextFactories';
+import { applications } from '../../config';
 import { ActiveApplication } from '../../types';
 
-const log = (msg: string)=> false ? undefined : console.log(msg);
+const log = (msg: string)=> true ? undefined : console.log(msg);
 
 export function appContextReducer(appContextState: AppContextState, appContextReducerAction: AppContextReducerActions) {
     const _state = {
@@ -36,7 +38,7 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                     _state.previous.current.delete(_payload);
                 } else {
                     /** App has not been opened before - make a new entry in `active` */
-                    _state.active.unshift( Factory.newAppInContext(_payload) );
+                    _state.active.unshift( Factory.newAppInContext(applications.appItemsById[_payload]) );
                 }
             };
             break;
@@ -84,6 +86,12 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                 for (const _prop in _payload) {
                     if (_prop !== 'appId') {
                         activeApp[_prop ] = _payload[_prop];
+                    }
+                    if (_payload.dimensions !== undefined) {
+                        activeApp.dimensions = [
+                            Util.handleDimensionConversion(_payload.dimensions[0], 'x'),
+                            Util.handleDimensionConversion(_payload.dimensions[1], 'y')
+                        ];
                     }
                 }
                 _state.active[activeAppIndex] = activeApp;

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Rnd, RndResizeCallback, RndDragCallback } from 'react-rnd' // https://github.com/bokuweb/react-rnd
+import ReactMarkdown from 'react-markdown';
 
 import { Scrollbar } from '../../components';
 import { applications } from '../../config';
@@ -33,8 +34,9 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
     const applicationItem = applications.appItemsById[appId];
 
     const [ appState, setAppState ] = React.useState<'INIT' | 'LOAD' | 'COMPLETE' | 'ERR'>('INIT');
-    const tempRef = React.useRef<any>(null);
-    const unmountRef = React.useRef<any>(null);
+    const appContent = React.useRef<string>();
+    // const tempRef = React.useRef<any>(null);
+    // const unmountRef = React.useRef<any>(null);
     const mountRef = React.useRef<any>(null);
         
     const onFocusEventHandler = ()=> {
@@ -44,11 +46,23 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
         })
     };
     const onResizeEventHandler: RndResizeCallback = (event, dir, ref, delta, pos)=> {
+        // const convertToPixel = (dimension: string)=> {
+        //     dimension.indexOf('%') > 0
+        //         ? 
+        //         : parseInt(dimension)
+        // }
         appContextDispatch({
             type:'UPDATE',
             payload: {
                 appId,
-                dimensions: [ parseInt(ref.style.width), parseInt(ref.style.height) ]
+                // dimensions: [ 
+                //     convertToPixel(ref.style.width), 
+                //     convertToPixel(ref.style.height)
+                // ]
+                dimensions: [ 
+                    parseInt(ref.style.width), 
+                    parseInt(ref.style.height)
+                ]
             }
         })
     };
@@ -78,8 +92,34 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
                     return <p>Loading...</p>
                 }
                 case 'COMPLETE': {
-                    console.log(mountRef.current);
-                    return <>{ mountRef.current }</>
+                    // console.log(mountRef.current);
+                    switch(applicationItem.sourceType) {
+                        case 'HTML': {
+                            // const parsedHTML = new DOMParser().parseFromString(html, "text/html");
+                            // mountRef.current = shadowComponentLoader({
+                            //     html: parsedHTML,
+                            //     className: props.windowClassname
+                            // })
+                            
+                            // if (/*!!customElements.get(givenId) && */mountRef.current !== null) {
+                            //     setAppState('COMPLETE')
+                            //     return
+                            // }
+                            return <>{ JSON.stringify(mountRef.current) }</>;
+                            // break;
+                        }
+                        case 'MD': {
+                            return <ReactMarkdown>{ appContent.current as string }</ReactMarkdown>
+                        }
+                        case 'JSON': {
+                            return <>{ mountRef.current }</>
+                            // break;
+                        }
+                        default: {
+                            return <>An unexpenceter error occured.</>
+                        }
+                    }
+                    // return <>{ mountRef.current }</>
                 }
                 case 'ERR':
                 default: {
@@ -98,27 +138,49 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
                     setAppState('LOAD')
                     await fetch(appDefinition.sourceUrl)
                         .then(res=> res.text() )
-                        .then((html)=> {
-                            const parsedHTML = new DOMParser().parseFromString(html, "text/html");
-                            mountRef.current = shadowComponentLoader({
-                                html: parsedHTML,
-                                className: props.windowClassname
-                            })
+                        .then((res)=> {
+                            appContent.current = res;
+
+                            // switch(applicationItem.sourceType) {
+                            //     case 'HTML': {
+                                    
+                            //         break;
+                            //     }
+                            //     case 'MD': {
+                            //         return <ReactMarkdown>{ appContent.current as string }</ReactMarkdown>
+                            //     }
+                            //     case 'JSON': {
+                            //         return <>{ mountRef.current }</>
+                            //         break;
+                            //     }
+                            //     default: {
+                            //         throw new Error(`Failed mounting custom component in ${appDefinition.appId}`)
+                            //     }
+                            // }
+
+
+                            // const parsedHTML = new DOMParser().parseFromString(html, "text/html");
+                            // mountRef.current = shadowComponentLoader({
+                            //     html: parsedHTML,
+                            //     className: props.windowClassname
+                            // })
                             
-                            if (/*!!customElements.get(givenId) && */mountRef.current !== null) {
+                            // if (/*!!customElements.get(givenId) && */mountRef.current !== null) {
                                 setAppState('COMPLETE')
-                                return
-                            }
-                            throw new Error(`Failed mounting custom component in ${appDefinition.appId}`)
+                            //     return
+                            // }
+                            // throw new Error(`Failed mounting custom component in ${appDefinition.appId}`)
                         })
                         .catch(err=>{
                             console.error(err)
                             setAppState('ERR')
                         });
                 } else if (appDefinition.sourceContent !== undefined) {
-                    console.log(appDefinition.sourceContent)
+                    // console.log(appDefinition.sourceContent)
+                    appContent.current = JSON.stringify(appDefinition.sourceContent);
+                    setAppState('COMPLETE');
                 } else {
-                    setAppState('COMPLETE')
+                    setAppState('ERR');
                 }
             } catch (err) {
                 setAppState('ERR')
@@ -126,35 +188,7 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
             }
         })();
     }, [])
-
-    // React.useEffect(()=>{
-    //     (async function() {
-    //         try {
-    //             const appDefinition = applicationItem;
-    //             if (appDefinition !== undefined && appDefinition.sourceUrl !== undefined && appDefinition.sourceUrl.length > 0) {
-    //                 setAppState('LOAD')
-    //                 // await fetch(appDefinition.sourceUrl)
-    //                 //     .then((res)=> res.json())
-    //                 //     .then((res)=> {
-    //                 //         console.log(res);
-    //                 //         setAppState('COMPLETE')
-    //                 //     })
-    //                 //     .catch(err=>{
-    //                 //         console.error(err)
-    //                 //         setAppState('ERR')
-    //                 //     });
-    //             } else if (appDefinition.sourceContent !== undefined) {
-    //                 console.log(appDefinition.sourceContent)
-    //             } else {
-    //                 setAppState('ERR')
-    //             }
-    //         } catch (err) {
-    //             setAppState('ERR')
-    //             console.log(err)
-    //         }
-    //     })();
-    // }, [])
-
+    
     return (
         <Rnd
             { ...rndSettings }
@@ -178,17 +212,17 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
                     className={ windowClassname }
                     menubarClassname={ menubarClassname }
                     displayName={ applicationItem.displayName }
-                    mountNode={ tempRef.current }
+                    mountNode={ mountRef.current }
                     appNode={mountRef.current}
                 />
                 <div className={ `${windowClassname}--content` }>
-                    <article ref={ tempRef } className={`${windowClassname}--content-article`}>
+                    <article className={`${windowClassname}--content-article`}>
                         <AppWindowArticleContent />
                     </article>
-                    <Scrollbar 
+                    {/* <Scrollbar 
                         direction='VERTICAL'
                         givenClass={`${windowClassname}--scroll ${windowClassname}--scroll-x`}
-                    />
+                    /> */}
                     <Scrollbar 
                         direction='HORIZONTAL' 
                         givenClass={`${windowClassname}--scroll ${windowClassname}--scroll-x`} 

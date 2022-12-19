@@ -9,7 +9,8 @@ export type ApplicationDefinition = {
     readonly icon?: IconType;
     /** The source of content - URL as string for remote or local content */
     readonly sourceUrl?: string;
-
+    /** The souces content type so we can correcly render */
+    readonly sourceType: 'JSON' | 'MD' | 'HTML';
     readonly sourceContent?: any;
     /** Dimensions where 
      * - [0] = w 
