@@ -1,4 +1,5 @@
 import { IconType } from "react-icons";
+import { AxiosRequestConfig } from 'axios';
 
 export type ApplicationDefinition = {
     /** Application ID for reference */
@@ -7,43 +8,42 @@ export type ApplicationDefinition = {
     readonly displayName: string;
     /** An associated icon as URL */
     readonly icon?: IconType;
-    /** The source of content - URL as string for remote or local content */
-    readonly sourceUrl?: string;
-    /** The souces content type so we can correcly render */
-    readonly sourceType: 'JSON' | 'MD' | 'HTML';
-    readonly sourceContent?: any;
-    /** Dimensions where 
-     * - [0] = w 
-     * - [1] = h 
-     */
+    /** Dimensions as `[ W, H ]` */
     dimensions?: [number | string, number | string];
+    /** The source URL as string for remote or local content fetch */
+    readonly sourceUrl?: string;
+    /** 
+     * The souces content type so we can correcly render - this can either be the returned type from the URL, or a static file
+     * - If youre using `API`, you should be passing the params as a JSON object that can be called with the URL under `sourceConfig`
+     * - Content of type `HTML` will be rendered inside a custom web component with its own shadow DOM to avoid pesky crashes and what-not
+     */
+    readonly sourceType: 'JSON' | 'MD' | 'HTML';
+    /** Configuration if you're making an API call and need to pass custom headers */
+    readonly sourceConfig?: AxiosRequestConfig;
+    /** Pass in static content here to omit URL/API calls completely - if this is not undefined on read it will nullify all other `source` entries */
+    readonly sourceContent?: string;
+    /** 
+     * If you want to handle rendering on your own pass a custom element reference - can only be done with contentType of `JSON` or `MD` 
+     * - @param content as a string or JSON for content to render
+     * - @param options are any options you might need for the component itself
+     */
+    renderContent?: (content: string, options?: Record<string, any>)=> JSX.Element;
 }
 
 export type ActiveApplication = {
     /** Application ID for reference */
     readonly appId: ApplicationDefinition['appId'];
-    /** any chanes the user might have made */
-    // userChanges: any;
-    /** Dimensions where 
-     * - [0] = x 
-     * - [1] = y 
-     */
+    /** position as `[ W, H ]` */
     positions: [number , number ];
-    /** Dimensions where 
-     * - [0] = w 
-     * - [1] = h 
-     */
+    /** dimensions as `[ W, H ]` */
     dimensions: [number | string, number | string];
     /** Application is minized or not */
-    _isVisible: boolean;
+    isVisible: boolean;
+    /** 
+     * Flag for loading status and any errors 
+     * - `false` if loading or qeued
+     * - `true` if all ops run and content ready
+     * - `Error` for baked beans
+     */
+    _ready: boolean | Error;
 }
-
-/*
-
-Dr george sharmone
-- 484 476 1000
-
-Dr Brian DeSouza
-- 610 649 6090
-
-*/

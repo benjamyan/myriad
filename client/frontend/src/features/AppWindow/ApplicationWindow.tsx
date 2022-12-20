@@ -1,13 +1,14 @@
 import * as React from 'react';
+import Axios from 'axios';
 import { Rnd, RndResizeCallback, RndDragCallback } from 'react-rnd' // https://github.com/bokuweb/react-rnd
 import ReactMarkdown from 'react-markdown';
 
-import { Scrollbar } from '../../components';
+import { Loader, Scrollbar } from '../../components';
 import { applications } from '../../config';
 import { ActiveApplication } from '../../types';
-import { useApplicationContext, AppContextDispatch } from '../../providers';
+import { useApplicationContext, applicationContextData, AppContextDispatch } from '../../providers';
 
-import { shadowComponentLoader } from './utils/shadowComponentLoader';
+// import { shadowComponentLoader } from './utils/shadowComponentLoader';
 import { reactRndSettings } from './libs';
 import { AppWindowMenuBar } from './components'
 import './_ApplicationWindow.scss';
@@ -16,7 +17,8 @@ type ApplicationWindowAdditionalProps = {
     windowClassname: string;
     menubarClassname: string;
     rndSettings: ReturnType<typeof reactRndSettings>;
-    activeApplications: ActiveApplication[];
+    stackPosition: number;
+    // activeApplications: ActiveApplication[];
     appContextDispatch: AppContextDispatch;
 } 
 
@@ -28,17 +30,15 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
         windowClassname, 
         menubarClassname, 
         rndSettings,
-        activeApplications,
+        // activeApplications,
         appContextDispatch
     } = props;
     const applicationItem = applications.appItemsById[appId];
 
     const [ appState, setAppState ] = React.useState<'INIT' | 'LOAD' | 'COMPLETE' | 'ERR'>('INIT');
     const appContent = React.useRef<string>();
-    // const tempRef = React.useRef<any>(null);
-    // const unmountRef = React.useRef<any>(null);
     const mountRef = React.useRef<any>(null);
-        
+    
     const onFocusEventHandler = ()=> {
         appContextDispatch({
             type:'FOCUS',
@@ -46,23 +46,11 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
         })
     };
     const onResizeEventHandler: RndResizeCallback = (event, dir, ref, delta, pos)=> {
-        // const convertToPixel = (dimension: string)=> {
-        //     dimension.indexOf('%') > 0
-        //         ? 
-        //         : parseInt(dimension)
-        // }
         appContextDispatch({
             type:'UPDATE',
             payload: {
                 appId,
-                // dimensions: [ 
-                //     convertToPixel(ref.style.width), 
-                //     convertToPixel(ref.style.height)
-                // ]
-                dimensions: [ 
-                    parseInt(ref.style.width), 
-                    parseInt(ref.style.height)
-                ]
+                dimensions: [ref.style.width, ref.style.height]
             }
         })
     };
@@ -76,12 +64,6 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
         })
     };
     
-    const appStackPosition = React.useMemo(
-        ()=> (
-            activeApplications[0].appId === applicationItem.appId ? '2' : '1'
-        ),
-        [ activeApplications ]
-    );
     const AppWindowArticleContent = React.useCallback(
         ()=>{
             switch(appState) {
@@ -89,7 +71,8 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
                     return <p>Init...</p>
                 }
                 case 'LOAD': {
-                    return <p>Loading...</p>
+                    return <Loader.Hourglass />
+                    // return <p>Loading...</p>
                 }
                 case 'COMPLETE': {
                     // console.log(mountRef.current);
@@ -112,6 +95,9 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
                             return <ReactMarkdown>{ appContent.current as string }</ReactMarkdown>
                         }
                         case 'JSON': {
+                            if (!!applicationItem.renderContent) {
+                                return <>{ applicationItem.renderContent(appContent.current as string) }</>
+                            }
                             return <>{ mountRef.current }</>
                             // break;
                         }
@@ -131,15 +117,16 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
     );
     
     React.useEffect(()=>{
+        // move the below func to our reducer, doesnt belong here
         (async function() {
             try {
                 const appDefinition = applicationItem;
                 if (appDefinition !== undefined && appDefinition.sourceUrl !== undefined && appDefinition.sourceUrl.length > 0) {
                     setAppState('LOAD')
-                    await fetch(appDefinition.sourceUrl)
-                        .then(res=> res.text() )
+                    await Axios(appDefinition.sourceUrl, appDefinition.sourceConfig || {})
+                        // .then(res=> res.text() )
                         .then((res)=> {
-                            appContent.current = res;
+                            appContent.current = res.data;
 
                             // switch(applicationItem.sourceType) {
                             //     case 'HTML': {
@@ -206,7 +193,7 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
                 x: positions[0], 
                 y: positions[1] 
             }}
-            style={{ zIndex: appStackPosition }}>
+            style={{ zIndex: props.stackPosition }}>
                 <AppWindowMenuBar 
                     appWindowId={ appId }
                     className={ windowClassname }
@@ -232,7 +219,7 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
     )
 }
 
-export const DesktopApplicationWindowWrapper = ()=> {
+export const ApplicationWrapper = ()=> {
     const { appContextState, appContextDispatch } = useApplicationContext();
 
     // so we can have dynaic classnames
@@ -247,18 +234,20 @@ export const DesktopApplicationWindowWrapper = ()=> {
 
     return React.useMemo(
         ()=> (
-            <>
-                { appContextState.active.map( (application)=> (
+            <main style={{ position:'relative', marginTop:35 }}>
+                { appContextState.active.map( (application, index, activeWindows)=> (
                     <ApplicationWindow 
                         { ...application } 
+                        key={`DesktopApplicationWindowWrapper_window_${application.appId}`}
                         windowClassname={ appWindowClassname }
                         menubarClassname={ menubarClassname }
                         rndSettings={ rndSettings }
-                        activeApplications={ appContextState.active }
+                        stackPosition={ activeWindows.length - index }
+                        // activeApplications={ appContextState.active }
                         appContextDispatch={ appContextDispatch }
                     />
                 )) }
-            </>
+            </main>
         ),
         [ appContextState.active ]
     )

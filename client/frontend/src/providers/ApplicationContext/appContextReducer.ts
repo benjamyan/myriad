@@ -4,8 +4,13 @@ import * as Util from './utils/appContextUtils';
 import * as Factory from './utils/contextFactories';
 import { applications } from '../../config';
 import { ActiveApplication } from '../../types';
+// import { appItemsById } from '../../config/applications';
 
 const log = (msg: string)=> true ? undefined : console.log(msg);
+
+const appContextItemInitialLoad = ()=> {
+
+}
 
 export function appContextReducer(appContextState: AppContextState, appContextReducerAction: AppContextReducerActions) {
     const _state = {
@@ -22,9 +27,9 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
             const activeAppIndexById = Util.findAppIndexById(_state.active, _payload);
             if (activeAppIndexById !== -1) {
                 /** If the app is in the currently active context */
-                if (!_state.active[activeAppIndexById]._isVisible) {
+                if (!_state.active[activeAppIndexById].isVisible) {
                     /** Its closed.. set to open */
-                    _state.active[activeAppIndexById]._isVisible = true;
+                    _state.active[activeAppIndexById].isVisible = true;
                 };
             } else {
                 /** App is not currently in active */
@@ -33,12 +38,19 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                     /** The app has a previous entry - add that entry to `active` and remove from `previous` */
                     _state.active.unshift({
                         ..._state.previous.current.get(_payload) as ActiveApplication,
-                        _isVisible: true
+                        isVisible: true
                     });
                     _state.previous.current.delete(_payload);
                 } else {
                     /** App has not been opened before - make a new entry in `active` */
-                    _state.active.unshift( Factory.newAppInContext(applications.appItemsById[_payload]) );
+                    const newActiveApp = (
+                        Factory.newAppInContext(applications.appItemsById[_payload], _state.active.length)
+                    );
+                    if (newActiveApp instanceof Error) {
+                        //
+                    } else {
+                        _state.active.unshift( newActiveApp );
+                    }
                 }
             };
             break;
@@ -48,11 +60,13 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
 
             const _payload = payload as string;
             try {
-                if (_state.active.length > 1 && _state.active[0].appId !== payload) {
-                    const appIndex = Util.findAppIndexById(_state.active, _payload);
-                    if (appIndex !== undefined) {
-                        const appDefinition = { ..._state.active[appIndex] };
-                        _state.active.splice(appIndex, 1);
+                if (_state.active.length > 1) {
+                    let currentApp: ActiveApplication;
+                    const focusedAppIndex = Util.findAppIndexById(_state.active, _payload);
+                    
+                    if (focusedAppIndex !== undefined) {
+                        const appDefinition = { ..._state.active[focusedAppIndex] };
+                        _state.active.splice(focusedAppIndex, 1);
                         _state.active.unshift(appDefinition);
                     }
                 }
@@ -106,7 +120,7 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
 
             if (activeAppIndex !== undefined) {
                 let appDefinition = { ..._state.active[activeAppIndex]  };
-                appDefinition._isVisible = false;
+                appDefinition.isVisible = false;
                 _state.previous.current.set(
                     appDefinition.appId, appDefinition
                 );

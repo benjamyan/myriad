@@ -67,10 +67,13 @@
     &--panel {
         width: 100px;
         float: right;
-        background-color: red;
+        // background-color: red;
         > button {
             height: 100%;
             font-weight: bold;
+        }
+        .time {
+            float: right;
         }
         &-config {
             width: 300px;

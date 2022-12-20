@@ -2,12 +2,6 @@ import * as React from 'react';
 import { IconType } from 'react-icons/lib';
 import './_buttons.scss';
 
-// const iconOnClickHanlder = ({ onSingleClick, onDoubleClick }: BasicButtonClickEvents)=> {
-//     if (!!onSingleClick) {
-//         onSingleClick(event);
-//     }
-// }
-
 const Icon = ({ iconPosition, ...iconProps }: Pick<BasicButtonProps, 'icon' | 'iconPosition'>)=> (
     <i className={`icon icon__${iconPosition ? iconPosition.toLowerCase() : 'left'}`}>
         { !!iconProps.icon ? <iconProps.icon /> : <></> }
@@ -17,6 +11,8 @@ const Icon = ({ iconPosition, ...iconProps }: Pick<BasicButtonProps, 'icon' | 'i
 export const Basic = (btnProps: BasicButtonProps) => {
     const { type, size, onHover, onSingleClick } = btnProps;
     
+    const keyString = Math.floor(Math.random() * 25).toString();
+
     /** Classname appending based on our props */
     let _btnClassName = `button button__${type?.toLowerCase() || 'standard'} ${btnProps.className || ''}`;
     if (size) {
@@ -28,9 +24,9 @@ export const Basic = (btnProps: BasicButtonProps) => {
 
     return (
         <button 
-            data-id={ btnProps.dataId }
+            // data-id={ btnProps.dataId }
             ref={ !!btnProps.btnRef ? btnProps.btnRef : undefined }
-            key={`BasicButton_${(Math.floor(Math.random() * 25)).toString()}`}
+            key={`BasicButton_outer_${keyString}`}
             type={ 'button' }
             className={ _btnClassName }
             name={ btnProps.htmlName || undefined }
@@ -47,7 +43,7 @@ export const Basic = (btnProps: BasicButtonProps) => {
                 { btnProps.title || '' }
                 { !!btnProps.icon && 
                     <Icon 
-                        key={`BasicButton_icon-${(Math.floor(Math.random() * 25)).toString()}`}
+                        key={`BasicButton_icon-${keyString}`}
                         icon={ btnProps.icon } 
                         iconPosition={ btnProps.iconPosition } 
                     />
@@ -68,7 +64,7 @@ export interface BasicButtonProps extends BasicButtonClickEvents {
     /** Custom name for identitifcation */
     htmlName?: string;
 
-    dataId?: string;
+    // dataId?: string;
     /** Given size the icon should take */
     size?: 'AUTO' | 'MINI' | 'SMALL' | 'MEDIUM' | 'LARGE';
     /** Optional flag to disable a */

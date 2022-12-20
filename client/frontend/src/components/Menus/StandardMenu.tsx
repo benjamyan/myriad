@@ -15,8 +15,9 @@ export const Standard = ({ menuItem, onClick, ...menuProps }: MenuDropdownProps)
                 left: menuProps.positionX || undefined  
             }}>
                 { menuItem.subMenu?.map(
-                    (subMenuItem)=> (
+                    (subMenuItem, index)=> (
                         <Button.Basic
+                            key={`MenuStandard_btn_${index}_${menuItem.appId}`}
                             dataId={subMenuItem.menuId || undefined }
                             type='NAKED'
                             onHover='HIGHLIGHT'

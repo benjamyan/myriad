@@ -51,29 +51,33 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
     
     const navContextClickEventHandler = React.useCallback(
         (event: React.MouseEvent | Event)=> {
+            /** Click event handler when the menu is open or menu triggers are exposed */
             try {
                 if (currNavState.current.id.length > 0) {
-                    const _nodes = currNavState.current.nodes;
-                    if (!!_nodes) {
-                        let _trigger, _menu;
+                    const { nodes } = currNavState.current;
+                    if (!!nodes) {
+                        let _menu: Element | undefined;
                         for (const id of currNavState.current.id) {
-                            if (_nodes[id].trigger === event.target) {
+                            if (nodes[id].trigger === event.target) {
+                                /** If the triggering button is clicked, close the menu it opened */
                                 navContextUpdate({
                                     type: 'REMOVE',
                                     payload: id
                                 })
                                 return
-                            } else if (_nodes[id].menu !== undefined) {
-                                _menu = _nodes[id].menu as Element
+                            } else if (nodes[id].menu !== undefined) {
+                                _menu = nodes[id].menu as Element;
                                 if (Array.from(_menu.children).includes(event.target as Element)) {
                                     // const _menuItem = currNavState.current.menuItem(event.target['data-id']);
                                     // if (_menuItem !== undefined ) {
-                                    //     if (currNavState.current.menuItem(event.target['data-id'])?.appId !== undefined) {
-                                    //         navContextUpdate({ type: 'CLEAR', payload: null })
-                                    //     }
+                                        // if (currNavState.current.menuItem(event.target['data-id'])?.appId !== undefined) {
+                                        //     navContextUpdate({ type: 'CLEAR', payload: null })
+                                        // }
                                     // } else {
                                         navContextUpdate({ type: 'CLEAR', payload: null })
                                     // }
+                                } else {
+                                    navContextUpdate({ type: 'CLEAR', payload: null })
                                 }
                                 _menu = undefined;
                                 return

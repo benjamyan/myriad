@@ -28,8 +28,8 @@ export const TaskbarActionMenu = ({ className }: TaskbarActionMenuProps)=> {
             <div className={ className }>
                 { taskbar.taskMenu.map( (menuItem, index)=> (
                     <Button.Basic
+                        key={`TaskbarActionMenu_button_${menuItem.menuId}_${index}`}
                         btnRef={ navContextState.id[0] === menuItem.menuId ? setMenuRef.bind(null, 'trigger') : null }
-                        key={`TaskbarActionMenu_${menuItem.menuId}_${index}`}
                         className={ navContextState.id[0] === menuItem.menuId ? 'active' : '' }
                         size='MEDIUM' 
                         type='NAKED' 
@@ -55,6 +55,7 @@ export const TaskbarActionMenu = ({ className }: TaskbarActionMenuProps)=> {
                 {  navContextState.id.length > 0 && (
                         navContextState.id.map( (id, index)=> (
                             <Menu.Standard 
+                                key={`TaskbarActionMenu_menu_${id}_${index}`}
                                 menuRef={ setMenuRef.bind(null, 'menu') }
                                 className={`${_taskbarMenuClassName}-menu`}
                                 menuItem={ navContextState.menuItem(id) as SingleMenuItem }

@@ -1,4 +1,4 @@
-import { NavigationOptions } from '../../../config';
+// import { NavigationOptions } from '../../../config';
 import { SingleMenuItem } from '../../../types';
 
 import { NavigationAction, NavActionNodeRecord } from './';
@@ -6,7 +6,7 @@ import { NavigationAction, NavActionNodeRecord } from './';
 export type NavigationState = {
     /** Unique ID value of the `menuItem` */
     // id: string;
-    /** UUID Set of each active `menuItem` */
+    /** UUID Set of each _active_ `menuItem` */
     id: NavStateId[];
     /** The items source where data is kept */
     source: Record<NavStateId, string>;

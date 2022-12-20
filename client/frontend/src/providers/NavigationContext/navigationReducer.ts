@@ -1,10 +1,10 @@
 
 import { NavigationReducer, NavigationActionResource, NavigationState } from "./types";
-import { menuItemById, navAreaBySourceName } from './utils';
+import { menuItemById } from './utils';
 import { NavigationOptions } from '../../config';
 
 
-const idRegExp: RegExp = /([A-Z]|[a-z])+(__)+([A-Z]|[a-z])\w+/g;
+// const idRegExp: RegExp = /([A-Z]|[a-z])+(__)+([A-Z]|[a-z])\w+/g;
 
 // const baselineErrorCheck = (action: NavigationAction): Error | true => {
 //     try {
@@ -69,15 +69,13 @@ const idRegExp: RegExp = /([A-Z]|[a-z])+(__)+([A-Z]|[a-z])\w+/g;
 // }
 
 export const navigationContextReducer: NavigationReducer = (navContextState, navContextAction)=> {
-    // if (baselineErrorCheck(navContextAction) instanceof Error) {
-    //     return navContextState
-    // };
+    
     const { payload } = navContextAction;
     let _state = { ...navContextState };
 
     const getNodePosition: NavigationState['position'] = (id, nodeType)=> {
         if (!!_state.nodes[id]) {
-            const _node = _state.nodes[id][nodeType] as HTMLElement
+            const _node = _state.nodes[id][nodeType] as HTMLElement;
             if (!!_node) {
                 return [
                     _node.offsetTop,

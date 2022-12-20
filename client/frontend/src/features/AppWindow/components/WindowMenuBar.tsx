@@ -25,18 +25,11 @@ export const AppWindowMenuBar = (props: MenuBarProps) => {
         event.stopPropagation();
         switch (action) {
             case 'CLOSE': {
-                // console.log(mountRef)
-                // console.log(unmountRef)
-                console.log(props.mountNode.firstElementChild);
-                // console.log(props.mountNode.parentElement)
-                ReactDOM.unmountComponentAtNode(props.mountNode.firstElementChild as Element);
-                console.log(props.appNode.props)
-                console.log(props.appNode.props.unmountComponent)
-                props.appNode.props.unmountComponent()
-                // appContextDispatch({
-                //     type:'REMOVE',
-                //     payload: props.appWindowId
-                // });
+                // ReactDOM.unmountComponentAtNode(props.mountNode.firstElementChild as Element);
+                appContextDispatch({
+                    type:'REMOVE',
+                    payload: props.appWindowId
+                });
                 break;
             }
             case 'MAXIMIZE': {

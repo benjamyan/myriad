@@ -1,25 +1,28 @@
 import { ActiveApplication, ApplicationDefinition } from "../../../types";
 import * as Util from './appContextUtils';
 
-export const newAppInContext = (props: ApplicationDefinition): ActiveApplication => ({
-    appId: props.appId,
-    // visibility: null,
-    // isOpen: true,
-    // isFullscreen: false,
-    // userChanges: null,
-    positions: [200, 150],
-    // posX: 200,
-    // posY: 150,
-    dimensions: (
-        props.dimensions !== undefined
-            ? [
-                Util.handleDimensionConversion(props.dimensions[0], 'x'),
-                Util.handleDimensionConversion(props.dimensions[1], 'y')
-            ]
-            : [300, 300]
-    ),
-    // dimensionH: 300,
-    // dimensionW: 300,
-    // _isFocused: 0,
-    _isVisible: true
-})
+export const newAppInContext = (app: ApplicationDefinition, contentLen: number): ActiveApplication | Error => {
+    try {
+        return {
+            appId: app.appId,
+            positions: [25  * (contentLen + 1), 25],
+            dimensions: (
+                app.dimensions !== undefined
+                    ? [
+                        Util.handleDimensionConversion(app.dimensions[0], 'x'),
+                        Util.handleDimensionConversion(app.dimensions[1], 'y')
+                    ]
+                    : [300, 300]
+            ),
+            isVisible: true,
+            _ready: false
+        }
+    } catch (err) {
+        console.log(err)
+        if (err instanceof Error) {
+            return err
+        } else {
+            return new Error('Unhandled exception when trying to open window');
+        }
+    }
+}
