@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { NavigationContextValue, NavigationState, NavigationDispatchMediary, NavigationActionPayload, NavStateNodeType, NavActionNodeRecord } from './types';
 import { navigationContextReducer } from './navigationReducer';
+import { useNavRef } from './hooks/useNavRef';
 
 const initialContextValue: NavigationContextValue = {
     navContextState: {
@@ -39,7 +40,6 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
                 // case 'REMOVE': { }
                 // case 'CLEAR': { }
                 default: {
-                    // prevNavState.current = {...navContextState};
                     navContextDispatch(action);
                     currNavState.current = navContextState;
                 }
@@ -129,6 +129,7 @@ const useNavigationContext = ()=> {
 }
 
 export {
+    useNavRef,
     useNavigationContext,
     NavigationContextProvider
 }

@@ -3,39 +3,36 @@ import { SingleMenuItem } from '../../types';
 import { Button } from '..';
 import './_Menu.scss';
 
-export const Standard = ({ menuItem, onClick, ...menuProps }: MenuDropdownProps)=> {
-
-    return (
-        <aside 
-            key={ `std-menu-${menuItem.menuId}` }
-            ref={ !!menuProps.menuRef ? menuProps.menuRef : undefined }
-            className={`menu__${ menuProps.type || 'standard' } ${menuProps.className || ''}`} 
-            style={{ 
-                top: menuProps.positionY || undefined,
-                left: menuProps.positionX || undefined  
-            }}>
-                { menuItem.subMenu?.map(
-                    (subMenuItem, index)=> (
-                        <Button.Basic
-                            key={`MenuStandard_btn_${index}_${menuItem.appId}`}
-                            dataId={subMenuItem.menuId || undefined }
-                            type='NAKED'
-                            onHover='HIGHLIGHT'
-                            disabled={ false }
-                            icon={ subMenuItem.icon || undefined }
-                            iconPosition={ subMenuItem.iconPosition || undefined }
-                            title={ subMenuItem.displayName }
-                            onSingleClick={ ()=> {
-                                if (onClick) {
-                                    onClick(subMenuItem)
-                                }
-                            } }
-                        />
-                    )
-                ) }
-        </aside>
-    )
-};
+export const Standard = ({ menuItem, onClick, ...menuProps }: MenuDropdownProps)=> (
+    <aside 
+        key={ `std-menu-${menuItem.menuId}` }
+        ref={ !!menuProps.menuRef ? menuProps.menuRef : undefined }
+        className={`menu__${ menuProps.type || 'standard' } ${menuProps.className || ''}`} 
+        style={{ 
+            top: menuProps.positionY || undefined,
+            left: menuProps.positionX || undefined  
+        }}>
+            { menuItem.subMenu?.map(
+                (subMenuItem, index)=> (
+                    <Button.Basic
+                        key={`MenuStandard_btn_${index}_${menuItem.appId}`}
+                        // dataId={subMenuItem.menuId || undefined }
+                        type='NAKED'
+                        onHover='HIGHLIGHT'
+                        disabled={ false }
+                        icon={ subMenuItem.icon || undefined }
+                        iconPosition={ subMenuItem.iconPosition || undefined }
+                        title={ subMenuItem.displayName }
+                        onSingleClick={ ()=> {
+                            if (onClick) {
+                                onClick(subMenuItem)
+                            }
+                        } }
+                    />
+                )
+            ) }
+    </aside>
+);
 
 type MenuDropdownProps = {
     /** Required menu item to pull data from */

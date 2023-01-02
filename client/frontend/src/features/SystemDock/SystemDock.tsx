@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { BsTrashFill, BsCloudsFill } from 'react-icons/bs';
+import { BsTrashFill } from 'react-icons/bs';
 
-import { applications } from '../../config';
+import { navigation } from '../../config';
 import { useApplicationContext } from '../../providers';
 import { Button } from '../../components';
+
 import './_SystemDock.scss';
 
 export const SystemDock = ()=> {
@@ -26,45 +27,38 @@ export const SystemDock = ()=> {
     }, []);
 
     return (
-        <section 
+        <aside
             className='system__dock' 
             ref={dockRef} 
             style={{
                 width: dockWidth 
             }}
         >
-            <Button.IconButton 
-                size='INHERIT'
-                // className='system__dock--trash'
-                icon={ BsTrashFill }
-            />
-            <Button.IconButton 
-                size='INHERIT'
-                // className='system__dock--trash'
-                icon={ BsTrashFill }
-            />
-            <Button.IconButton 
-                size='INHERIT'
-                // className='system__dock--trash'
-                icon={ BsTrashFill }
-            />
-            <Button.IconButton 
-                size='INHERIT'
-                icon={ BsCloudsFill }
-                onSingleClick={()=>{
-                    appContextDispatch({
-                        type: 'SELECT',
-                        payload: applications.weatherApp.appId
-                    });
-                }}
-            />
+            { Object.values(navigation.systemTrayItems).map( (navItem)=> {
+                    if (navItem.appId && navItem.icon) {
+                        return (
+                            <Button.IconButton 
+                                key={`SystemDock-icon-${navItem.appId}`}
+                                size='INHERIT'
+                                icon={ navItem.icon }
+                                onSingleClick={()=>{
+                                    appContextDispatch({
+                                        type: 'SELECT',
+                                        payload: navItem.appId as string
+                                    });
+                                }}
+                            />
+                        )
+                    }
+                    return null
+                }
+            )}
             <div className='system__dock--spacer' />
             <Button.IconButton 
                 size='INHERIT'
-                // className='system__dock--trash'
                 icon={ BsTrashFill }
             />
             <div className='system__dock--bg'></div>
-        </section>
+        </aside>
     )
 }

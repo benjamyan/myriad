@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Axios from 'axios';
+// import Axios from 'axios';
 import { Rnd, RndResizeCallback, RndDragCallback } from 'react-rnd' // https://github.com/bokuweb/react-rnd
 import ReactMarkdown from 'react-markdown';
 
@@ -24,6 +24,7 @@ type ApplicationWindowAdditionalProps = {
 
 export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAdditionalProps) => {
     const { 
+        _ready,
         appId, 
         positions, 
         dimensions, 
@@ -36,7 +37,7 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
     const applicationItem = applications.appItemsById[appId];
 
     const [ appState, setAppState ] = React.useState<'INIT' | 'LOAD' | 'COMPLETE' | 'ERR'>('INIT');
-    const appContent = React.useRef<string>();
+    const appContent = React.useRef<Error | JSON | string>();
     const mountRef = React.useRef<any>(null);
     
     const onFocusEventHandler = ()=> {
@@ -96,7 +97,7 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
                         }
                         case 'JSON': {
                             if (!!applicationItem.renderContent) {
-                                return <>{ applicationItem.renderContent(appContent.current as string) }</>
+                                return <>{ applicationItem.renderContent({ content: appContent.current as JSON }) }</>
                             }
                             return <>{ mountRef.current }</>
                             // break;
@@ -117,69 +118,81 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
     );
     
     React.useEffect(()=>{
-        // move the below func to our reducer, doesnt belong here
-        (async function() {
-            try {
-                const appDefinition = applicationItem;
-                if (appDefinition !== undefined && appDefinition.sourceUrl !== undefined && appDefinition.sourceUrl.length > 0) {
-                    setAppState('LOAD')
-                    await Axios(appDefinition.sourceUrl, appDefinition.sourceConfig || {})
-                        // .then(res=> res.text() )
-                        .then((res)=> {
-                            appContent.current = res.data;
+        if (_ready === false) {
+            setAppState('LOAD')
+        } else if (_ready instanceof Error) {
+            setAppState('ERR')
+        } else {
+            appContent.current = applicationContextData.get(appId);
+            setAppState('COMPLETE')
+        }
+    }, [ _ready ])
 
-                            // switch(applicationItem.sourceType) {
-                            //     case 'HTML': {
+    // React.useEffect(()=>{
+    //     // move the below func to our reducer, doesnt belong here
+    //     (async function() {
+    //         try {
+    //             const appDefinition = applicationItem;
+    //             if (appDefinition !== undefined && appDefinition.sourceUrl !== undefined && appDefinition.sourceUrl.length > 0) {
+    //                 setAppState('LOAD')
+    //                 await Axios(appDefinition.sourceUrl, appDefinition.sourceConfig || {})
+    //                     // .then(res=> res.text() )
+    //                     .then((res)=> {
+    //                         appContent.current = res.data;
+
+    //                         // switch(applicationItem.sourceType) {
+    //                         //     case 'HTML': {
                                     
-                            //         break;
-                            //     }
-                            //     case 'MD': {
-                            //         return <ReactMarkdown>{ appContent.current as string }</ReactMarkdown>
-                            //     }
-                            //     case 'JSON': {
-                            //         return <>{ mountRef.current }</>
-                            //         break;
-                            //     }
-                            //     default: {
-                            //         throw new Error(`Failed mounting custom component in ${appDefinition.appId}`)
-                            //     }
-                            // }
+    //                         //         break;
+    //                         //     }
+    //                         //     case 'MD': {
+    //                         //         return <ReactMarkdown>{ appContent.current as string }</ReactMarkdown>
+    //                         //     }
+    //                         //     case 'JSON': {
+    //                         //         return <>{ mountRef.current }</>
+    //                         //         break;
+    //                         //     }
+    //                         //     default: {
+    //                         //         throw new Error(`Failed mounting custom component in ${appDefinition.appId}`)
+    //                         //     }
+    //                         // }
 
 
-                            // const parsedHTML = new DOMParser().parseFromString(html, "text/html");
-                            // mountRef.current = shadowComponentLoader({
-                            //     html: parsedHTML,
-                            //     className: props.windowClassname
-                            // })
+    //                         // const parsedHTML = new DOMParser().parseFromString(html, "text/html");
+    //                         // mountRef.current = shadowComponentLoader({
+    //                         //     html: parsedHTML,
+    //                         //     className: props.windowClassname
+    //                         // })
                             
-                            // if (/*!!customElements.get(givenId) && */mountRef.current !== null) {
-                                setAppState('COMPLETE')
-                            //     return
-                            // }
-                            // throw new Error(`Failed mounting custom component in ${appDefinition.appId}`)
-                        })
-                        .catch(err=>{
-                            console.error(err)
-                            setAppState('ERR')
-                        });
-                } else if (appDefinition.sourceContent !== undefined) {
-                    // console.log(appDefinition.sourceContent)
-                    appContent.current = JSON.stringify(appDefinition.sourceContent);
-                    setAppState('COMPLETE');
-                } else {
-                    setAppState('ERR');
-                }
-            } catch (err) {
-                setAppState('ERR')
-                console.log(err)
-            }
-        })();
-    }, [])
+    //                         // if (/*!!customElements.get(givenId) && */mountRef.current !== null) {
+    //                             setAppState('COMPLETE')
+    //                         //     return
+    //                         // }
+    //                         // throw new Error(`Failed mounting custom component in ${appDefinition.appId}`)
+    //                     })
+    //                     .catch(err=>{
+    //                         console.error(err)
+    //                         setAppState('ERR')
+    //                     });
+    //             } else if (appDefinition.sourceContent !== undefined) {
+    //                 // console.log(appDefinition.sourceContent)
+    //                 appContent.current = JSON.stringify(appDefinition.sourceContent);
+    //                 setAppState('COMPLETE');
+    //             } else {
+    //                 setAppState('ERR');
+    //             }
+    //         } catch (err) {
+    //             setAppState('ERR')
+    //             console.log(err)
+    //         }
+    //     })();
+    // }, [])
     
     return (
         <Rnd
             { ...rndSettings }
             key={`ApplicationWindow_${appId}`}
+            bounds='parent'
             onClick={ onFocusEventHandler }
             onDragStart={ onFocusEventHandler }
             onDragStop={ onDragStopEventHandler }
@@ -234,7 +247,7 @@ export const ApplicationWrapper = ()=> {
 
     return React.useMemo(
         ()=> (
-            <main style={{ position:'relative', marginTop:35 }}>
+            <>
                 { appContextState.active.map( (application, index, activeWindows)=> (
                     <ApplicationWindow 
                         { ...application } 
@@ -247,7 +260,7 @@ export const ApplicationWrapper = ()=> {
                         appContextDispatch={ appContextDispatch }
                     />
                 )) }
-            </main>
+            </>
         ),
         [ appContextState.active ]
     )

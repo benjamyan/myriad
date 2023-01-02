@@ -1,6 +1,6 @@
 import { ActiveApplication, ApplicationDefinition } from "../../../types";
 
-/** Returns the index of the app that matches the suppled ID inside of the supplied array relative to our context state */
+/** Returns the index of the app that matches the suppled ID inside of the supplied array relative to our active context state */
 export const findAppIndexById = (givenArr: (ApplicationDefinition | ActiveApplication)[], id: string): number => {
     return givenArr.findIndex( arrItem=> arrItem.appId === id );
 }

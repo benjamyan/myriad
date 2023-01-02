@@ -1,0 +1,119 @@
+@import '../../utils/styles/colors';
+
+.weather__data {
+    padding: 10px;
+    > * {
+        vertical-align: top;
+    }
+    &--nav {
+        width: 100%;
+        // padding-bottom: 10px;
+        display: inline-block;
+        &-location {
+            font-size: 12px;
+            font-family: var(--body-typeface);
+            font-weight: 900;
+            margin: 0 0 5px 0;
+            font-size: 0.75em;
+            height: unset;
+            vertical-align: bottom;
+            display: inline-block;
+            span {
+                font-size: 12px;
+                font-family: var(--body-typeface);
+                font-weight: 900;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 160px;
+                display: inline-block;
+                vertical-align: bottom;
+            }
+        }
+        &-config {
+            width: auto;
+            float: right;
+            * {
+                cursor: pointer;
+                margin-left: 5px;
+                font-size: 14px;
+            }
+        }
+    }
+    &--header {
+        width: 100%;
+        display: block;
+        > * {
+            height: 100%;
+            display: inline-block;
+            vertical-align: top;
+        }
+        &-icon {
+            width: calc(33% - 10px);
+            margin-right: 10px;
+            svg {
+                width: 100%;
+                height: 100%;
+            }
+        }
+        &-temp {
+            width: 66%;
+            margin-top: 10px;
+            h1 {
+                font-size: 1.75em;
+                line-height: 1;
+                margin: 0;
+                sup {
+                    margin-left: -7px;
+                    b {
+                        font-size: 0.8em;
+                        font-weight: 900;
+                    }
+                }
+                span {
+                    font-family: var(--body-typeface);
+                    font-size: 1em;
+                    font-weight: 900;
+                    font-size: initial;
+                    display: block;
+                }
+            }
+        }
+    }
+    &--data {
+        width: calc(100% - 30px);
+        display: block;
+        margin: 0 15px;
+        > p {
+            display: inline-block;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            &::before {
+                content: '';
+                position: absolute;
+                bottom: 4px;
+                width: 100%;
+                height: 0;
+                line-height: 0;
+                border-bottom: 2px dotted black;
+                z-index: 1;
+            }
+            > * {
+                background-color: $menu_fgColor;
+                font-size: 14px;
+                z-index: 2;
+                position: relative;
+            }
+            span {
+                padding-right: 5px;
+            }
+            b {
+                font-weight: 900;
+                float: right;
+                padding-left: 5px;
+            }
+        }
+    }
+}

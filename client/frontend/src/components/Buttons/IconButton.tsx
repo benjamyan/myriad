@@ -8,6 +8,7 @@ export const IconButton = (props: IconButtonProps)=> {
     return (
         <button 
             key={`IconButton_${keyString}`}
+            ref={props.fRef}
             className={`button button__icon button__icon--${props.size === 'INHERIT' ? 'std' : props.size.toLowerCase()} ${props.className || ''}`}
             onClick={(e)=>{
                 if (props.onSingleClick !== undefined) {
@@ -40,4 +41,7 @@ export interface IconButtonProps extends IconButtonEvents {
     icon: IconType | string;
 
     disabled?: boolean;
+
+    fRef?: React.ForwardedRef<HTMLButtonElement>;
+    // ref: React.MutableRefObject<HTMLButtonElement>;
 }

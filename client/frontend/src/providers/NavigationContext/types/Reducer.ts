@@ -1,11 +1,21 @@
 import { NavStateId, NavStateNodeType, NavigationState } from "./";
 
-export type NavActionNodeRecord = Record<NavStateNodeType, Element | undefined>;
+// export type NavActionNodeRecord = Record<NavStateNodeType, HTMLElement | undefined>;
+export type NavActionNodeRecord = {
+    // [NavStateNodeType]: HTMLElement | undefined;
+    trigger: HTMLElement | HTMLButtonElement;
+    menu: HTMLElement | undefined;
+};
 
 export type NavigationActionPayload = {
     id: NavStateId;
     /** If not provided, the last source provided will be used */
     source?: string;
+    /** 
+     * Provide the triggering element and/or the menu it spawned so the listener can track user interactions 
+     * - `trigger` should be the invoking button
+     * - `menu` should be the menu it invoked
+     * */
     nodes: React.MutableRefObject<NavActionNodeRecord>;
 }
 

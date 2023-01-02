@@ -4,11 +4,9 @@ import { SingleMenuItem } from '../../../types';
 import { NavigationAction, NavActionNodeRecord } from './';
 
 export type NavigationState = {
-    /** Unique ID value of the `menuItem` */
-    // id: string;
     /** UUID Set of each _active_ `menuItem` */
     id: NavStateId[];
-    /** The items source where data is kept */
+    /** The items source where its `config` data is kept - see the `config/navigation.ts` for their individual definitions  */
     source: Record<NavStateId, string>;
     /** Associated element */
     // nodes: React.MutableRefObject<ActiveNavRef>;
@@ -20,6 +18,7 @@ export type NavigationState = {
     /** Get a tuple of values as T x L x B x R */
     position: (
             id: NavStateId, 
+            // node: Element,
             nodeType: NavStateNodeType
         )=> [number, number, number, number];
     /** Return the associated menu items properties as defined by user */

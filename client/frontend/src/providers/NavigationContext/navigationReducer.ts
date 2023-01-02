@@ -1,7 +1,8 @@
 
 import { NavigationReducer, NavigationActionResource, NavigationState } from "./types";
-import { menuItemById } from './utils';
-import { NavigationOptions } from '../../config';
+// import { menuItemById } from './utils';
+import { navigation } from '../../config';
+// import { allNavigationItems } from "../../config/navigation";
 
 
 // const idRegExp: RegExp = /([A-Z]|[a-z])+(__)+([A-Z]|[a-z])\w+/g;
@@ -68,29 +69,51 @@ import { NavigationOptions } from '../../config';
 //     }
 // }
 
+const getMenuItem = (id: string, source: string)=> {
+    return navigation.allNavigationItems[id]
+    // return menuItemById( id, source as keyof navigation.allNavigationItems );
+};
+let getNodePosition: NavigationState['position'] = null!; 
+
+// const getNodePosition: NavigationState['position'] = (node, nodeType)=> {
+//     if (!!node) {
+//         const _node = node[nodeType] as HTMLElement;
+//         if (!!_node) {
+//             return [
+//                 _node.offsetTop,
+//                 0, // calc to get right
+//                 0, // calc to get bottom
+//                 _node.offsetLeft
+//             ]
+//         }
+//     }
+//     return [0,0,0,0]
+// };
+
+
 export const navigationContextReducer: NavigationReducer = (navContextState, navContextAction)=> {
     
     const { payload } = navContextAction;
     let _state = { ...navContextState };
-
-    const getNodePosition: NavigationState['position'] = (id, nodeType)=> {
-        if (!!_state.nodes[id]) {
-            const _node = _state.nodes[id][nodeType] as HTMLElement;
-            if (!!_node) {
-                return [
-                    _node.offsetTop,
-                    0, // calc to get right
-                    0, // calc to get bottom
-                    _node.offsetLeft
-                ]
-            }
-        }
-        return [0,0,0,0]
-    };
-    const getMenuItem = (id: string, source: string)=> {
-        return menuItemById( id, source as keyof NavigationOptions );
-    };
     
+    if (getNodePosition === null) {
+        getNodePosition = (id, nodeType)=> {
+            const nodeInContext = _state.nodes[id]
+            if (!!nodeInContext) {
+                const _node = nodeInContext[nodeType] as HTMLElement;
+                if (!!_node) {
+                    return [
+                        _node.offsetTop,
+                        0, // calc to get right
+                        0, // calc to get bottom
+                        _node.offsetLeft
+                    ]
+                }
+            }
+            return [0,0,0,0]
+        };
+    }
+
     switch (navContextAction.type) {
         case 'SELECT':
         case 'UPDATE': {

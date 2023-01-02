@@ -1,35 +1,28 @@
 import * as React from 'react';
 
-import { taskbar } from '../../../config';
+import { navigation } from '../../../config';
 import { Button, Menu } from '../../../components';
-import { useApplicationContext, useNavigationContext, NavStateNodeType, NavActionNodeRecord } from '../../../providers';
+import { useApplicationContext, useNavigationContext, useNavRef } from '../../../providers';
 import { SingleMenuItem } from '../../../types';
+// import { taskMenuItems } from '../../../config/navigation';
 
 let _taskbarMenuClassName: string;
 
 export const TaskbarActionMenu = ({ className }: TaskbarActionMenuProps)=> {
     _taskbarMenuClassName = className;
-    const { navContextState, navContextUpdate } = useNavigationContext();
-    const { appContextDispatch } = useApplicationContext();
-    
-    const menuRef = React.useRef<NavActionNodeRecord>({
-        trigger: undefined,
-        menu: undefined
-    });
 
-    const setMenuRef = React.useCallback(
-        (type: NavStateNodeType, node: Element)=> {
-            menuRef.current[type] = node
-        },
-        [ navContextState.id ]
-    );
+    const { navContextState, navContextUpdate, } = useNavigationContext();
+    const { appContextDispatch } = useApplicationContext();
+    const { navRef, setNavTriggerRef, setNavMenuRef } = useNavRef();
+    
+    const taskbarNavItems = Object.values(navigation.taskMenuItems);
 
     return React.useMemo( ()=> (
             <div className={ className }>
-                { taskbar.taskMenu.map( (menuItem, index)=> (
+                { taskbarNavItems.map( (menuItem, index)=> (
                     <Button.Basic
                         key={`TaskbarActionMenu_button_${menuItem.menuId}_${index}`}
-                        btnRef={ navContextState.id[0] === menuItem.menuId ? setMenuRef.bind(null, 'trigger') : null }
+                        btnRef={ setNavTriggerRef(menuItem.menuId) }
                         className={ navContextState.id[0] === menuItem.menuId ? 'active' : '' }
                         size='MEDIUM' 
                         type='NAKED' 
@@ -44,19 +37,19 @@ export const TaskbarActionMenu = ({ className }: TaskbarActionMenuProps)=> {
                                     type: 'SELECT',
                                     payload: {
                                         id: menuItem.menuId,
-                                        source: 'taskbar',
-                                        nodes: menuRef
+                                        // source: 'taskbar',
+                                        nodes: navRef
                                     }
                                 })
                             }
                         } } 
                     />
                 ) )}
-                {  navContextState.id.length > 0 && (
+                { (navContextState.id.length > 0 && taskbarNavItems.some(({menuId})=> menuId === navContextState.id[0])) && (
                         navContextState.id.map( (id, index)=> (
                             <Menu.Standard 
                                 key={`TaskbarActionMenu_menu_${id}_${index}`}
-                                menuRef={ setMenuRef.bind(null, 'menu') }
+                                menuRef={ setNavMenuRef }
                                 className={`${_taskbarMenuClassName}-menu`}
                                 menuItem={ navContextState.menuItem(id) as SingleMenuItem }
                                 positionX={ navContextState.position(id, 'menu')[0] }

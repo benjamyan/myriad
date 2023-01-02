@@ -2,17 +2,20 @@ import { default as Axios } from 'axios';
 import * as React from 'react';
 import { applications } from '../../config';
 
-// import { applications } from '../../config';
+import { applicationContextData, updateAppContextData, applicationDataLoader } from './appContextDataSilo';
 import { appContextReducer } from './appContextReducer';
-// import * as Util from './utils/appContextUtils';
-import { AppContextReturnValue, AppContextReducerMediaryActions } from './types';
+import { AppContextReturnValue } from './types';
 
-const ApplicationContext = React.createContext<AppContextReturnValue | undefined>(undefined);
+const ApplicationContext = React.createContext<AppContextReturnValue>(undefined!);
 
-const applicationContextData: Record<string, any> = {};
+// const applicationContextData: Record<string, any> = {};
+// const updateAppContextData = (appId: string, content: JSON | string | AxiosResponse['data'])=> {
+//     /** Handle validation and whatnot here */
+//     applicationContextData[appId] = content;
+// }
 
 const ApplicationContextProvider = ({ children }: any) => {
-    const [ appContextState, appContextUpdate] = React.useReducer(
+    const [ appContextState, appContextDispatch] = React.useReducer(
         appContextReducer,
         {
             active: [],
@@ -21,82 +24,71 @@ const ApplicationContextProvider = ({ children }: any) => {
     );
     const activeAppLength = React.useRef<number>(0);
     
-    const appContextDispatch = async (action: AppContextReducerMediaryActions)=> {
-        appContextUpdate(action);
-        // const { type, payload } = action;
-        // switch (type) {
-        //     case 'SELECT': {
-        //         try {
-        //             const appDefinition = applications.appItemsById[payload];
-
-        //             if (appDefinition === undefined) {
-        //                 throw new Error(`Application not found`);
-        //             } else if (applicationContextData[payload]) {
-        //                 //
-        //                 return;
-        //             } else if (appDefinition.sourceContent !== undefined) {
-        //                 applicationContextData[payload] = JSON.stringify(appDefinition.sourceContent);
-        //             } else if (appDefinition.sourceUrl !== undefined && appDefinition.sourceUrl.length > 0) {
-        //                 await Axios(appDefinition.sourceUrl, appDefinition.sourceConfig || {})
-        //                     .then((res)=> {
-        //                         applicationContextData[payload] = res.data;
-        //                     })
-        //                     .catch( (err)=>console.error(err) );
-        //             } else {
-        //                 throw new Error(`Unhandled exception`);
-        //             }
-        //         } catch (err) {
-        //             console.log(err);
-        //             return;
-        //         } finally {
-        //             appContextUpdate(action);
-        //         }
-        //         break;
-        //     }
-        //     default: {
-                // appContextUpdate(action);
-        //     }
-        // }
-    }
-
     React.useEffect(()=>{
-        if (activeAppLength.current < appContextState.active.length) {
-            activeAppLength.current += 1;
+        if (activeAppLength.current !== appContextState.active.length) {
+            /** Change out ref to active contexts len here so we can handle changes quickly */
+            if (activeAppLength.current > appContextState.active.length) {
+                activeAppLength.current--;
+            } else {
+                activeAppLength.current++;
+            }
+            
             // run our fetch ops here, load the data, set necessary flags
             for (const app of appContextState.active) {
-                if (app._ready === false) {
+                if (app._ready === false || app._ready instanceof Error) {
                     (async function(){
+                        let appInContextData = applicationContextData.get(app.appId);
                         try {
                             const appDefinition = applications.appItemsById[app.appId];
-        
-                            if (applicationContextData[app.appId]) {
-                                // 
+                            
+                            if (appInContextData) {
+                                /** if it already exists in our context, we dont need to do anything, the data should automaticaally load into the component */
+                                return
                             } else if (appDefinition.sourceContent !== undefined) {
-                                applicationContextData[app.appId] = JSON.stringify(appDefinition.sourceContent);
+                                appInContextData = updateAppContextData(app.appId, appDefinition.sourceContent);
                             } else if (appDefinition.sourceUrl !== undefined && appDefinition.sourceUrl.length > 0) {
-                                await Axios(appDefinition.sourceUrl, appDefinition.sourceConfig || {})
-                                    .then((res)=> {
-                                        applicationContextData[app.appId] = res.data;
-                                    })
-                                    .catch( (err)=>console.error(err) );
+                                const remoteContent = (
+                                    await Axios(appDefinition.sourceUrl, appDefinition.sourceConfig || {})
+                                        .then((res)=> {
+                                            return res.data
+                                        })
+                                        .catch((err)=> {
+                                            console.error(err)
+                                            return false
+                                        })
+                                );
+                                if (!!remoteContent) {
+                                    appInContextData = updateAppContextData(app.appId, remoteContent);
+                                    return
+                                }
+                                throw new Error(`Unhandled exception fetching remote content`);
                             } else {
-                                throw new Error(`Unhandled exception`);
+                                throw new Error(`No source to draw from`);
                             }
                         } catch (err) {
                             console.log(err);
-                            return;
-                        } finally {
-                            appContextUpdate({
+                            appContextDispatch({
                                 type: 'UPDATE',
                                 payload: {
                                     appId: app.appId,
-                                    _ready: true
+                                    _ready: err instanceof Error ? err : new Error(`Unhandled exception`)
                                 }
                             });
+                            return; 
+                        } finally {
+                            if (appInContextData !== undefined && !(appInContextData instanceof Error)) {
+                                setTimeout(()=>{
+                                    appContextDispatch({
+                                        type: 'UPDATE',
+                                        payload:{
+                                            appId: app.appId, 
+                                            _ready: true 
+                                        }
+                                    }); 
+                                }, 1000);
+                            } 
                         }
                     })()
-                } else if (app._ready instanceof Error) {
-                    //
                 }
             }
         }
@@ -132,5 +124,6 @@ export type AppContextDispatch = AppContextReturnValue['appContextDispatch'];
 export {
     useApplicationContext,
     applicationContextData,
+    applicationDataLoader,
     ApplicationContextProvider
 }

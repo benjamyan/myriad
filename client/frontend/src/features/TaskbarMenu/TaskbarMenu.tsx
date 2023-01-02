@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { TaskbarActionMenu } from './components/TaskbarActionMenu';
-import { UtilityPane } from './components/UtilityPane';
+import { UtilityMenu } from './components/UtilityMenu';
 import "./_TaskbarMenu.scss";
 
 const _baseClassName = 'taskbar__menu';
@@ -21,7 +21,7 @@ export const TaskbarMenu = ({taskbarRef}:any)=> {
         <nav className={ _baseClassName } ref={taskbarRef}>
             <i className={`${_baseClassName}--logo`} />
             <TaskbarActionMenu className={`${_baseClassName}--actions`} />
-            <UtilityPane className={`${_baseClassName}--panel`} />
+            <UtilityMenu className={`${_baseClassName}--panel`} />
         </nav>
     )
 }

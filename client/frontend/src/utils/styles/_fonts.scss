@@ -3,35 +3,89 @@
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  * Copyright 2022 Fonticons, Inc.
  */
- :root, 
- :host {
-    --fa-font-regular: normal 400 1em/1 "Font Awesome 6 Free";
-    --fa-font-solid: normal 900 1em/1 "Font Awesome 6 Free"; 
-}
+ // https://fonts.google.com/specimen/VT323
 
+// https://fonts.google.com/specimen/Press+Start+2P
 @font-face {
-    font-family: 'Font Awesome 6 Free';
+    font-family: 'PressStart2P';
     font-style: normal;
     font-weight: 400;
     font-display: block;
-    src: url("../webfonts/fa-regular-400.woff2") format("woff2"), url("../webfonts/fa-regular-400.ttf") format("truetype"); 
+    src: url("~/src/assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf") format("truetype");
+    // src: url("../../assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf") format("truetype"); 
 }
 
+// https://fonts.google.com/specimen/Roboto+Mono
 @font-face {
-    font-family: 'Font Awesome 6 Free';
+    font-family: 'RobotoMono';
     font-style: normal;
     font-weight: 900;
     font-display: block;
-    src: url("../webfonts/fa-solid-900.woff2") format("woff2"), url("../webfonts/fa-solid-900.ttf") format("truetype"); 
+    src: url("~/src/assets/fonts/Roboto_Mono/RobotoMono-Bold.ttf") format("truetype");
 }
-  
-.fas,
-.fa-solid {
-    font-family: 'Font Awesome 6 Free';
-    font-weight: 900; 
+@font-face {
+    font-family: 'RobotoMono';
+    font-style: italic;
+    font-weight: 900;
+    font-display: block;
+    src: url("~/src/assets/fonts/Roboto_Mono/RobotoMono-BoldItalic.ttf") format("truetype");
 }
-.far,
-.fa-regular {
-    font-family: 'Font Awesome 6 Free';
-    font-weight: 400; 
+@font-face {
+    font-family: 'RobotoMono';
+    font-style: normal;
+    font-weight: 600;
+    font-display: block;
+    src: url("~/src/assets/fonts/Roboto_Mono/RobotoMono-SemiBold.ttf") format("truetype");
 }
+@font-face {
+    font-family: 'RobotoMono';
+    font-style: italic;
+    font-weight: 600;
+    font-display: block;
+    src: url("~/src/assets/fonts/Roboto_Mono/RobotoMono-SemiBoldItalic.ttf") format("truetype");
+}
+@font-face {
+    font-family: 'RobotoMono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url("~/src/assets/fonts/Roboto_Mono/RobotoMono-Regular.ttf") format("truetype");
+}
+@font-face {
+    font-family: 'RobotoMono';
+    font-style: italic;
+    font-weight: 400;
+    font-display: block;
+    src: url("~/src/assets/fonts/Roboto_Mono/RobotoMono-Italic.ttf") format("truetype");
+}
+
+ :root, 
+ :host {
+    --header-typeface: 'PressStart2P';
+    --body-typeface: 'RobotoMono';
+}
+h1, h2, h3, h4, h5 {
+    font-family: var(--header-typeface);
+    font-weight: 400;
+    b {
+        font-family: var(--header-typeface);
+        font-weight: 900; 
+    }
+    span, i {
+        font-family: var(--header-typeface);
+        font-weight: 400; 
+    }
+}
+p, span, b, i, button, ul, ol {
+    font-family: var(--body-typeface);
+    font-size: 1rem;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: -0.02rem;
+    b {
+        font-weight: 900;
+        letter-spacing: -0.005rem;
+    }
+}
+
+

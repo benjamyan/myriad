@@ -24,7 +24,6 @@ export const Basic = (btnProps: BasicButtonProps) => {
 
     return (
         <button 
-            // data-id={ btnProps.dataId }
             ref={ !!btnProps.btnRef ? btnProps.btnRef : undefined }
             key={`BasicButton_outer_${keyString}`}
             type={ 'button' }

@@ -4,12 +4,27 @@ import * as Util from './utils/appContextUtils';
 import * as Factory from './utils/contextFactories';
 import { applications } from '../../config';
 import { ActiveApplication } from '../../types';
-// import { appItemsById } from '../../config/applications';
 
 const log = (msg: string)=> true ? undefined : console.log(msg);
 
-const appContextItemInitialLoad = ()=> {
-
+const handleAppContextItemUpdate  = (appToUpdate: ActiveApplication, updates: Partial<ActiveApplication>)=> {
+    const appWithUpdates: ActiveApplication = {...appToUpdate};
+    for (const _prop in updates) {
+        if (_prop !== 'appId') {
+            // Object.defineProperty(appWithUpdates, _prop, updates[_prop] as keyof ActiveApplication);
+            appWithUpdates[_prop] = updates[_prop] as keyof ActiveApplication;
+        }
+        if (updates.dimensions !== undefined) {
+            appWithUpdates.dimensions = [
+                Util.handleDimensionConversion(updates.dimensions[0], 'x'),
+                Util.handleDimensionConversion(updates.dimensions[1], 'y')
+            ];
+        }
+        if (updates._ready !== undefined) {
+            appWithUpdates._ready = updates._ready;
+        }
+    }
+    return {...appWithUpdates};
 }
 
 export function appContextReducer(appContextState: AppContextState, appContextReducerAction: AppContextReducerActions) {
@@ -18,7 +33,7 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
         previous: appContextState.previous
     };
     const { type, payload } = appContextReducerAction;
-
+    
     switch (type) {
         case 'SELECT': {
             log('SELECT')
@@ -42,6 +57,7 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                     });
                     _state.previous.current.delete(_payload);
                 } else {
+                    console.log(_payload)
                     /** App has not been opened before - make a new entry in `active` */
                     const newActiveApp = (
                         Factory.newAppInContext(applications.appItemsById[_payload], _state.active.length)
@@ -89,26 +105,22 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
         case 'UPDATE': {
             log('UPDATE')
             
-            const _payload = payload as any;
+            const _payload = payload as Partial<ActiveApplication> & Pick<ActiveApplication, 'appId'>;
+            
             const activeAppIndex = Util.findAppIndexById(_state.active, _payload.appId);
-            if (activeAppIndex !== undefined) {
-                /** TS is weird 
-                 * - Recasting these to any because TS wont cast a keyof as `string`
-                 * - https://stackoverflow.com/questions/57350092/string-cant-be-used-to-index-type
-                 */
-                const activeApp: any = {..._state.active[activeAppIndex]};
-                for (const _prop in _payload) {
-                    if (_prop !== 'appId') {
-                        activeApp[_prop ] = _payload[_prop];
-                    }
-                    if (_payload.dimensions !== undefined) {
-                        activeApp.dimensions = [
-                            Util.handleDimensionConversion(_payload.dimensions[0], 'x'),
-                            Util.handleDimensionConversion(_payload.dimensions[1], 'y')
-                        ];
-                    }
+            if (activeAppIndex > -1) {
+                _state.active[activeAppIndex] = handleAppContextItemUpdate(_state.active[activeAppIndex], _payload);
+            } else {
+                const previouslyActiveApp = appContextState.previous.current.get(payload.appId);
+                if (!!previouslyActiveApp) {
+                    /** The app is in our previous context, update it there */
+                    appContextState.previous.current.set( 
+                        payload.appId, 
+                        handleAppContextItemUpdate(previouslyActiveApp, _payload) 
+                    ); 
+                } else {
+                    // ...how did you get here??
                 }
-                _state.active[activeAppIndex] = activeApp;
             }
             break;
         }

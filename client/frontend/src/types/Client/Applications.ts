@@ -21,16 +21,29 @@ export type ApplicationDefinition = {
     /** Configuration if you're making an API call and need to pass custom headers */
     readonly sourceConfig?: AxiosRequestConfig;
     /** Pass in static content here to omit URL/API calls completely - if this is not undefined on read it will nullify all other `source` entries */
-    readonly sourceContent?: string;
+    readonly sourceContent?: string | JSON;
     /** 
      * If you want to handle rendering on your own pass a custom element reference - can only be done with contentType of `JSON` or `MD` 
      * - @param content as a string or JSON for content to render
      * - @param options are any options you might need for the component itself
      */
-    renderContent?: (content: string, options?: Record<string, any>)=> JSX.Element;
+    renderContent?: ApplicationRenderComponent;
 }
 
+export type ApplicationRenderComponent = ({ content, options }: { 
+        /**
+         * @param content is the actual content to be passed to your custom component 
+         * - `'OFFLOAD'` if loading of data is being handled by the component itself
+         * - `'LOADING'` as a <string> if youre currently loading in the content from elsewhere, and it should expect it later down the line
+         * - Pass a JSON object if its loaded correctly and should render as such
+         * - `Error` if you need to display an error on client  
+         */
+        content: 'OFFLOAD' | 'LOADING' | JSON | Error, 
+        options?: Record<string, any>
+    })=> JSX.Element;
+
 export type ActiveApplication = {
+    [key: string]: number | string | boolean | Error | any[];
     /** Application ID for reference */
     readonly appId: ApplicationDefinition['appId'];
     /** position as `[ W, H ]` */
