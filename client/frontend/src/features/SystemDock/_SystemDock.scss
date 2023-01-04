@@ -25,18 +25,27 @@
         }
     }
     button {
+        position: relative;
         font-size: 50px;
         padding: 0 15px;
         display: inline-block;
         &:hover {
             margin-top: -15px;
         }
-        // &:nth-last-of-type(2) {
-        //     padding-right: 30px;
-        // }
-        // &:nth-last-of-type(1) {
-        //     padding-left: 30px;
-        // }
+        &.active {
+            &::after {
+                position: absolute;
+                bottom: -5px;
+                right: 0;
+                left: 0;
+                margin: 0 auto;
+                display: inline-block;
+                content: ' ';
+                width: 10px;
+                height: 10px;
+                background-color: blue;
+            }
+        }
     }
     &--bg {
         width: calc(110% - 50px);

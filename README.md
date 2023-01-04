@@ -7,6 +7,9 @@ Site built on a microfrontend to display my portfolio, blog, maybe some dog pict
 - https://dev.to/vovacodesca/windows-11-inspired-portfolio-nni
 - https://www.fullstackacademy.com/blog/how-to-create-a-portfolio-website
 - https://zach.dev/
+- https://www.benvessey.com/mac
+- https://opensource.glassanimals.com/
+- https://www.benvessey.com/mac-old-school
 
 ## Docs/tuts:
 - https://reactjs.org/docs/web-components.html

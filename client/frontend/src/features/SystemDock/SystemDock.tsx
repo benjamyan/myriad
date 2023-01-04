@@ -8,21 +8,27 @@ import { Button } from '../../components';
 import './_SystemDock.scss';
 
 export const SystemDock = ()=> {
-    const { appContextDispatch } = useApplicationContext();
+    const { appContextState, appContextDispatch } = useApplicationContext();
     const [ dockWidth, setDockWidth ] = React.useState<number>(0);
     const dockRef = React.useRef<HTMLElement>(null);
 
     React.useEffect(()=>{
+
+        // appContextDispatch({
+        //     type: 'SELECT',
+        //     payload: navigation.systemTrayItems.fileExplorer.appId as string
+        // });
+
         if (dockRef.current !== null) {
             /** Takes the ref (parent section element) and returns the combined width of its children barring the last element (background shape) */
             setDockWidth(
-                Array.from(dockRef.current.children)
-                    .reduce( (res, el, i, arr)=> (
-                            res = i < arr.length - 1 
-                                ? el.clientWidth + res 
-                                : res
-                            ), 0
-                        ));
+                Array.from(dockRef.current.children).reduce( 
+                (res, el, i, arr)=> (
+                    res = i < arr.length - 1 
+                        ? el.clientWidth + res 
+                        : res
+                ), 0)
+            );
         }
     }, []);
 
@@ -39,6 +45,7 @@ export const SystemDock = ()=> {
                         return (
                             <Button.IconButton 
                                 key={`SystemDock-icon-${navItem.appId}`}
+                                className={ appContextState.active.some((active)=>navItem.appId === active.appId) ? 'active' : '' }
                                 size='INHERIT'
                                 icon={ navItem.icon }
                                 onSingleClick={()=>{

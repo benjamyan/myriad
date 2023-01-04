@@ -1,5 +1,5 @@
-import { ApplicationDefinition } from '../../types';
-import { WeatherApp, FileExplorer } from '../../features';
+import { ApplicationDefinition, ApplicationRenderComponent } from '../../types';
+import { WeatherApp, FileExplorerWrapper } from '../../features';
 import { AiFillFolder } from 'react-icons/ai';
 
 export const userSettings: ApplicationDefinition = {
@@ -39,7 +39,8 @@ export const fileExplorer: ApplicationDefinition = {
 
     //     }
     // }),
-    renderContent: FileExplorer,
+    renderContent: FileExplorerWrapper,
+    // renderContent: FileExplorerWrapper as ApplicationRenderComponent<Record<string, any>>,
     icon: AiFillFolder
 };
 

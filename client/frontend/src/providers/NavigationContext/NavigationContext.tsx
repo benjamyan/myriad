@@ -55,6 +55,7 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
             try {
                 if (currNavState.current.id.length > 0) {
                     const { nodes } = currNavState.current;
+                    console.log({...currNavState.current});
                     if (!!nodes) {
                         let _menu: Element | undefined;
                         for (const id of currNavState.current.id) {
@@ -67,6 +68,7 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
                                 return
                             } else if (nodes[id].menu !== undefined) {
                                 _menu = nodes[id].menu as Element;
+
                                 if (Array.from(_menu.children).includes(event.target as Element)) {
                                     // const _menuItem = currNavState.current.menuItem(event.target['data-id']);
                                     // if (_menuItem !== undefined ) {
@@ -82,6 +84,7 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
                                 _menu = undefined;
                                 return
                             } else {
+                                console.log(event)
                                 navContextUpdate({ type: 'CLEAR', payload: null })
                                 return
                             }

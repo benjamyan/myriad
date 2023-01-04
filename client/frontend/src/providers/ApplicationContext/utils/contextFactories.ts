@@ -3,7 +3,6 @@ import * as Util from './appContextUtils';
 
 export const newAppInContext = (app: ApplicationDefinition, contentLen: number): ActiveApplication | Error => {
     try {
-        console.log({...app})
         return {
             appId: app.appId,
             positions: [25  * (contentLen + 1), 25],

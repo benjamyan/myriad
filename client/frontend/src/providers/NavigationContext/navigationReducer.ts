@@ -118,8 +118,12 @@ export const navigationContextReducer: NavigationReducer = (navContextState, nav
         case 'SELECT':
         case 'UPDATE': {
             const _payload = payload as NavigationActionResource<'SELECT'>;
+
             if (_payload.id !== undefined && _payload.nodes !== undefined) {
-                _state.id = [ ..._state.id, _payload.id ];
+                _state.id = [ 
+                    ..._state.id, 
+                    _payload.id 
+                ];
                 _state.nodes[_payload.id] = _payload.nodes.current;
                 if (!!_payload.source) {
                     _state.source[_payload.id] = _payload.source
@@ -133,6 +137,7 @@ export const navigationContextReducer: NavigationReducer = (navContextState, nav
         }
         case 'REMOVE': {
             const _payload = payload as NavigationActionResource<'REMOVE'>;
+
             _state.id = _state.id.splice(
                 _state.id.findIndex( (_id)=> _id === _payload ), 1
             );
@@ -141,6 +146,8 @@ export const navigationContextReducer: NavigationReducer = (navContextState, nav
             break;
         }
         case 'CLEAR': {
+            // console.trace()
+            
             _state.id = [];
             _state.nodes = {};
             _state.source = {};

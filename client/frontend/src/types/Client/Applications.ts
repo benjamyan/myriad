@@ -30,17 +30,31 @@ export type ApplicationDefinition = {
     renderContent?: ApplicationRenderComponent;
 }
 
-export type ApplicationRenderComponent = ({ content, options }: { 
-        /**
-         * @param content is the actual content to be passed to your custom component 
-         * - `'OFFLOAD'` if loading of data is being handled by the component itself
-         * - `'LOADING'` as a <string> if youre currently loading in the content from elsewhere, and it should expect it later down the line
-         * - Pass a JSON object if its loaded correctly and should render as such
-         * - `Error` if you need to display an error on client  
-         */
-        content: 'OFFLOAD' | 'LOADING' | JSON | Error, 
-        options?: Record<string, any>
-    })=> JSX.Element;
+export interface ApplicationRenderProps<C extends any = JSON> {
+    /**
+     * @param content is the actual content to be passed to your custom component 
+     * - `'OFFLOAD'` if loading of data is being handled by the component itself
+     * - `'LOADING'` as a <string> if youre currently loading in the content from elsewhere, and it should expect it later down the line
+     * - Pass a JSON object if its loaded correctly and should render as such
+     * - `Error` if you need to display an error on client  
+     */
+    content: 'OFFLOAD' | 'LOADING' | Error | C; 
+    options?: Record<string, any>;
+}
+export type ApplicationRenderComponent = (props: ApplicationRenderProps)=> JSX.Element;
+// export type ApplicationRenderComponent = ({ content, options }: { 
+//         /**
+//          * @param content is the actual content to be passed to your custom component 
+//          * - `'OFFLOAD'` if loading of data is being handled by the component itself
+//          * - `'LOADING'` as a <string> if youre currently loading in the content from elsewhere, and it should expect it later down the line
+//          * - Pass a JSON object if its loaded correctly and should render as such
+//          * - `Error` if you need to display an error on client  
+//          */
+//         content: 'OFFLOAD' | 'LOADING' | Error | (
+//             C extends void ? JSON : C
+//         ), 
+//         options?: Record<string, any>
+//     })=> JSX.Element;
 
 export type ActiveApplication = {
     [key: string]: number | string | boolean | Error | any[];

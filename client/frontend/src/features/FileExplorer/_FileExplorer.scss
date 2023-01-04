@@ -1,0 +1,135 @@
+@import '../../utils/styles/colors';
+
+.file__explorer {
+    height: 100%;
+    .chonky-chonkyRoot {
+        padding: 0;
+        margin: 0;
+        border: none;
+        .file__explorer--nav {
+            position: fixed;
+            z-index: 2;
+            width: calc(100% - 21px);
+            border-bottom: 1px solid $menu_borderColor;
+            background-color: $menu_fgColor;
+            button, span, li {
+                font-size: 0.85rem;
+                letter-spacing: -0.03rem;
+                svg {
+                    font-size: 1rem;
+                }
+            }
+            .chonky-navbarWrapper {
+                width: calc(100% - 45px);
+                display: inline-block;
+                padding: 0 0 2px 0;
+                overflow: hidden;
+                .chonky-navbarContainer {
+                    > button.chonky-iconOnlyButton {
+                        padding: 0;
+                        margin: 0;
+                        span {
+                            &:first-of-type {
+                                position: relative;
+                                width: 75%;
+                                min-width: 20px;
+                                max-width: 25px;
+                                height: 80%;
+                                max-height: 25px;
+                                min-height: 15px;
+                                &::before {
+                                    width: 100%;
+                                    height: 100%;
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    right: 0;
+                                    margin: 0 auto;
+                                    content: url(data:image/svg+xml,%3Csvg%20stroke%3D%22currentColor%22%20fill%3D%22currentColor%22%20stroke-width%3D%220%22%20viewBox%3D%220%200%2016%2016%22%20height%3D%221em%22%20width%3D%221em%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M15.683%203a2%202%200%200%200-2-2h-7.08a2%202%200%200%200-1.519.698L.241%207.35a1%201%200%200%200%200%201.302l4.843%205.65A2%202%200%200%200%206.603%2015h7.08a2%202%200%200%200%202-2V3zM5.829%205.854a.5.5%200%201%201%20.707-.708l2.147%202.147%202.146-2.147a.5.5%200%201%201%20.707.708L9.39%208l2.146%202.146a.5.5%200%200%201-.707.708L8.683%208.707l-2.147%202.147a.5.5%200%200%201-.707-.708L7.976%208%205.829%205.854z%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E);
+                                }
+                                div svg {
+                                    display: none;
+                                }
+                            }
+                            &:not(:first-of-type) {
+                                display: none;
+                            }
+                        }
+                        &.Mui-disabled {
+                            opacity: 0.5;
+                        }
+                    }
+                    .chonky-navbarBreadcrumbs {
+                        ol li {
+                            &.chonky-separator {
+                                margin: 0 !important;
+                            }
+                            button {
+                                padding: 0;
+                                .chonky-iconWithText {
+                                    display: none;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            &-toolbar {
+                display: inline-block;
+                width: 45px;
+                height: 100%;
+                padding-top: 10px;
+                vertical-align: top;
+                margin-left: auto;
+                text-align: justify;
+                button:last-of-type {
+                    margin-left: 5px;
+                }
+                &__container {
+                    width: 100%;
+                    position: absolute;
+                    bottom: -32px;
+                    left: 0;
+                    right: 0;
+                    margin: 0 auto;
+                    border-top: 1px solid $menu_borderColor;
+                    border-bottom: 1px solid $menu_borderColor;
+                    background-color: $menu_fgColor;
+                    z-index: 1;
+                    .chonky-toolbarRight,
+                    .chonky-toolbarLeft {
+                        display: none;
+                        padding: 0;
+                        width: 100%;
+                    }
+                }
+                &__disabled {
+                    display: none;
+                }
+                &__actions {
+                    .chonky-toolbarRight {
+                        display: inherit;
+                        button[title="Actions"] {
+                            display: none;
+                        }
+                        button[title="Options"] {
+                            margin-left: auto;
+                            svg {
+                                font-size: 0.85rem;
+                                margin-top: 10px;
+                            }
+                        }
+                    }
+                }
+                &__search {
+                    .chonky-toolbarLeft {
+                        display: inherit;
+                    }
+                }
+            }
+        }
+        .chonky-fileListWrapper {
+            margin-top: 36px;
+        }
+    }
+}

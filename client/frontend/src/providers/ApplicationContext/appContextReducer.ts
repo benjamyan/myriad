@@ -57,7 +57,6 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                     });
                     _state.previous.current.delete(_payload);
                 } else {
-                    console.log(_payload)
                     /** App has not been opened before - make a new entry in `active` */
                     const newActiveApp = (
                         Factory.newAppInContext(applications.appItemsById[_payload], _state.active.length)

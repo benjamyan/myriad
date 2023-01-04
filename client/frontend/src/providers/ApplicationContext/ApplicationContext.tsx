@@ -77,7 +77,7 @@ const ApplicationContextProvider = ({ children }: any) => {
                             return; 
                         } finally {
                             if (appInContextData !== undefined && !(appInContextData instanceof Error)) {
-                                setTimeout(()=>{
+                                // setTimeout(()=>{
                                     appContextDispatch({
                                         type: 'UPDATE',
                                         payload:{
@@ -85,7 +85,7 @@ const ApplicationContextProvider = ({ children }: any) => {
                                             _ready: true 
                                         }
                                     }); 
-                                }, 1000);
+                                // }, 1000);
                             } 
                         }
                     })()
