@@ -8,12 +8,6 @@ import { AppContextReturnValue } from './types';
 
 const ApplicationContext = React.createContext<AppContextReturnValue>(undefined!);
 
-// const applicationContextData: Record<string, any> = {};
-// const updateAppContextData = (appId: string, content: JSON | string | AxiosResponse['data'])=> {
-//     /** Handle validation and whatnot here */
-//     applicationContextData[appId] = content;
-// }
-
 const ApplicationContextProvider = ({ children }: any) => {
     const [ appContextState, appContextDispatch] = React.useReducer(
         appContextReducer,

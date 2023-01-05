@@ -2,7 +2,7 @@ import * as React from 'react';
 import { IconType } from 'react-icons/lib';
 
 export const IconButton = (props: IconButtonProps)=> {
-
+    const { onSingleClick } = props;
     const keyString = Math.floor(Math.random() * 25).toString();
 
     return (
@@ -10,11 +10,17 @@ export const IconButton = (props: IconButtonProps)=> {
             key={`IconButton_${keyString}`}
             ref={props.fRef}
             className={`button button__icon button__icon--${props.size === 'INHERIT' ? 'std' : props.size.toLowerCase()} ${props.className || ''}`}
-            onClick={(e)=>{
-                if (props.onSingleClick !== undefined) {
-                    props.onSingleClick(e)
+            onMouseDown={(event)=>{
+                if (!!onSingleClick) {
+                    onSingleClick(event);
                 }
             }}
+            // onClick={(event)=>{
+            //     console.log(11)
+            //     if (onSingleClick !== undefined) {
+            //         onSingleClick(event)
+            //     }
+            // }}
         >
             { typeof(props.icon) === 'string' 
                 ? <img src={props.icon} /> 

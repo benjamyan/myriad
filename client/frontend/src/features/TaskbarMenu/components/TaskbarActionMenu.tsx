@@ -4,7 +4,6 @@ import { navigation } from '../../../config';
 import { Button, Menu } from '../../../components';
 import { useApplicationContext, useNavigationContext, useNavRef } from '../../../providers';
 import { SingleMenuItem } from '../../../types';
-// import { taskMenuItems } from '../../../config/navigation';
 
 let _taskbarMenuClassName: string;
 

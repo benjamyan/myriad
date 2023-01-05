@@ -6,7 +6,7 @@ import ReactMarkdown from 'react-markdown';
 import { Loader, Scrollbar } from '../../components';
 import { applications } from '../../config';
 import { ActiveApplication } from '../../types';
-import { useApplicationContext, applicationContextData, AppContextDispatch } from '../../providers';
+import { useApplicationContext, applicationContextData, AppContextDispatch, useNavigationContext } from '../../providers';
 
 // import { shadowComponentLoader } from './utils/shadowComponentLoader';
 import { reactRndSettings } from './libs';
@@ -15,10 +15,10 @@ import './_ApplicationWindow.scss';
 
 type ApplicationWindowAdditionalProps = {
     windowClassname: string;
+    windowVisibility: string;
     menubarClassname: string;
     rndSettings: ReturnType<typeof reactRndSettings>;
     stackPosition: number;
-    // activeApplications: ActiveApplication[];
     appContextDispatch: AppContextDispatch;
 } 
 
@@ -192,6 +192,7 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
         <Rnd
             { ...rndSettings }
             key={`ApplicationWindow_${appId}`}
+            className={`${props.windowVisibility} ${windowClassname}`}
             bounds='parent'
             onClick={ onFocusEventHandler }
             onDragStart={ onFocusEventHandler }
@@ -233,10 +234,24 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
 }
 
 export const ApplicationWrapper = ()=> {
+    const { navContextState } = useNavigationContext();
     const { appContextState, appContextDispatch } = useApplicationContext();
 
     // so we can have dynaic classnames
     const appWindowClassname: string = 'app__window';
+
+    const appWindowVisibility = React.useCallback(
+        (appIndex: number)=> {
+            if (navContextState.id.length > 0) {
+                return ''
+            } else if (appIndex === 0) {
+                return 'focused'
+            } else {
+                return ''
+            }
+        },
+        [ navContextState.id ]
+    );
     // this is being used in both rnd and an external component - keep it here so it can be referenced
     const menubarClassname: string = `${appWindowClassname}--menubar`;
     // invoke out rnd settings on component mount, pass them down on each instance
@@ -252,6 +267,7 @@ export const ApplicationWrapper = ()=> {
                     <ApplicationWindow 
                         { ...application } 
                         key={`DesktopApplicationWindowWrapper_window_${application.appId}`}
+                        windowVisibility={ appWindowVisibility(index) }
                         windowClassname={ appWindowClassname }
                         menubarClassname={ menubarClassname }
                         rndSettings={ rndSettings }
@@ -262,6 +278,6 @@ export const ApplicationWrapper = ()=> {
                 )) }
             </>
         ),
-        [ appContextState.active ]
+        [ appContextState.active, navContextState.id ]
     )
 }

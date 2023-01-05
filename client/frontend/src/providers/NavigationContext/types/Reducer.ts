@@ -1,4 +1,5 @@
 import { NavStateId, NavStateNodeType, NavigationState } from "./";
+import { ExtractValueByPropKey } from '../../../types';
 
 // export type NavActionNodeRecord = Record<NavStateNodeType, HTMLElement | undefined>;
 export type NavActionNodeRecord = {
@@ -40,6 +41,7 @@ export type NavigationActionDefs =
 
 export type NavigationAction = {
     type: NavigationActionDefs['type'];
+    // payload: ExtractValueByPropKey<NavigationActionDefs, NavigationActionDefs['type'], 'payload'>;
     payload: NavigationActionResource<NavigationActionDefs['type']>;
 }
 
@@ -52,7 +54,10 @@ export type NavigationDispatchMediary = (
         args0: NavigationAction
     )=> void;
 
-type ExtractPayload<A extends NavigationActionDefs, T extends NavigationActionDefs['type']> = 
-    A extends { type: T } ? A : never;
-export type NavigationActionResource<T extends NavigationActionDefs['type']> = 
-    ExtractPayload<NavigationActionDefs, T>['payload'];
+// type ExtractPayload<A extends NavigationActionDefs, T extends NavigationActionDefs['type']> = 
+//     A extends { type: T } ? A : never;
+// export type NavigationActionResource<T extends NavigationActionDefs['type']> = 
+//     ExtractPayload<NavigationActionDefs, T>['payload'];
+export type NavigationActionResource<T extends NavigationActionDefs['type']> = (
+    ExtractValueByPropKey<NavigationActionDefs, T, 'payload'>
+);

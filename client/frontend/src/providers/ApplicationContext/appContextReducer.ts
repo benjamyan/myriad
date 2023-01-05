@@ -143,6 +143,6 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
             console.error('Undefined dispatch type')
         }
     }
-
+    
     return _state
 }

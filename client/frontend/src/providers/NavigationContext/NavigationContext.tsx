@@ -55,7 +55,7 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
             try {
                 if (currNavState.current.id.length > 0) {
                     const { nodes } = currNavState.current;
-                    console.log({...currNavState.current});
+                    
                     if (!!nodes) {
                         let _menu: Element | undefined;
                         for (const id of currNavState.current.id) {
@@ -84,7 +84,6 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
                                 _menu = undefined;
                                 return
                             } else {
-                                console.log(event)
                                 navContextUpdate({ type: 'CLEAR', payload: null })
                                 return
                             }
@@ -100,10 +99,13 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
 
     React.useEffect( ()=> {
         initialContextValue.navContextUpdate = navContextUpdate;
-        document.addEventListener('click', navContextClickEventHandler)
-        // return ()=> {
-        //     document.removeEventListener('click', navContextClickEventHandler)
-        // }
+        // document.querySelector('#root *')?.addEventListener('click', navContextClickEventHandler, false);
+
+        // document.querySelector('#root > nav')?.addEventListener('click', navContextClickEventHandler);
+        // document.querySelector('#root > main')?.addEventListener('click', navContextClickEventHandler);
+
+        // document.addEventListener('mousedown', navContextClickEventHandler);
+        document.addEventListener('click', navContextClickEventHandler, true);
     }, []);
 
     React.useEffect(()=>{

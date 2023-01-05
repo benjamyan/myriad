@@ -1,95 +1,11 @@
 
 import { NavigationReducer, NavigationActionResource, NavigationState } from "./types";
-// import { menuItemById } from './utils';
 import { navigation } from '../../config';
-// import { allNavigationItems } from "../../config/navigation";
-
-
-// const idRegExp: RegExp = /([A-Z]|[a-z])+(__)+([A-Z]|[a-z])\w+/g;
-
-// const baselineErrorCheck = (action: NavigationAction): Error | true => {
-//     try {
-//         /** Common ID checks */
-//         if (action.payload.id !== undefined) {
-//             const _id = action.payload.id;
-//             const splitId = _id.split('__');
-//             if (typeof(_id) !== 'string') {
-//                 /** Failed ID typeof */
-//                 throw new Error(`ID must be string but received: ${typeof(_id)}`)
-//             }
-//             if (!idRegExp.test(_id)) {
-//                 /** Failed ID check */
-//                 throw new Error(`ID must be formatted correctly: ${_id.toString()}`)
-//             }
-//             if (navAreaBySourceName(splitId[0]) === undefined) {
-//                 throw new Error(`menu item with id ${splitId[1]} not found in ${splitId[0]}`)
-//             }
-//         }
-//         /** Node element checks */
-//         if (action.payload.nodes !== undefined) {
-
-//         } else {
-            
-//         }
-
-//         //  else if (nodes === undefined) {
-//         //     /** Invalid nodes provided */
-//         //     throw new Error(`Not provided valid nodes`)
-//         // }  else {
-            
-//         //     if (navAreaBySourceName(splitId[0]) === undefined) {
-//         //         /** Cannot find in sourece */
-                
-//         //     } else {
-//         //         /** All good */
-//         //         // prevNavState.current = { ...navContextState }
-//         //         navContextDispatch({
-//         //             id: splitId[1],
-//         //             // id2: 
-//         //             source: splitId[0],
-//         //             nodes,
-//         //             position(node: 'target' | 'menu' = 'target') {
-//         //                 return [
-//         //                     (nodes.current[node] as HTMLElement).offsetLeft,
-//         //                     (nodes.current[node] as HTMLElement).offsetTop
-//         //                 ]
-//         //             },
-//         //             menuItem() {
-//         //                 return menuItemById(splitId[1], splitId[0] as keyof NavigationOptions)
-//         //             }
-//         //         });
-//         //         currNavState.current = navContextState
-//         //         return
-//         //     }
-//         // }
-//         return true
-//     } catch (err) {
-//         console.log(err)
-//         return new Error('Unhandled baseline error')
-//     }
-// }
 
 const getMenuItem = (id: string, source: string)=> {
     return navigation.allNavigationItems[id]
-    // return menuItemById( id, source as keyof navigation.allNavigationItems );
 };
 let getNodePosition: NavigationState['position'] = null!; 
-
-// const getNodePosition: NavigationState['position'] = (node, nodeType)=> {
-//     if (!!node) {
-//         const _node = node[nodeType] as HTMLElement;
-//         if (!!_node) {
-//             return [
-//                 _node.offsetTop,
-//                 0, // calc to get right
-//                 0, // calc to get bottom
-//                 _node.offsetLeft
-//             ]
-//         }
-//     }
-//     return [0,0,0,0]
-// };
-
 
 export const navigationContextReducer: NavigationReducer = (navContextState, navContextAction)=> {
     

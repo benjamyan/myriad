@@ -1,14 +1,18 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-// import { ApplicationContextProvider } from './providers';
-// import { Generic } from "./utils";
+import { ApplicationContextProvider, NavigationContextProvider, ClientSettingsContextProvider } from "./providers";
 
-
-import Desktop from "./views/Desktop";
+import { ClientWrapper } from "./views/ClientWrapper";
 
 ReactDOM.render(
     <React.StrictMode>
-        <Desktop />
+        <ClientSettingsContextProvider>
+            <ApplicationContextProvider>
+                <NavigationContextProvider>
+                    <ClientWrapper />
+                </NavigationContextProvider>
+            </ApplicationContextProvider>
+        </ClientSettingsContextProvider>
     </React.StrictMode>,
     document.getElementById("root")
 );

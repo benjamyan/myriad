@@ -6,7 +6,7 @@ import {
     ChonkyFileActionData,
     FileArray,
     FileBrowser,
-    FileContextMenu,
+    // FileContextMenu,
     FileData,
     FileHelper,
     FileList,
@@ -145,7 +145,11 @@ export const FileExplorerWrapper = (props: ExpectedFileExplorerProps): JSX.Eleme
     React.useEffect(()=>{
         if (!explorerLoaded) {
             try {
-                setChonkyDefaults({ ...chonky.chonkySettings, iconComponent: ChonkyIconFA });
+                setChonkyDefaults({ 
+                    ...chonky.chonkySettings, 
+                    iconComponent: ChonkyIconFA 
+                });
+                
                 if (!content || content instanceof Error) {
                     throw new Error('Bad props')
                 } else if (content === 'LOADING' || content === 'OFFLOAD') {

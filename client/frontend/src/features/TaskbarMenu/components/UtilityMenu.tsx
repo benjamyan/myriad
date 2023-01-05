@@ -91,8 +91,7 @@ const WeatherPane = ()=> {
                         top: weatherIconRef.current.offsetHeight,
                         right: (
                             window.innerWidth - weatherIconRef.current.offsetLeft - weatherIconRef.current.offsetWidth
-                        ),
-                        
+                        )
                     }}>
                         <WeatherPaneContent />
                 </div>

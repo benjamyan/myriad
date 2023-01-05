@@ -21,26 +21,7 @@ export const fileExplorer: ApplicationDefinition = {
     dimensions: ['33%', '50%'],
     sourceUrl: 'http://localhost:3000/content/fileExplorer.json',
     sourceType: 'JSON',
-    // sourceContent: JSON.stringify({
-    //     Pictures: {
-    //         dir1: {
-    //             dir2: {
-
-    //             }
-    //         },
-    //         dir3: {
-
-    //         },
-    //         dir4: {
-
-    //         }
-    //     },
-    //     Documents: {
-
-    //     }
-    // }),
     renderContent: FileExplorerWrapper,
-    // renderContent: FileExplorerWrapper as ApplicationRenderComponent<Record<string, any>>,
     icon: AiFillFolder
 };
 
