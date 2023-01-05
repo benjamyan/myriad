@@ -16,9 +16,10 @@ const initialContextValue: NavigationContextValue = {
         },
         menuItem() {
             return undefined
-        }
+        },
+        _timestamp: 0
     },
-    navContextUpdate: ()=> undefined
+    navContextUpdate: ()=> undefined,
 };
 
 const NavigationContext = React.createContext<NavigationContextValue>(initialContextValue);
@@ -53,6 +54,9 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
         (event: React.MouseEvent | Event)=> {
             /** Click event handler when the menu is open or menu triggers are exposed */
             try {
+                if (window.performance.now() - currNavState.current._timestamp < 50) {
+                    return
+                };
                 if (currNavState.current.id.length > 0) {
                     const { nodes } = currNavState.current;
                     
@@ -99,17 +103,15 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
 
     React.useEffect( ()=> {
         initialContextValue.navContextUpdate = navContextUpdate;
-        // document.querySelector('#root *')?.addEventListener('click', navContextClickEventHandler, false);
-
-        // document.querySelector('#root > nav')?.addEventListener('click', navContextClickEventHandler);
-        // document.querySelector('#root > main')?.addEventListener('click', navContextClickEventHandler);
-
-        // document.addEventListener('mousedown', navContextClickEventHandler);
-        document.addEventListener('click', navContextClickEventHandler, true);
     }, []);
-
+    
     React.useEffect(()=>{
         currNavState.current = navContextState;
+        if (navContextState.id.length === 0) {
+            document.removeEventListener('click', navContextClickEventHandler);
+        } else if (navContextState.id.length === 1) {
+            document.addEventListener('click', navContextClickEventHandler);
+        }
     }, [ navContextState.id ])
 
     return (

@@ -4,23 +4,18 @@ import { IconType } from 'react-icons/lib';
 export const IconButton = (props: IconButtonProps)=> {
     const { onSingleClick } = props;
     const keyString = Math.floor(Math.random() * 25).toString();
-
+    
     return (
         <button 
             key={`IconButton_${keyString}`}
             ref={props.fRef}
             className={`button button__icon button__icon--${props.size === 'INHERIT' ? 'std' : props.size.toLowerCase()} ${props.className || ''}`}
-            onMouseDown={(event)=>{
-                if (!!onSingleClick) {
-                    onSingleClick(event);
+            onClick={(event)=>{
+                if (event.button !== 0) return;
+                if (onSingleClick !== undefined) {
+                    onSingleClick(event)
                 }
             }}
-            // onClick={(event)=>{
-            //     console.log(11)
-            //     if (onSingleClick !== undefined) {
-            //         onSingleClick(event)
-            //     }
-            // }}
         >
             { typeof(props.icon) === 'string' 
                 ? <img src={props.icon} /> 

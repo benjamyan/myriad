@@ -5,4 +5,8 @@
     border-right-width: 2px;
     border-bottom-width: 2px;
     background: $menu_fgColor;
+    pointer-events: none;
+    > button {
+        pointer-events: all;
+    }
 }

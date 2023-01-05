@@ -4,10 +4,19 @@
     left: 0;
     right: 0;
     margin: 0 auto;
-    width: fit-content;
+    // width: fit-content;
     height: 60px;
     padding: 0 25px;
     display: inline-block;
+    text-align: right;
+
+    // margin-bottom:0;
+    transition-duration: 0.05s;
+    transition-timing-function: ease-in-out;
+    transition-property: width;// margin-bottom, width;
+    // &.initial {
+    //     margin-bottom: -70px;
+    // }
     &--spacer {
         width: 40px;
         height: 50px;
@@ -28,9 +37,51 @@
         position: relative;
         font-size: 50px;
         padding: 0 15px;
+        // margin-right: 0;
+        opacity: 1;
         display: inline-block;
+        // transition-duration: 0.05s;
+        // transition-timing-function: ease-in-out;
+        // transition-property: margin-right, opacity;
+        &:not(.default) {
+            // animation-delay: 0.001s;
+            animation-duration: 0.05s;
+            // animation-direction: alternate;
+            animation-iteration-count: 1;
+            transition-property: margin-right, opacity;
+            &.animate-in {
+                animation-name: slidein;
+            }
+            &.animate-out {
+                animation-name: slideout;
+            }
+            @keyframes slidein {
+                from {
+                    margin-right: -10px;
+                    opacity: 0;
+                }
+                to {
+                    margin-right: 0;
+                    opacity: 1;
+                }
+            }
+            @keyframes slideout {
+                from {
+                    margin-right: 0;
+                    opacity: 1;
+                }
+                to {
+                    margin-right: -10px;
+                    opacity: 0;
+                }
+            }
+        }
         &:hover {
             margin-top: -15px;
+        }
+        &.initial {
+            margin-right: -30px;
+            opacity: 0.25;
         }
         &.active {
             &::after {

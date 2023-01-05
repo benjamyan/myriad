@@ -30,17 +30,12 @@ export const Basic = (btnProps: BasicButtonProps) => {
             className={ _btnClassName }
             name={ btnProps.htmlName || undefined }
             disabled={ btnProps.disabled || false }
-            onMouseDown={(event)=>{
+            onClick={ (event)=> {
+                if (event.button !== 0) return;
                 if (!!onSingleClick) {
                     onSingleClick(event);
                 }
             }}
-            // onClick={ (event)=> {
-            //     console.log(12)
-            //     if (!!onSingleClick) {
-            //         onSingleClick(event);
-            //     }
-            // }}
             style={{ ...btnProps.customStyle }}>
                 { btnProps.title || '' }
                 { !!btnProps.icon && 

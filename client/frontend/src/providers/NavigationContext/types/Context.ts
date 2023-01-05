@@ -23,6 +23,8 @@ export type NavigationState = {
         )=> [number, number, number, number];
     /** Return the associated menu items properties as defined by user */
     menuItem: (id: string)=> SingleMenuItem | undefined;
+    /** Timestamp of the last event tracked by our context - use to avoid duplicate calls and excessive dispatching */
+    _timestamp: number;
 }
 
 export type NavigationContextValue = {

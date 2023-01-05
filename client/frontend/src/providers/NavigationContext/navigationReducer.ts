@@ -48,6 +48,7 @@ export const navigationContextReducer: NavigationReducer = (navContextState, nav
                 }
                 _state.position = getNodePosition;
                 _state.menuItem = (id: string)=> getMenuItem(id, _state.source[id]);
+                _state._timestamp = window.performance.now();
             }
             break;
         }

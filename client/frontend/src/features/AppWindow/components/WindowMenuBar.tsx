@@ -25,7 +25,6 @@ export const AppWindowMenuBar = (props: MenuBarProps) => {
         event.stopPropagation();
         switch (action) {
             case 'CLOSE': {
-                // ReactDOM.unmountComponentAtNode(props.mountNode.firstElementChild as Element);
                 appContextDispatch({
                     type:'REMOVE',
                     payload: props.appWindowId
