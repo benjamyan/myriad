@@ -4,19 +4,19 @@
     left: 0;
     right: 0;
     margin: 0 auto;
-    // width: fit-content;
     height: 60px;
-    // padding: 0 25px;
     display: inline-block;
-    text-align: right;
+    text-align: center;
     z-index: 10;
-    // margin-bottom:0;
+    
     transition-duration: 0.05s;
     transition-timing-function: ease-in-out;
-    transition-property: width;// margin-bottom, width;
-    // &.initial {
-    //     margin-bottom: -70px;
-    // }
+    transition-property: width;
+    @for $i from 2 through 99 {
+        &:has(:nth-child(#{$i})) {
+            width: calc((#{$i} - 1) * 100px);
+        }
+    }
     &--spacer {
         width: 40px;
         height: 50px;
@@ -33,75 +33,65 @@
             margin: 0 auto;
         }
     }
-    .button__icon {
+    &--button {
         position: relative;
-        // font-size: 50px;
         padding: 0 20px;
-        // margin-right: 0;
-        margin-top: -7.5px;
+        margin-top: -10px;
         display: inline-block;
         z-index: 2;
-        // transition-duration: 0.05s;
-        // transition-timing-function: ease-in-out;
-        // transition-property: margin-right, opacity;
-        &:not(.default) {
-            // animation-duration: 0.09s;
-            // animation-iteration-count: 1;
-            // transition-property: margin-right, opacity;
-            left: 0;
-            opacity: 1;
-            // transition-property: left, opacity;
-            // transition-duration: 5s;
-            // transition-delay: 0.1s;
-            transition-timing-function: ease;
-            &.animate-in {
-                position: absolute;
-                @for $i from 1 through 99 {
-                    &:nth-child(#{$i}) {
-                        left: calc(#{$i} * 25px);
-                    }
-                }
-                opacity: 0;
-            }
-            // &.animate-out {
-            //     animation-name: slideout;
-            // }
-            @keyframes fadein {
-                from {
-                    opacity: 0;
-                }
-                to {
-                    opacity: 1;
-                }
-            }
-            // @keyframes slidein {
-            //     from {
-            //         margin-right: -10px;
-            //         opacity: 0;
-            //     }
-            //     to {
-            //         margin-right: 0;
-            //         opacity: 1;
-            //     }
-            // }
-            // @keyframes slideout {
-            //     from {
-            //         margin-right: 0;
-            //         opacity: 1;
-            //     }
-            //     to {
-            //         margin-right: -10px;
-            //         opacity: 0;
-            //     }
-            // }
-        }
-        // &:hover {
-        //     margin-top: -15px;
+        // &:not(.default) {
+        //     transition-property: display, position, right, left, margin-right, opacity;
+        //     // transition-duration: 0.05s;
+        //     // transition-timing-function: ease;
+        //     opacity: 1;
+        //     right: 0;
+        //     animation-timing-function: ease-in-out;
+        //     animation-duration: 0.05s;
+        //     animation-delay: 0.5s;
+        //     animation-name: slidein;
+        //     // &.animate-in {
+        //         // position: absolute;
+        //         // @for $i from 1 through 99 {
+        //         //     &:nth-child(#{$i}) {
+        //         //         left: calc(#{$i} * 25px);
+        //         //     }
+        //         // }
+        //         // opacity: 0;
+        //     // }
+        //     animation-play-state: running;
+        //     @keyframes slidein {
+        //         0% {
+        //             // position: absolute;
+        //             display: none;
+        //             // top: 5px;
+        //             // left: 35px;
+        //             // left: 0;
+        //             // @for $i from 1 through 99 {
+        //             //     &:nth-child(#{$i}) {
+        //             //         left: calc(#{$i} * 50px);
+        //             //     }
+        //             // }
+        //             opacity: 0;
+        //             // right: -25px;
+        //         }
+        //         99% {
+        //             opacity: 1;
+        //             // right: 0;
+        //             left: 0;
+        //             // top: 0;
+        //         }
+        //         100% {
+        //             // position: relative;
+        //             display: inline-block;
+        //             // opacity: 1;
+        //             // margin-right: 0;
+        //         }
+        //     }
         // }
-        &.initial {
-            margin-right: -30px;
-            opacity: 0.25;
-        }
+        // &.initial {
+        //     margin-right: -30px;
+        //     opacity: 0.25;
+        // }
         &.trash img {
             width: 50px;
         }
@@ -111,19 +101,16 @@
         .button__icon--local {
             width: 55px;
         }
-        &.open {
-            &::after {
-                position: absolute;
-                bottom: -12px;
-                right: 0;
-                left: 0;
-                margin: 0 auto;
-                display: inline-block;
-                content: " ";
-                width: 9px;
-                height: 8px;
-                background-color: black;
-            }
+        span.open {
+            position: absolute;
+            bottom: -7px;
+            right: 0;
+            left: 0;
+            margin: 0 auto;
+            display: inline-block;
+            width: 9px;
+            height: 8px;
+            background-color: black;
         }
     }
     &--bg {
@@ -136,15 +123,6 @@
         bottom: 0;
         margin: 0 auto;
         z-index: 1;
-        // width: calc(110% - 50px);
-        // height: 35px;
-        // background: rgba(255, 255, 255, 0.5);
-        // position: absolute;
-        // right: 0;
-        // left: 0;
-        // bottom: 0;
-        // margin: 0 auto;
-        // z-index: -1;
         &::before, 
         &::after {
             position: absolute;

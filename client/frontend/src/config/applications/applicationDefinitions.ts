@@ -53,9 +53,8 @@ export const systemOverview: ApplicationDefinition = {
     appId: 'system-overview',
     displayName: 'System',
     dimensions: ['50%','33%'],
-    sourceType: 'JSON',
-    sourceContent: '',
-
+    sourceType: 'HTML',
+    sourceUrl: 'http://localhost:3000/content/systemInfo.html'
 };
 export const weatherApp: ApplicationDefinition = {
     appId: 'weather',

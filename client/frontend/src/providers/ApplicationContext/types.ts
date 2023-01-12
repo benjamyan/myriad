@@ -1,5 +1,5 @@
 import React from "react";
-import { ActiveApplication, ApplicationDefinition } from "../../types";
+import { ActiveApplication, ApplicationDefinition, ExtractValueByPropKey } from "../../types";
 
 export type AppContextActiveValues = React.MutableRefObject<Map<ActiveApplication['appId'],  Pick<ActiveApplication, 'dimensions' | 'positions' | '_visibility'>>>;;
 
@@ -10,28 +10,49 @@ export type AppContextState = {
     values: AppContextActiveValues;
 };
 
+// type AppContextReducerUpdateAction<A extends ReducerUpdateActions | void = void> = {
+//     type: 'UPDATE';
+//     /** An optional, preconfigured action that can be performed  */
+//     action?: A;
+
+//     payload: (
+//         A extends ReducerUpdateActions 
+//             ? ApplicationDefinition['appId']
+//             : Required<Pick<ActiveApplication, 'appId'>> & Partial<Omit<ActiveApplication, 'appId'>>
+//     )
+// }
+
+/** Predefined actions for common operations 
+ * - `MINIMIZE` will set the `_visibility` to 'MINIMIZE'
+ * - `MAXIMIZE` will set the `_visibility` to 'MAXIMIZE', and update the `dimensions` and `positions` values so that the window covers the entire screen
+ * - `TOGGLE` will get the last `_visibility` property from the value bucket and set the desired apps `_visibility` prop as such
+ */
+type AppContextReducerUpdateActions = 'FOCUS' | 'MINIMIZE' | 'TOGGLE' |  'MAXIMIZE';
+// type ExpectedUpdatePayload<A extends AppContextReducerUpdateActions | void = void> = (
+//     A extends void 
+//         ? Required<Pick<ActiveApplication, 'appId'>> & Partial<Omit<ActiveApplication, 'appId'>>
+//         : ActiveApplication['appId']
+// );
+
 export type AppContextReducerActions = 
     {
         type: 'SELECT';
         /** ID of application as payload */
         payload: ApplicationDefinition['appId'];
     } | {
-        type: 'FOCUS';
-        /** ID of application as payload */
-        payload: ApplicationDefinition['appId'];
-    } | {
-    //     type: 'MINIMIZE';
-    //     /** ID of application as payload */
-    //     payload: ApplicationDefinition['appId'];
-    // } | {
-    //     type: 'MAXIMIZE';
+    //     type: 'FOCUS';
     //     /** ID of application as payload */
     //     payload: ApplicationDefinition['appId'];
     // } | {
         type: 'UPDATE';
-        /** An optional, preconfigured action that can be performed  */
-        action?: 'MINIMIZE' | '' |  'MAXIMIZE';
+        /** An optional, preconfigured set of actions that can be performed  */
+        action?: AppContextReducerUpdateActions[];
         /** Object containinig changes */
+        // payload: (
+        //     typeof action extends void 
+        //         ? Required<Pick<ActiveApplication, 'appId'>> & Partial<Omit<ActiveApplication, 'appId'>>
+        //         : ApplicationDefinition['appId']
+        // )
         payload: Required<Pick<ActiveApplication, 'appId'>> & Partial<Omit<ActiveApplication, 'appId'>>;
     } | {
         type: 'REMOVE';
@@ -39,6 +60,12 @@ export type AppContextReducerActions =
         payload: ApplicationDefinition['appId'];
         // payload: ActiveApplication;
     };
+
+// export type NavigationActionResource<T extends AppContextReducerActions['type'], A extends AppContextReducerActions['type'] | void = void> = {
+//     type: T;
+//     action?: A;
+//     payload: ExtractValueByPropKey<AppContextReducerActions, A, 'payload'>
+// };
 
 export type AppContextReturnValue = {
     appContextState: AppContextState;

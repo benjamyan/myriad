@@ -1,4 +1,3 @@
-import ReactDOM from 'react-dom';
 import * as React from 'react';
 
 import { useApplicationContext } from '../../../providers';
@@ -28,7 +27,7 @@ export const AppWindowMenuBar = (props: MenuBarProps) => {
         if (event.button !== 0) return;
         switch (action) {
             case 'CLOSE': {
-                console.log('onMenuBarIconClickHandler CLOSE')
+                // console.log('onMenuBarIconClickHandler CLOSE')
                 appContextDispatch({
                     type:'REMOVE',
                     payload: props.appWindowId
@@ -36,10 +35,10 @@ export const AppWindowMenuBar = (props: MenuBarProps) => {
                 break;
             }
             case 'MAXIMIZE': {
-                console.log('onMenuBarIconClickHandler MAXIMIZE')
+                // console.log('onMenuBarIconClickHandler MAXIMIZE')
                 appContextDispatch({
                     type:'UPDATE',
-                    action: 'MAXIMIZE',
+                    action: ['MAXIMIZE','FOCUS'],
                     payload: {
                         appId: props.appWindowId,
                         // dimensions: ['100%','100%'],
@@ -49,10 +48,10 @@ export const AppWindowMenuBar = (props: MenuBarProps) => {
                 break;
             }
             case 'MINIMIZE': {
-                console.log('onMenuBarIconClickHandler MINIMIZE')
+                // console.log('onMenuBarIconClickHandler MINIMIZE')
                 appContextDispatch({
                     type:'UPDATE',
-                    action: 'MINIMIZE',
+                    action: ['MINIMIZE'],
                     payload: {
                         appId: props.appWindowId,
                         // isVisible: false

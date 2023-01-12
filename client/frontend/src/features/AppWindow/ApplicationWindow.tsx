@@ -12,6 +12,8 @@ import { useApplicationContext, applicationContextData, AppContextDispatch, useN
 import { reactRndSettings } from './libs';
 import { AppWindowMenuBar } from './components'
 import './_ApplicationWindow.scss';
+import { shadowComponentLoader } from './utils/shadowComponentLoader';
+import ReactDOM from 'react-dom';
 
 type ApplicationWindowAdditionalProps = {
     windowClassname: string;
@@ -58,15 +60,16 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
             && event.target !== interactionRef.maximize.current 
             && event.target !== interactionRef.minimize.current
         ) {
-            console.log('onFocusEventHandler')
+            // console.log('onFocusEventHandler')
             appContextDispatch({
-                type:'FOCUS',
-                payload: appId
+                type:'UPDATE',
+                action:['FOCUS'],
+                payload: { appId }
             })
         }
     };
     const onResizeEventHandler: RndResizeCallback = (event, dir, ref, delta, pos)=> {
-        console.log('onResizeEventHandler')
+        // console.log('onResizeEventHandler')
         appContextDispatch({
             type:'UPDATE',
             payload: {
@@ -77,7 +80,7 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
     };
     const onDragStopEventHandler: RndDragCallback = (event, data)=> {
         if (event.target === interactionRef.drag.current) {
-            console.log('onDragStopEventHandler')
+            // console.log('onDragStopEventHandler')
             appContextDispatch({
                 type:'UPDATE',
                 payload: {
@@ -96,21 +99,17 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
                     return <Loader.Hourglass />
                 }
                 case 'COMPLETE': {
-                    // console.log(mountRef.current);
                     switch(applicationItem.sourceType) {
                         case 'HTML': {
                             // const parsedHTML = new DOMParser().parseFromString(html, "text/html");
-                            // mountRef.current = shadowComponentLoader({
-                            //     html: parsedHTML,
-                            //     className: props.windowClassname
-                            // })
-                            
-                            // if (/*!!customElements.get(givenId) && */mountRef.current !== null) {
-                            //     setAppState('COMPLETE')
-                            //     return
-                            // }
-                            return <>{ JSON.stringify(mountRef.current) }</>;
-                            // break;
+                            if (mountRef.current === null) {
+                                mountRef.current = shadowComponentLoader({
+                                    html: new DOMParser().parseFromString(appContent.current as string, "text/html"),
+                                    className: props.windowClassname,
+                                    refHandler: mountRef.current
+                                })
+                            }
+                            return <>{ mountRef.current }</>;
                         }
                         case 'MD': {
                             return <ReactMarkdown>{ appContent.current as string }</ReactMarkdown>
@@ -119,8 +118,7 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
                             if (!!applicationItem.renderContent) {
                                 return <>{ applicationItem.renderContent({ content: appContent.current as JSON }) }</>
                             }
-                            return <>{ mountRef.current }</>
-                            // break;
+                            return <>{ mountRef.current }</>;
                         }
                         default: {
                             return <>An unexpenceter error occured.</>
@@ -212,7 +210,7 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
         <Rnd
             { ...rndSettings }
             key={`ApplicationWindow_${appId}`}
-            className={`${props.windowVisibility} ${windowClassname} ${props._visibility === 'MINIMIZED' ? 'minimized' : ''}`}
+            className={`${props.windowVisibility} ${windowClassname} ${props._visibility === 'MINIMIZED' ? 'minimized' : ''} ${props.appId}`}
             bounds='parent'
             onMouseDown={onFocusEventHandler}
             onDragStop={ onDragStopEventHandler }

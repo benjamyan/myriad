@@ -38,7 +38,8 @@ const finderMenu: Record<string, SingleMenuItem> = {
     },
     system: {
         menuId: 'system',
-        displayName: 'System',
+        appId: applications.systemOverview.appId,
+        displayName: 'System Information',
         icon: FaCompress,
         iconPosition: 'RIGHT'
     },

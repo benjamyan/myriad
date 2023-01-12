@@ -1,11 +1,10 @@
-import { AppContextState, AppContextReducerActions, AppContextActiveValues } from './types';
-// import { Factory } from '../../utils'
+import { AppContextState, AppContextReducerActions } from './types';
 import * as Util from './utils/appContextUtils';
 import * as Factory from './utils/contextFactories';
 import { applications } from '../../config';
 import { ActiveApplication } from '../../types';
 
-const log = (msg: string)=> false ? undefined : console.log(msg);
+const log = (msg: string)=> true ? undefined : console.log(msg);
 
 // let getActiveAppIndexById: number = null!,
 //     getAppValuesById: Pick<AppContextActiveValues['current'], keyof AppContextActiveValues['current']> | false = null!
@@ -52,15 +51,15 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
             positions: [..._state.active[activeAppIndexById].positions],
             _visibility: _state.active[activeAppIndexById]._visibility
         })
-    }
+    };
     let activeAppIndexById = getActiveAppIndexById(),
         appValuesById = getAppValuesById();
 
     switch (type) {
         case 'SELECT': {
             log('SELECT');
+
             const _payload = payload as string;
-            
             if (activeAppIndexById !== -1) {
                 /** If the app is in the currently active context */
                 if (_state.active[activeAppIndexById]._visibility && !!appValuesById) {
@@ -93,26 +92,6 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
             };
             break;
         }
-        case 'FOCUS': {
-            log('FOCUS')
-
-            const _payload = payload as string;
-            try {
-                if (_state.active.length > 1) {
-                    let currentApp: ActiveApplication;
-                    const focusedAppIndex = Util.findAppIndexById(_state.active, _payload);
-                    
-                    if (focusedAppIndex !== undefined) {
-                        const appDefinition = { ..._state.active[focusedAppIndex] };
-                        _state.active.splice(focusedAppIndex, 1);
-                        _state.active.unshift(appDefinition);
-                    }
-                }
-            } catch (err) {
-                console.error(err)
-            }
-            break;
-        }
         case 'UPDATE': {
             log('UPDATE')
             const _payload = payload as Partial<ActiveApplication> & Pick<ActiveApplication, 'appId'>;
@@ -120,40 +99,66 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
             if (activeAppIndexById > -1) {
                 const referencedActiveApp = { ..._state.active[activeAppIndexById] };
                 if (appContextReducerAction.action !== undefined) {
-                    switch (appContextReducerAction.action) {
-                        case 'MAXIMIZE': {
-                            if (referencedActiveApp._visibility === 'DEFAULT') {
+                    if (!appValuesById) {
+                        console.error(`Failed to locate ${_appId} in value bucket`)
+                        break
+                    };
+                    for (const action of appContextReducerAction.action) {
+                        log(action);
+                        switch (action) {
+                            case 'MAXIMIZE': {
+                                if (referencedActiveApp._visibility === 'DEFAULT') {
+                                    setValueBucketEntry()
+                                    _state.active[activeAppIndexById] = {
+                                        ...referencedActiveApp,
+                                        dimensions: ['100%','100%'],
+                                        positions: [0,0],
+                                        _visibility: 'MAXIMIZED'
+                                    }
+                                } else {
+                                    _state.active[activeAppIndexById] = {
+                                        ...referencedActiveApp,
+                                        dimensions: appValuesById?.dimensions,
+                                        positions: appValuesById?.positions,
+                                        _visibility: 'DEFAULT'
+                                    }
+                                }
+                                break;
+                            }
+                            case 'MINIMIZE': {
                                 setValueBucketEntry()
                                 _state.active[activeAppIndexById] = {
-                                    ...referencedActiveApp,
-                                    dimensions: ['100%','100%'],
-                                    positions: [0,0],
-                                    _visibility: 'MAXIMIZED'
+                                    ..._state.active[activeAppIndexById],
+                                    _visibility: 'MINIMIZED'
                                 }
-                            } else {
-                                if (!appValuesById) {
-                                    console.error(`Failed to locate ${_appId} in value bucket`)
-                                    break
-                                };
-                                _state.active[activeAppIndexById] = {
-                                    ...referencedActiveApp,
-                                    dimensions: appValuesById?.dimensions,
-                                    positions: appValuesById?.positions,
-                                    _visibility: 'DEFAULT'
+                                break;
+                            }
+                            case 'TOGGLE': {
+                                if (_state.active[activeAppIndexById]._visibility === 'MINIMIZED') {
+                                    _state.active[activeAppIndexById] = {
+                                        ..._state.active[activeAppIndexById],
+                                        _visibility: appValuesById?._visibility
+                                    }
+                                } else {
+                                    setValueBucketEntry()
+                                    _state.active[activeAppIndexById] = {
+                                        ..._state.active[activeAppIndexById],
+                                        _visibility: 'MINIMIZED'
+                                    }
                                 }
+                                break;
                             }
-                            break;
-                        }
-                        case 'MINIMIZE': {
-                            setValueBucketEntry()
-                            _state.active[activeAppIndexById] = {
-                                ..._state.active[activeAppIndexById],
-                                _visibility: 'MINIMIZED'
+                            case 'FOCUS': {
+                                if (_state.active.length > 1 && _state.active[activeAppIndexById]._visibility !== 'MINIMIZED') {
+                                    const appDefinition = { ..._state.active[activeAppIndexById] };
+                                    _state.active.splice(activeAppIndexById, 1);
+                                    _state.active.unshift(appDefinition);
+                                }
+                                break;
                             }
-                            break;
-                        }
-                        default: {
-                            console.error(`Unhandled action type of ${appContextReducerAction.action}`)
+                            default: {
+                                console.error(`Unhandled action type of ${appContextReducerAction.action}`)
+                            }
                         }
                     }
                 }

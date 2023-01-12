@@ -12,123 +12,83 @@ import { IconType } from 'react-icons';
 
 type SystemDockButtonProps = {
 
-    app: ActiveApplication | undefined;
+    // app: ActiveApplication | undefined;
 
     appId: ApplicationDefinition['appId'];
 
-    icon?: IconType | string;
+    menuIcon?: IconType | string;
 
     className?: string;
 
-    isDefault: boolean;
+    // isDefault: boolean;
 
-    shouldRemove: boolean;
+    // onClickHandler: (event: MouseEvent | TouchEvent, appId: Pick<ApplicationDefinition, 'appId'>)=> void;
+    onClickHandler: (event: MouseEvent | TouchEvent, appId: string)=> void;
+    // shouldRemove: boolean;
     // isActive: boolean;
     // onSelectDispatch?: ()=> void;
 }
 
-let systemTrayDefaultItems: SingleMenuItem[] = [],
-    nonDefaultApplications: SingleMenuItem[] = [];
+const BUTTON_CLASS = 'system__dock--button';
+let systemTrayDefaultItems: SingleMenuItem[] = [];
 
-const SystemDockButton = (props: SystemDockButtonProps)=> {
-    const { isDefault } = props;
+const SystemTrayButton = (props: { className?: string, icon?: IconType | string, appId: string })=> {
     const { appContextState, appContextDispatch } = useApplicationContext();
-
-    const [btnShouldFireStartAnim, setBtnShouldFireStartAnim] = React.useState<boolean>(isDefault ? false : true);
-    const btnRef = React.useRef<HTMLButtonElement>(null);
-
-    const isAppActive = React.useMemo(
-        ()=> appContextState.active.some(
-            (active)=> props.appId === active.appId
-        ),
-        [ appContextState.active ]
+    const appIsActive = (
+        appContextState.active.findIndex(({appId})=> appId === props.appId) > -1
     );
-    const btnClassName = React.useMemo(
-        ()=> {
-            let initialClassName = ` ${props.appId}`;
-
-            if (isAppActive) {
-                initialClassName += ' open';
-            }
-            if (isDefault) {
-                initialClassName += ' default';
-            } else {
-                if (btnShouldFireStartAnim) {
-                    initialClassName += ' animate-in';
-                } /*else if (props.shouldRemove) {
-                    initialClassName += ' animate-out';
-                }*/
-            }
-
-            return initialClassName
-        },
-        [ appContextState.active, btnShouldFireStartAnim] 
-    );
-    
-    React.useEffect(()=>{
-        if (!isDefault && btnRef.current !== null) {
-
-            setTimeout(function(){
-                setBtnShouldFireStartAnim(false);
-            }, 100)
-
-            // document.onanimationend = (e)=> {
-            //     console.log(e)
-            //     if (e.target === btnRef.current) {
-            //         setBtnShouldFireStartAnim(false);
-            //     }
-            // }
-        }
-    }, [])
 
     return (
-        <Button.IconButton 
-            // key={`jlkadsjklasd-${props.appId}`}
-            fRef={ btnRef }
-            className={`${props.className || ''} ${btnClassName}`}
-            // className={`${isAppActive ? 'active' : ''} ${isDefault ? 'default' : ''} ${btnShouldFireStartAnim ? 'animate-in' : 'animate-out'}`}
-            size='INHERIT'
-            icon={ props.icon || HiDocument }
-            onSingleClick={()=>{
-                if (!isAppActive) {
-                    appContextDispatch({
-                        type: 'SELECT',
-                        payload: props.appId as string
-                    });
-                } else if (props.app !== undefined) {
-                    // appContextDispatch({
-                    //     type: 'UPDATE',
-                    //     payload: {
-                    //         appId: props.appId as string,
-                    //         _visibility: ''
-                    //     }
-                    // })
-                }
-            }}
-        />
-    );
-}
+        <div className={`${BUTTON_CLASS} ${props.appId} ${props.className || ''}`}>
+            <Button.IconButton 
+                size='INHERIT' 
+                icon={ props.icon || applications.appItemsById[props.appId].icon || HiDocument }
+                onSingleClick={()=>{
+                    if (!appIsActive) {
+                        appContextDispatch({
+                            type: 'SELECT',
+                            payload: props.appId as string
+                        });
+                    } else {
+                        appContextDispatch({
+                            type: 'UPDATE',
+                            action: ['TOGGLE','FOCUS'],
+                            payload: {
+                                appId: props.appId as string
+                            }
+                        })
+                    }
+                }}
+            />
+            <span className={appIsActive ? 'open' : ''}></span>
+        </div>
+    )
+};
+const ActiveApplicationDockButtons = ()=> {
+    const { appContextState } = useApplicationContext();
+    
+    return (
+        <>
+            {   Object.values(appContextState.active).map(({appId}, i)=> {
+                    if (systemTrayDefaultItems.findIndex((trayItem)=> trayItem.appId === appId) === -1) {
+                        return (
+                            <SystemTrayButton 
+                                key={`SystemDock-trayItem-${appId}-${i}`}
+                                appId={appId} 
+                            />
+                        )
+                    }
+                    return null
+                }) 
+            }
+        </>
+    )
+};
 
 export const SystemDock = ()=> {
-    const { appContextState } = useApplicationContext();
-
     const [ dockLoaded, setDockLoaded ] = React.useState<boolean>(false);
-    const [ dockWidth, setDockWidth ] = React.useState<number>(0);
-    // const [ applicationButtons, setApplicationButtons ] = React.useState<any>([]);
+    // const [ dockWidth, setDockWidth ] = React.useState<number>(0);
     const dockRef = React.useRef<HTMLElement>(null);
-    
-    const shouldRenderActiveApplicationDockItems = React.useMemo(
-        ()=>  (
-            appContextState.active.length === 0
-                ? false
-                : !appContextState.active.every( (app)=> (
-                        systemTrayDefaultItems
-                            .map((item)=> item.appId)
-                            .includes(app.appId)
-                    ))
-        ),
-        [ dockLoaded, appContextState.active ]
-    );
     
     React.useEffect(()=>{
         systemTrayDefaultItems = Object.values(navigation.systemTrayItems);
@@ -136,97 +96,39 @@ export const SystemDock = ()=> {
             setDockLoaded(true)
         }
     }, []);
-
-    // React.useEffect(()=>{
-    //     const nonDefaultApplications = (
-    //             Object.values(appContextState.active)
-    //                 .map((app)=> {
-    //                     if (systemTrayDefaultItems.findIndex((trayItem)=> trayItem.appId === app.appId) === -1) {
-    //                         return app.appId
-    //                     }
-    //                     return false
-    //                 })
-    //                 .filter(Boolean)
-    //         ) as string[];
-    //     if (nonDefaultApplications.length > applicationButtons.length) {
-    //         setApplicationButtons([...nonDefaultApplications])
-    //     } else if (nonDefaultApplications.length === applicationButtons.length) {
-
-    //     } else {
-            
+    
+    // React.useLayoutEffect(()=>{
+    //     if (dockRef.current !== null) {
+    //         setDockWidth(
+    //             Array.from(dockRef.current.children).reduce( 
+    //                 (res, el, i, arr)=> (
+    //                     res = i < arr.length - 1 
+    //                         ? el.clientWidth + res 
+    //                         : res
+    //                 ), 0)
+    //         );
     //     }
-    // }, [ appContextState.active ]);
-
-    React.useLayoutEffect(()=>{
-        if (dockRef.current !== null) {
-            setDockWidth(
-                Array.from(dockRef.current.children).reduce( 
-                    (res, el, i, arr)=> (
-                        res = i < arr.length - 1 
-                            ? el.clientWidth + res 
-                            : res
-                    ), 0)
-            );
-        }
-    }, [ dockLoaded, appContextState.active ])
+    // }, [ dockLoaded, appContextState.active ])
     
     return (
-        <aside
-            className={`system__dock ${dockLoaded ? 'loaded' : 'initial'}`} 
-            ref={dockRef} 
-            style={{ width: dockWidth }}>
-            {/* { shouldRenderActiveApplicationDockItems && (
-                <>
-                    { applicationButtons.map(({ appId })=> (
-                            <SystemDockButton 
-                                key={`SystemDock-application-${appId}`}
-                                appId={ appId }
-                                icon={ applications.appItemsById[appId].icon }
-                                isDefault={false}
-                                shouldRemove={ appContextState.active.findIndex((activeApp)=>activeApp.appId === appId) === -1 }
-                            />
-                        )) }
-                </>
-            )} */}
-            { shouldRenderActiveApplicationDockItems && (
-                <>
-                    { Object.values(appContextState.active).map(({appId})=> {
-                        if (systemTrayDefaultItems.findIndex((trayItem)=> trayItem.appId === appId) === -1) {
+        <aside ref={dockRef} className={`system__dock ${dockLoaded ? 'loaded' : 'initial'}`} /*style={{ width: dockWidth }}*/>
+                <ActiveApplicationDockButtons />
+                { Object.values(navigation.systemTrayItems).map( 
+                    ({ appId, icon }, i)=> {
+                        if (appId && icon) {
                             return (
-                                <SystemDockButton 
-                                    key={`SystemDock-application-${appId}`}
-                                    app={appContextState.active.find((app)=>app.appId === appId) }
-                                    appId={ appId }
-                                    icon={ applications.appItemsById[appId].icon }
-                                    isDefault={false}
-                                    shouldRemove={false}
+                                <SystemTrayButton 
+                                    key={`SystemDock-trayItem-${appId}-${i}`}
+                                    className='default'
+                                    icon={ icon } 
+                                    appId={ appId } 
                                 />
                             )
                         }
                         return null
-                    }) }
-                    {/* <div className='system__dock--spacer' /> */}
-                </>
-            )}
-            { systemTrayDefaultItems.map( 
-                ({ appId, icon, ...item })=> {
-                    if (appId && icon) {
-                        return (
-                            <SystemDockButton 
-                                isDefault
-                                key={`SystemDock-trayItem-${appId}`}
-                                app={ appContextState.active.find((app)=>app.appId === appId)  }
-                                appId={ appId }
-                                icon={ icon }
-                                shouldRemove={false}
-                                className={item.menuId}
-                            />
-                        )
-                    }
-                    return null
-                })
-            }
-            <div className='system__dock--bg'></div>
+                    }) 
+                }
+                <div className='system__dock--bg'></div>
         </aside>
     )
 }
