@@ -1,12 +1,34 @@
 import * as React from 'react';
 import { IconType } from 'react-icons/lib';
+// import { ReactSVG } from 'react-svg';
+import { Action } from '..';
 import './_buttons.scss';
 
-const Icon = ({ iconPosition, ...iconProps }: Pick<BasicButtonProps, 'icon' | 'iconPosition'>)=> (
-    <i className={`icon icon__${iconPosition ? iconPosition.toLowerCase() : 'left'}`}>
-        { !!iconProps.icon ? <iconProps.icon /> : <></> }
-    </i>
-);
+// const Icon = ({ iconPosition, ...iconProps }: Pick<BasicButtonProps, 'icon' | 'iconPosition'>)=> {
+
+//     if (typeof(iconProps.icon) === 'string') {
+//         if (iconProps.icon.endsWith('svg')) {
+//             // https://www.npmjs.com/package/react-svg
+//             return (
+//                 <ReactSVG 
+//                     wrapper='span' 
+//                     className={`icon icon__${iconPosition ? iconPosition.toLowerCase() : 'left'}`} 
+//                     src={`assets/images/${iconProps.icon}`} 
+//                 />
+//             )
+//         } else {
+//             return (
+//                 <img className={`icon icon__${iconPosition ? iconPosition.toLowerCase() : 'left'}`} src={`assets/images/${iconProps.icon}`} />
+//             )
+//         }
+//     } else {
+//         return (
+//             <i className={`icon icon__${iconPosition ? iconPosition.toLowerCase() : 'left'}`}>
+//                 { !!iconProps.icon ? <iconProps.icon /> : <></> }
+//             </i>
+//         )
+//     }
+// };
 
 export const Basic = (btnProps: BasicButtonProps) => {
     const { type, size, onHover, onSingleClick } = btnProps;
@@ -39,7 +61,7 @@ export const Basic = (btnProps: BasicButtonProps) => {
             style={{ ...btnProps.customStyle }}>
                 { btnProps.title || '' }
                 { !!btnProps.icon && 
-                    <Icon 
+                    <Action.Icon 
                         key={`BasicButton_icon-${keyString}`}
                         icon={ btnProps.icon } 
                         iconPosition={ btnProps.iconPosition } 
@@ -75,7 +97,7 @@ export interface BasicButtonProps extends BasicButtonClickEvents {
     /** Title to be displayed */
     title?: string;
     /** URI of the icon */
-    icon?: IconType;
+    icon?: IconType | string;
     /** positioon of the icon relative to the title */
     iconPosition?: 'TOP' | 'RIGHT' | 'BOTTOM' | 'LEFT';
     /** custom styles can be added to the base element */

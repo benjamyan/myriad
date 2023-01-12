@@ -34,9 +34,21 @@ module.exports = {
                 use: ["style-loader", "css-loader", "sass-loader"],
             },
             {
-                test: /\.(jpg|jpeg|png|gif|mp3|svg)$/,
+                test: /\.(jpg|jpeg|png|gif)$/,
                 use: ["file-loader"],
+                // loader:require.resolve("url-loader") + "?name=../[path][name].[ext]"
             },
+            // {
+            //     test: /\.svg$/,
+            //     use: [
+            //         {
+            //             loader: 'svg-url-loader',
+            //             options: {
+            //                 limit: 10000,
+            //             },
+            //         },
+            //     ],
+            // },
             // {
             //   test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
             //   use: [

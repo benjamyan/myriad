@@ -24,7 +24,7 @@ export const ClientWrapper = ()=> {
         <>
             <TaskbarMenu />
             {/* <DesktopArea /> */}
-            <main style={{ position:'relative', marginTop:35 }}>
+            <main>
                 <ApplicationWrapper />
                 <SystemDock />
             </main>

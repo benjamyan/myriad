@@ -1,4 +1,5 @@
 @import '../../utils/styles/colors';
+@import '../../utils/styles/sizes';
 
 .taskbar__menu {
     position: absolute;
@@ -6,7 +7,7 @@
     left: 0;
     text-align: left;
     width: 100%;
-    height: 35px; 
+    height: $taskbarHeight; 
     border-bottom: 2px solid $menu_shadowColor; 
     background-color: $menu_fgColor;
     z-index: 1;
@@ -17,11 +18,18 @@
         font-size: 18px;
     }
     &--logo {
-        border-radius: 50%;
-        height: 27px;
-        width: 27px;
-        background: $focus1_light;
-        margin: 3px 15px 0 25px;
+        width: 60px;
+        height: 100%;
+        display: inline-block;
+        &-icon {
+            display: inline-block;
+            height: 31px;
+            width: 31px;
+            cursor: pointer;
+            margin: 4px 15px 0 20px;
+            border-radius: 50%;
+            background: $focus1_light;
+        }
     }
     &--actions {
         > button {
@@ -34,10 +42,10 @@
             position: absolute;
             width: 200px;
             height: auto;
-            top: 35px;
+            top: $taskbarHeight;
             > button {
                 width: 100%;
-                height: 40px;
+                height: $taskbarHeight;
                 text-align: left;
                 &:nth-child(1),
                 &:nth-last-child(2) {
@@ -71,10 +79,16 @@
             font-weight: bold;
             &.button__icon {
                 font-size: 17px;
-                padding: 0 5px;
+                padding: 0 10px;
             }
             &--time {
                 float: right;
+                padding: 0 15px 0 20px;
+            }
+            &--weather {
+                svg {
+                    width: 24px;
+                }
             }
         }
         .utility__pane {

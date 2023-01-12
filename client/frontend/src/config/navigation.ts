@@ -19,7 +19,8 @@ const finderMenu: Record<string, SingleMenuItem> = {
         menuId: 'settings',
         appId: applications.userSettings.appId,
         displayName: 'Settings',
-        icon: BsFillGearFill,
+        // icon: BsFillGearFill,
+        icon: 'config-so.svg',
         iconPosition: 'RIGHT'
     },
     services: {
@@ -78,9 +79,27 @@ export const utilityMenuItems: Record<string, SingleMenuItem> = {
 export const systemTrayItems: Record<string, SingleMenuItem> = {
     fileExplorer: {
         menuId: 'explorer',
-        displayName: 'File explorer',
-        icon: applications.fileExplorer.icon,
+        displayName: 'File Explorer',
+        icon: 'folder-so.png',
+        // icon: applications.fileExplorer.icon,
         appId: applications.fileExplorer.appId
+    },
+    trash: {
+        menuId: 'trash',
+        displayName: 'Trash',
+        icon: 'trash-so.png',
+        appId: applications.trashExplorer.appId
+        // icon: applications.fileExplorer.icon,
+        // appId: applications.fileExplorer.appId
+    }
+}
+
+export const desktopItems: Record<string, SingleMenuItem> = {
+    resume: {
+        menuId: 'resume',
+        displayName: 'My resume',
+        icon: 'preview-so.png',
+        appId: ''
     }
 } 
 

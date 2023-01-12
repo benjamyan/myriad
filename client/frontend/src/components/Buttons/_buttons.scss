@@ -11,6 +11,10 @@
 
 .button {
     cursor: pointer;
+    .icon svg {
+        width: 20px;
+        height: auto;
+    }
     &__hover {
         &--highlight {
             &:hover {
@@ -18,10 +22,22 @@
                 font-weight: 600;
                 background: $focus1_light;
                 background: linear-gradient(0deg, $focus1_dark 0%, $focus1_light 100%);
-                .icon > svg {
+                .icon svg,
+                .icon svg path {
                     fill: white;
                 }
             }
+        }
+    }
+    &.active {
+        color: white;
+        font-weight: 600;
+        background: $focus1_light;
+        background: linear-gradient(0deg, $focus1_dark 0%, $focus1_light 100%);
+        svg,
+        svg path, 
+        svg g {
+            fill: white;
         }
     }
 }
@@ -32,19 +48,30 @@
     line-height: 0;
     margin: 0;
     text-align: center;
+    // &.active {
+    //     color: white;
+    //     font-weight: 600;
+    //     background: $focus1_light;
+    //     background: linear-gradient(0deg, $focus1_dark 0%, $focus1_light 100%);
+    // }
 }
 .button__naked {
     padding: 0 10px;
     margin: 0;
     border: none;
     vertical-align: middle;
-    font-size: 15px;
     line-height: 0.95;
     background: transparent;
-    &.active {
-        color: white;
-        font-weight: 600;
-        background: $focus1_light;
-        background: linear-gradient(0deg, $focus1_dark 0%, $focus1_light 100%);
+    // &.active {
+    //     color: white;
+    //     font-weight: 600;
+    //     background: $focus1_light;
+    //     background: linear-gradient(0deg, $focus1_dark 0%, $focus1_light 100%);
+    // }
+    img.icon {
+        max-height: 50%;
+    }
+    i.icon {
+
     }
 }

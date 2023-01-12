@@ -19,7 +19,9 @@ export const TaskbarMenu = ({taskbarRef}:any)=> {
 
     return (
         <nav className={ _baseClassName } ref={taskbarRef}>
-            <i className={`${_baseClassName}--logo`} />
+            <div className={`${_baseClassName}--logo`}>
+                <i className={`${_baseClassName}--logo-icon`} />
+            </div>
             <TaskbarActionMenu className={`${_baseClassName}--actions`} />
             <UtilityMenu className={`${_baseClassName}--panel`} />
         </nav>

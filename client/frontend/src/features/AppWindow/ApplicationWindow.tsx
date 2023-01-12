@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Rnd, RndResizeCallback, RndDragCallback } from 'react-rnd' // https://github.com/bokuweb/react-rnd
 import ReactMarkdown from 'react-markdown';
 
-import { Loader, Scrollbar } from '../../components';
+import { Loader, Action } from '../../components';
 import { applications } from '../../config';
 import { ActiveApplication } from '../../types';
 import { useApplicationContext, applicationContextData, AppContextDispatch, useNavigationContext } from '../../providers';
@@ -16,11 +16,17 @@ import './_ApplicationWindow.scss';
 type ApplicationWindowAdditionalProps = {
     windowClassname: string;
     windowVisibility: string;
-    menubarClassname: string;
+    menubarClassName: string;
     rndSettings: ReturnType<typeof reactRndSettings>;
     stackPosition: number;
     appContextDispatch: AppContextDispatch;
 } 
+export type IconRef = {
+    close: React.RefObject<HTMLElement>;
+    minimize: React.RefObject<HTMLElement>;
+    maximize: React.RefObject<HTMLElement>;
+    drag: React.RefObject<HTMLDivElement>;
+};
 
 export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAdditionalProps) => {
     const { 
@@ -29,7 +35,7 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
         positions, 
         dimensions, 
         windowClassname, 
-        menubarClassname, 
+        menubarClassName, 
         rndSettings,
         // activeApplications,
         appContextDispatch
@@ -39,14 +45,28 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
     const [ appState, setAppState ] = React.useState<'INIT' | 'LOAD' | 'COMPLETE' | 'ERR'>('INIT');
     const appContent = React.useRef<Error | JSON | string>();
     const mountRef = React.useRef<any>(null);
+    // const dragRef = React.useRef<any>(null);
+    const interactionRef: IconRef = {
+        close: React.useRef(null),
+        minimize: React.useRef(null),
+        maximize: React.useRef(null),
+        drag: React.useRef(null)
+    };
     
-    const onFocusEventHandler = ()=> {
-        appContextDispatch({
-            type:'FOCUS',
-            payload: appId
-        })
+    const onFocusEventHandler = (event: MouseEvent)=> {
+        if (event.target !== interactionRef.close.current 
+            && event.target !== interactionRef.maximize.current 
+            && event.target !== interactionRef.minimize.current
+        ) {
+            console.log('onFocusEventHandler')
+            appContextDispatch({
+                type:'FOCUS',
+                payload: appId
+            })
+        }
     };
     const onResizeEventHandler: RndResizeCallback = (event, dir, ref, delta, pos)=> {
+        console.log('onResizeEventHandler')
         appContextDispatch({
             type:'UPDATE',
             payload: {
@@ -56,24 +76,24 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
         })
     };
     const onDragStopEventHandler: RndDragCallback = (event, data)=> {
-        appContextDispatch({
-            type:'UPDATE',
-            payload: {
-                appId,
-                positions: [data.x, data.y]
-            }
-        })
+        if (event.target === interactionRef.drag.current) {
+            console.log('onDragStopEventHandler')
+            appContextDispatch({
+                type:'UPDATE',
+                payload: {
+                    appId,
+                    positions: [data.x, data.y]
+                }
+            })
+        }
     };
     
     const AppWindowArticleContent = React.useCallback(
         ()=>{
             switch(appState) {
-                case 'INIT': {
-                    return <p>Init...</p>
-                }
+                case 'INIT':
                 case 'LOAD': {
                     return <Loader.Hourglass />
-                    // return <p>Loading...</p>
                 }
                 case 'COMPLETE': {
                     // console.log(mountRef.current);
@@ -192,12 +212,10 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
         <Rnd
             { ...rndSettings }
             key={`ApplicationWindow_${appId}`}
-            className={`${props.windowVisibility} ${windowClassname}`}
+            className={`${props.windowVisibility} ${windowClassname} ${props._visibility === 'MINIMIZED' ? 'minimized' : ''}`}
             bounds='parent'
-            onClick={ onFocusEventHandler }
-            onDragStart={ onFocusEventHandler }
+            onMouseDown={onFocusEventHandler}
             onDragStop={ onDragStopEventHandler }
-            onResizeStart={ onFocusEventHandler }
             onResizeStop={ onResizeEventHandler }
             size={{ 
                 width: dimensions[0], 
@@ -210,21 +228,15 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
             style={{ zIndex: props.stackPosition }}>
                 <AppWindowMenuBar 
                     appWindowId={ appId }
-                    className={ windowClassname }
-                    menubarClassname={ menubarClassname }
+                    menubarClassName={ menubarClassName }
                     displayName={ applicationItem.displayName }
-                    mountNode={ mountRef.current }
-                    appNode={mountRef.current}
+                    interactionRef={interactionRef}
                 />
                 <div className={ `${windowClassname}--content` }>
                     <article className={`${windowClassname}--content-article`}>
                         <AppWindowArticleContent />
                     </article>
-                    {/* <Scrollbar 
-                        direction='VERTICAL'
-                        givenClass={`${windowClassname}--scroll ${windowClassname}--scroll-x`}
-                    /> */}
-                    <Scrollbar 
+                    <Action.Scrollbar 
                         direction='HORIZONTAL' 
                         givenClass={`${windowClassname}--scroll ${windowClassname}--scroll-x`} 
                     />
@@ -253,11 +265,11 @@ export const ApplicationWrapper = ()=> {
         [ navContextState.id ]
     );
     // this is being used in both rnd and an external component - keep it here so it can be referenced
-    const menubarClassname: string = `${appWindowClassname}--menubar`;
+    const menubarClassName: string = `${appWindowClassname}--menubar`;
     // invoke out rnd settings on component mount, pass them down on each instance
     const rndSettings = reactRndSettings({
             className: appWindowClassname,
-            menubarClassname
+            menubarClassName
         });
 
     return React.useMemo(
@@ -269,10 +281,9 @@ export const ApplicationWrapper = ()=> {
                         key={`DesktopApplicationWindowWrapper_window_${application.appId}`}
                         windowVisibility={ appWindowVisibility(index) }
                         windowClassname={ appWindowClassname }
-                        menubarClassname={ menubarClassname }
+                        menubarClassName={ menubarClassName }
                         rndSettings={ rndSettings }
                         stackPosition={ activeWindows.length - index }
-                        // activeApplications={ appContextState.active }
                         appContextDispatch={ appContextDispatch }
                     />
                 )) }

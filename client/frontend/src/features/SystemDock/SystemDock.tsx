@@ -11,9 +11,15 @@ import { ActiveApplication, ApplicationDefinition, SingleMenuItem } from '../../
 import { IconType } from 'react-icons';
 
 type SystemDockButtonProps = {
+
+    app: ActiveApplication | undefined;
+
     appId: ApplicationDefinition['appId'];
-    icon?: IconType;
-    // customClassName?: string;
+
+    icon?: IconType | string;
+
+    className?: string;
+
     isDefault: boolean;
 
     shouldRemove: boolean;
@@ -21,7 +27,8 @@ type SystemDockButtonProps = {
     // onSelectDispatch?: ()=> void;
 }
 
-let systemTrayDefaultItems: SingleMenuItem[] = [];
+let systemTrayDefaultItems: SingleMenuItem[] = [],
+    nonDefaultApplications: SingleMenuItem[] = [];
 
 const SystemDockButton = (props: SystemDockButtonProps)=> {
     const { isDefault } = props;
@@ -38,20 +45,19 @@ const SystemDockButton = (props: SystemDockButtonProps)=> {
     );
     const btnClassName = React.useMemo(
         ()=> {
-            let initialClassName = '';
+            let initialClassName = ` ${props.appId}`;
 
             if (isAppActive) {
-                initialClassName += ' active';
+                initialClassName += ' open';
             }
             if (isDefault) {
                 initialClassName += ' default';
             } else {
                 if (btnShouldFireStartAnim) {
                     initialClassName += ' animate-in';
-                } else if (props.shouldRemove) {
-                    console.log('dasasdasd')
+                } /*else if (props.shouldRemove) {
                     initialClassName += ' animate-out';
-                }
+                }*/
             }
 
             return initialClassName
@@ -61,11 +67,17 @@ const SystemDockButton = (props: SystemDockButtonProps)=> {
     
     React.useEffect(()=>{
         if (!isDefault && btnRef.current !== null) {
-            document.onanimationend = (e)=> {
-                if (e.target === btnRef.current) {
-                    setBtnShouldFireStartAnim(false);
-                }
-            }
+
+            setTimeout(function(){
+                setBtnShouldFireStartAnim(false);
+            }, 100)
+
+            // document.onanimationend = (e)=> {
+            //     console.log(e)
+            //     if (e.target === btnRef.current) {
+            //         setBtnShouldFireStartAnim(false);
+            //     }
+            // }
         }
     }, [])
 
@@ -73,7 +85,7 @@ const SystemDockButton = (props: SystemDockButtonProps)=> {
         <Button.IconButton 
             // key={`jlkadsjklasd-${props.appId}`}
             fRef={ btnRef }
-            className={ btnClassName }
+            className={`${props.className || ''} ${btnClassName}`}
             // className={`${isAppActive ? 'active' : ''} ${isDefault ? 'default' : ''} ${btnShouldFireStartAnim ? 'animate-in' : 'animate-out'}`}
             size='INHERIT'
             icon={ props.icon || HiDocument }
@@ -83,6 +95,14 @@ const SystemDockButton = (props: SystemDockButtonProps)=> {
                         type: 'SELECT',
                         payload: props.appId as string
                     });
+                } else if (props.app !== undefined) {
+                    // appContextDispatch({
+                    //     type: 'UPDATE',
+                    //     payload: {
+                    //         appId: props.appId as string,
+                    //         _visibility: ''
+                    //     }
+                    // })
                 }
             }}
         />
@@ -94,7 +114,7 @@ export const SystemDock = ()=> {
 
     const [ dockLoaded, setDockLoaded ] = React.useState<boolean>(false);
     const [ dockWidth, setDockWidth ] = React.useState<number>(0);
-    const [ applicationButtons, setApplicationButtons ] = React.useState<any>([]);
+    // const [ applicationButtons, setApplicationButtons ] = React.useState<any>([]);
     const dockRef = React.useRef<HTMLElement>(null);
     
     const shouldRenderActiveApplicationDockItems = React.useMemo(
@@ -117,25 +137,25 @@ export const SystemDock = ()=> {
         }
     }, []);
 
-    React.useEffect(()=>{
-        const nonDefaultApplications = (
-                Object.values(appContextState.active)
-                    .map((app)=> {
-                        if (systemTrayDefaultItems.findIndex((trayItem)=> trayItem.appId === app.appId) === -1) {
-                            return app.appId
-                        }
-                        return false
-                    })
-                    .filter(Boolean)
-            ) as string[];
-        if (nonDefaultApplications.length > applicationButtons.length) {
-            setApplicationButtons([...nonDefaultApplications])
-        } else if (nonDefaultApplications.length === applicationButtons.length) {
+    // React.useEffect(()=>{
+    //     const nonDefaultApplications = (
+    //             Object.values(appContextState.active)
+    //                 .map((app)=> {
+    //                     if (systemTrayDefaultItems.findIndex((trayItem)=> trayItem.appId === app.appId) === -1) {
+    //                         return app.appId
+    //                     }
+    //                     return false
+    //                 })
+    //                 .filter(Boolean)
+    //         ) as string[];
+    //     if (nonDefaultApplications.length > applicationButtons.length) {
+    //         setApplicationButtons([...nonDefaultApplications])
+    //     } else if (nonDefaultApplications.length === applicationButtons.length) {
 
-        } else {
+    //     } else {
             
-        }
-    }, [ appContextState.active ]);
+    //     }
+    // }, [ appContextState.active ]);
 
     React.useLayoutEffect(()=>{
         if (dockRef.current !== null) {
@@ -175,6 +195,7 @@ export const SystemDock = ()=> {
                             return (
                                 <SystemDockButton 
                                     key={`SystemDock-application-${appId}`}
+                                    app={appContextState.active.find((app)=>app.appId === appId) }
                                     appId={ appId }
                                     icon={ applications.appItemsById[appId].icon }
                                     isDefault={false}
@@ -188,27 +209,23 @@ export const SystemDock = ()=> {
                 </>
             )}
             { systemTrayDefaultItems.map( 
-                ({ appId, icon })=> {
+                ({ appId, icon, ...item })=> {
                     if (appId && icon) {
                         return (
                             <SystemDockButton 
                                 isDefault
                                 key={`SystemDock-trayItem-${appId}`}
+                                app={ appContextState.active.find((app)=>app.appId === appId)  }
                                 appId={ appId }
                                 icon={ icon }
                                 shouldRemove={false}
-                                // customClassName='default'
+                                className={item.menuId}
                             />
                         )
                     }
                     return null
                 })
             }
-            <Button.IconButton 
-                size='INHERIT'
-                icon={ BsTrashFill }
-                className='default'
-            />
             <div className='system__dock--bg'></div>
         </aside>
     )

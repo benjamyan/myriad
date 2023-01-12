@@ -15,7 +15,7 @@ import { Props } from "react-rnd";
 
 type RndSettingsProps = {
     className: string;
-    menubarClassname: string;
+    menubarClassName: string;
 }
 
 export const reactRndSettings = (props: RndSettingsProps): Partial<Props> => {
@@ -25,7 +25,7 @@ export const reactRndSettings = (props: RndSettingsProps): Partial<Props> => {
     return {
         as: 'section',
         className,
-        dragHandleClassName: props.menubarClassname,
+        dragHandleClassName: props.menubarClassName,
         enableResizing: { 
             top: false, 
             right:true, 

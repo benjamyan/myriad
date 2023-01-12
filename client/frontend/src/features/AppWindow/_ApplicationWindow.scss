@@ -9,7 +9,11 @@
     border-right-width: 3px;
     background-color: white;
     resize: both;
+    &.minimized {
+        display: none !important;
+    }
     &--menubar {
+        position: relative;
         width: calc(100% - 10px);
         height: 25px;
         padding: 2.5px 5px;
@@ -18,41 +22,53 @@
         justify-content: space-between;
         border-bottom: 1px solid rgb(19, 18, 36);
         background-color: rgb(203, 203, 203);
-        i {
+        pointer-events: none;
+        &-icon {
+            pointer-events: all;
             height: 15px;
             min-width: 15px;
             display: inline-block;
             border: 2px solid $menu_outlineColor;
             background-color: $menu_iconColor;
+            z-index: 3;
+            &_wrapper {
+                display: inherit;
+                i:last-child {
+                    margin-left: 5px;
+                }
+                i:nth-of-type(2) {
+                    &::before,
+                    &::after {
+                        content: ' ';
+                        width: 100%;
+                        height: 2px;
+                        margin-top: 2px;
+                        display: block;
+                        background-color: $menu_outlineColor;
+                    }
+                    &::before {
+                        margin-top: 7px;
+                    }
+                }
+            }
         }
-        > p {
+        &-title {
             width: 100%;
             margin-right: -20px;
             font-weight: 600;
             text-align: center;
             pointer-events: none;
+            z-index: 1;
         }
-        > div {
-            display: inherit;
-            i:last-child {
-                margin-left: 5px;
-            }
-            i:nth-of-type(2) {
-                &::before,
-                &::after {
-                    content: ' ';
-                    width: 100%;
-                    height: 2px;
-                    margin-top: 2px;
-                    display: block;
-                    background-color: $menu_outlineColor;
-                }
-                &::before {
-                    margin-top: 7px;
-                }
-            }
+        &-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            pointer-events: all;
+            z-index: 2;
         }
-        
     }
     &--content {
         display: flex;

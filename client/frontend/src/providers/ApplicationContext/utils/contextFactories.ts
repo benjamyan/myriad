@@ -1,10 +1,12 @@
 import { ActiveApplication, ApplicationDefinition } from "../../../types";
 import * as Util from './appContextUtils';
+import { Generic } from '../../../utils';
 
 export const newAppInContext = (app: ApplicationDefinition, contentLen: number): ActiveApplication | Error => {
     try {
         return {
             appId: app.appId,
+            instanceId: Generic.generateUuid(),
             positions: [25  * (contentLen + 1), 25],
             dimensions: (
                 app.dimensions !== undefined
@@ -14,7 +16,7 @@ export const newAppInContext = (app: ApplicationDefinition, contentLen: number):
                     ]
                     : [300, 300]
             ),
-            isVisible: true,
+            _visibility: 'DEFAULT',
             _ready: false
         }
     } catch (err) {

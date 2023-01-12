@@ -102,11 +102,9 @@ const FileExplorer = (props: FileExplorerProps): JSX.Element => {
         },
         [ activeToolbar ]
     );
-
+    
     return (
         <FileBrowser
-            // { ...chonky.chonkySettings }
-            instanceId={props.instanceId}
             files={ files }
             folderChain={ folderChain }
             onFileAction={ handleFileAction }
@@ -155,11 +153,8 @@ export const FileExplorerWrapper = (props: ExpectedFileExplorerProps): JSX.Eleme
                 } else if (content === 'LOADING' || content === 'OFFLOAD') {
                     throw new Error('Unexpected content')
                 } else if (content.rootFolderId && content.fileMap) {
-                    if (!rootFolderId && !fileMap) {
-                        rootFolderId = content.rootFolderId;
-                        fileMap = content.fileMap;
-                    }
-
+                    rootFolderId = content.rootFolderId;
+                    fileMap = content.fileMap;
                     if (rootFolderId !== undefined && rootFolderId.length > 0) {
                         setExplorerLoaded(true)
                         return

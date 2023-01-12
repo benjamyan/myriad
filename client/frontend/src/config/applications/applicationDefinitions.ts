@@ -1,4 +1,4 @@
-import { ApplicationDefinition, ApplicationRenderComponent } from '../../types';
+import { ApplicationDefinition } from '../../types';
 import { WeatherApp, FileExplorerWrapper } from '../../features';
 import { AiFillFolder } from 'react-icons/ai';
 
@@ -13,18 +13,50 @@ export const aboutMe: ApplicationDefinition = {
     displayName: 'About me',
     sourceUrl: 'http://localhost:3000/content/aboutme.md',
     sourceType: 'MD',
+    icon: 'preview-so.png',
     dimensions: ['33%', '75%']
+};
+export const myResume: ApplicationDefinition = {
+    appId: 'my-resume',
+    displayName: 'My resume',
+    sourceUrl: 'http://localhost:3000/content/myresume.json',
+    sourceType: 'JSON',
+    dimensions: ['40%', '90%']
+};
+export const imageViewer: ApplicationDefinition = {
+    appId: 'image-viewer',
+    displayName: 'Image Viewer',
+    // sourceUrl: 'http://localhost:3000/content/aboutme.md',
+    sourceType: 'JSON',
+    sourceContent: '',
+    dimensions: ['50%', '33%']
 };
 export const fileExplorer: ApplicationDefinition = {
     appId: 'file-explorer',
-    displayName: 'File explorer',
+    displayName: 'File Explorer [Read only]',
     dimensions: ['33%', '50%'],
     sourceUrl: 'http://localhost:3000/content/fileExplorer.json',
     sourceType: 'JSON',
     renderContent: FileExplorerWrapper,
     icon: AiFillFolder
 };
+export const trashExplorer: ApplicationDefinition = {
+    appId: 'trash-explorer',
+    displayName: 'File Explorer [Read only]',
+    dimensions: ['33%', '50%'],
+    sourceUrl: 'http://localhost:3000/content/trashExplorer.json',
+    sourceType: 'JSON',
+    renderContent: FileExplorerWrapper,
+    icon: AiFillFolder
+};
+export const systemOverview: ApplicationDefinition = {
+    appId: 'system-overview',
+    displayName: 'System',
+    dimensions: ['50%','33%'],
+    sourceType: 'JSON',
+    sourceContent: '',
 
+};
 export const weatherApp: ApplicationDefinition = {
     appId: 'weather',
     displayName: 'Weather',

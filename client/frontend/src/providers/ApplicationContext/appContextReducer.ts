@@ -1,11 +1,14 @@
-import { AppContextState, AppContextReducerActions } from './types';
+import { AppContextState, AppContextReducerActions, AppContextActiveValues } from './types';
 // import { Factory } from '../../utils'
 import * as Util from './utils/appContextUtils';
 import * as Factory from './utils/contextFactories';
 import { applications } from '../../config';
 import { ActiveApplication } from '../../types';
 
-const log = (msg: string)=> true ? undefined : console.log(msg);
+const log = (msg: string)=> false ? undefined : console.log(msg);
+
+// let getActiveAppIndexById: number = null!,
+//     getAppValuesById: Pick<AppContextActiveValues['current'], keyof AppContextActiveValues['current']> | false = null!
 
 const handleAppContextItemUpdate  = (appToUpdate: ActiveApplication, updates: Partial<ActiveApplication>)=> {
     const appWithUpdates: ActiveApplication = {...appToUpdate};
@@ -28,23 +31,41 @@ const handleAppContextItemUpdate  = (appToUpdate: ActiveApplication, updates: Pa
 }
 
 export function appContextReducer(appContextState: AppContextState, appContextReducerAction: AppContextReducerActions) {
+    const { type, payload } = appContextReducerAction;
     const _state = {
         active: [...appContextState.active],
-        previous: appContextState.previous
+        previous: appContextState.previous,
+        values: appContextState.values
     };
-    const { type, payload } = appContextReducerAction;
-    
+    const _appId = typeof(payload) === 'string' ? payload : payload.appId;
+
+    const getActiveAppIndexById = ()=> _state.active.findIndex( arrItem=> arrItem.appId === _appId );
+    const getAppValuesById = ()=> {
+        if (_state.values.current.has(_appId)) {
+            return _state.values.current.get(_appId) as Pick<ActiveApplication, "positions" | "dimensions" | '_visibility'> //Pick<AppContextActiveValues['current'], keyof AppContextActiveValues['current']>
+        }
+        return undefined
+    };
+    const setValueBucketEntry = ()=> {
+        _state.values.current.set(_appId, {
+            dimensions: [..._state.active[activeAppIndexById].dimensions],
+            positions: [..._state.active[activeAppIndexById].positions],
+            _visibility: _state.active[activeAppIndexById]._visibility
+        })
+    }
+    let activeAppIndexById = getActiveAppIndexById(),
+        appValuesById = getAppValuesById();
+
     switch (type) {
         case 'SELECT': {
-            log('SELECT')
-
+            log('SELECT');
             const _payload = payload as string;
-            const activeAppIndexById = Util.findAppIndexById(_state.active, _payload);
+            
             if (activeAppIndexById !== -1) {
                 /** If the app is in the currently active context */
-                if (!_state.active[activeAppIndexById].isVisible) {
-                    /** Its closed.. set to open */
-                    _state.active[activeAppIndexById].isVisible = true;
+                if (_state.active[activeAppIndexById]._visibility && !!appValuesById) {
+                    /** Its been minized, bring back to front */
+                    _state.active[activeAppIndexById]._visibility = appValuesById._visibility;
                 };
             } else {
                 /** App is not currently in active */
@@ -52,8 +73,7 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                 if (prevAppIndex) {
                     /** The app has a previous entry - add that entry to `active` and remove from `previous` */
                     _state.active.unshift({
-                        ..._state.previous.current.get(_payload) as ActiveApplication,
-                        isVisible: true
+                        ..._state.previous.current.get(_payload) as ActiveApplication
                     });
                     _state.previous.current.delete(_payload);
                 } else {
@@ -62,9 +82,12 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                         Factory.newAppInContext(applications.appItemsById[_payload], _state.active.length)
                     );
                     if (newActiveApp instanceof Error) {
-                        //
+                        console.error(`Factory failed for id: ${_appId}`);
+                        break;
                     } else {
                         _state.active.unshift( newActiveApp );
+                        activeAppIndexById = getActiveAppIndexById();
+                        setValueBucketEntry()
                     }
                 }
             };
@@ -90,25 +113,51 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
             }
             break;
         }
-        case 'MINIMIZE': {
-            console.log('MINIMIZE TODO')
-            // const _payload = payload as string;
-
-            break;
-        }
-        case 'MAXIMIZE': {
-            console.log('MAXIMIZE TODO')
-
-            break;
-        }
         case 'UPDATE': {
             log('UPDATE')
-            
             const _payload = payload as Partial<ActiveApplication> & Pick<ActiveApplication, 'appId'>;
-            
-            const activeAppIndex = Util.findAppIndexById(_state.active, _payload.appId);
-            if (activeAppIndex > -1) {
-                _state.active[activeAppIndex] = handleAppContextItemUpdate(_state.active[activeAppIndex], _payload);
+
+            if (activeAppIndexById > -1) {
+                const referencedActiveApp = { ..._state.active[activeAppIndexById] };
+                if (appContextReducerAction.action !== undefined) {
+                    switch (appContextReducerAction.action) {
+                        case 'MAXIMIZE': {
+                            if (referencedActiveApp._visibility === 'DEFAULT') {
+                                setValueBucketEntry()
+                                _state.active[activeAppIndexById] = {
+                                    ...referencedActiveApp,
+                                    dimensions: ['100%','100%'],
+                                    positions: [0,0],
+                                    _visibility: 'MAXIMIZED'
+                                }
+                            } else {
+                                if (!appValuesById) {
+                                    console.error(`Failed to locate ${_appId} in value bucket`)
+                                    break
+                                };
+                                _state.active[activeAppIndexById] = {
+                                    ...referencedActiveApp,
+                                    dimensions: appValuesById?.dimensions,
+                                    positions: appValuesById?.positions,
+                                    _visibility: 'DEFAULT'
+                                }
+                            }
+                            break;
+                        }
+                        case 'MINIMIZE': {
+                            setValueBucketEntry()
+                            _state.active[activeAppIndexById] = {
+                                ..._state.active[activeAppIndexById],
+                                _visibility: 'MINIMIZED'
+                            }
+                            break;
+                        }
+                        default: {
+                            console.error(`Unhandled action type of ${appContextReducerAction.action}`)
+                        }
+                    }
+                }
+                _state.active[activeAppIndexById] = handleAppContextItemUpdate(_state.active[activeAppIndexById], _payload);
             } else {
                 const previouslyActiveApp = appContextState.previous.current.get(payload.appId);
                 if (!!previouslyActiveApp) {
@@ -116,9 +165,10 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                     appContextState.previous.current.set( 
                         payload.appId, 
                         handleAppContextItemUpdate(previouslyActiveApp, _payload) 
-                    ); 
+                    );
                 } else {
-                    // ...how did you get here??
+                    console.error(`Failed to update ${_appId} in previous state`);
+                    break
                 }
             }
             break;
@@ -131,10 +181,11 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
 
             if (activeAppIndex !== undefined) {
                 let appDefinition = { ..._state.active[activeAppIndex]  };
-                appDefinition.isVisible = false;
+
                 _state.previous.current.set(
                     appDefinition.appId, appDefinition
                 );
+                _state.values.current.delete(_appId);
                 _state.active.splice(activeAppIndex, 1);
             }
             break;

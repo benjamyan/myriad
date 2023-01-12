@@ -1,5 +1,8 @@
 import * as React from 'react';
 import { IconType } from 'react-icons/lib';
+import { Action } from '..';
+
+import '../../utils/styles/_sizes.scss';
 
 export const IconButton = (props: IconButtonProps)=> {
     const { onSingleClick } = props;
@@ -17,10 +20,11 @@ export const IconButton = (props: IconButtonProps)=> {
                 }
             }}
         >
-            { typeof(props.icon) === 'string' 
-                ? <img src={props.icon} /> 
+            <Action.Icon icon={ props.icon } />
+            {/* { typeof(props.icon) === 'string' 
+                ? <img className='button__icon--local' src={`assets/images/${props.icon}`} /> 
                 : <props.icon /> 
-            }
+            } */}
         </button>
     )
 }
@@ -38,7 +42,10 @@ export interface IconButtonProps extends IconButtonEvents {
     className?: string;
 
     size: 'XS' | 'SM' | 'MD' | 'LG' | 'XL' | 'INHERIT';
-    /**  */
+    /** Image to be used
+     * @if `icon` is a string, you need to pass in the filename/path
+     * @if `icon` is of type `IconType` 
+     */
     icon: IconType | string;
 
     disabled?: boolean;

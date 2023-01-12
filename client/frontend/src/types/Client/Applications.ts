@@ -7,7 +7,7 @@ export type ApplicationDefinition = {
     /** Title/name to be shown to user */
     readonly displayName: string;
     /** An associated icon as URL */
-    readonly icon?: IconType;
+    readonly icon?: IconType | string;
     /** Dimensions as `[ W, H ]` */
     dimensions?: [number | string, number | string];
     /** The source URL as string for remote or local content fetch */
@@ -57,15 +57,17 @@ export type ApplicationRenderComponent = (props: ApplicationRenderProps)=> JSX.E
 //     })=> JSX.Element;
 
 export type ActiveApplication = {
-    [key: string]: number | string | boolean | Error | any[];
+    // [key: string]: number | string | boolean | Error | any[];
     /** Application ID for reference */
     readonly appId: ApplicationDefinition['appId'];
+    /** So we can have multiple instances of the same kind of applicaton at once in memeory */
+    readonly instanceId: string;
     /** position as `[ W, H ]` */
     positions: [number , number ];
     /** dimensions as `[ W, H ]` */
     dimensions: [number | string, number | string];
     /** Application is minized or not */
-    isVisible: boolean;
+    _visibility: 'MINIMIZED' | 'DEFAULT' | 'MAXIMIZED';
     /** 
      * Flag for loading status and any errors 
      * - `false` if loading or qeued

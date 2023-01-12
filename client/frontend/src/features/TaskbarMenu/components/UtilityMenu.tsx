@@ -67,11 +67,12 @@ const WeatherPane = ()=> {
     return (
         <React.Fragment>
             <Button.IconButton 
-                className={`${utilBtnClassName} ${utilBtnClassName}--weather`}
+                className={`${utilBtnClassName} ${utilBtnClassName}--weather ${navContextState.id.includes(navigation.utilityMenuItems.weather.menuId) ? 'active' : ''}`}
                 size='INHERIT'
                 // fRef={ setNavTriggerRef(navigation.utilityMenuItems.weather.menuId) }
                 fRef={ weatherIconRef }
-                icon={ BsCloudsFill }
+                // icon={ BsCloudsFill }
+                icon='/weather/cloud-sun.svg'
                 onSingleClick={ ()=> {
                     if (navContextState.id.length === 0) {
                         navContextUpdate({
