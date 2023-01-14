@@ -4,10 +4,10 @@ import { default as Path } from 'node:path';
 const TS_FILE_DIR = './src/assets';
 const TS_FILE_NAME = 'assets';
 const INCLUDE_EXT = ['svg','png'];
-const ASSET_DIR_LIST = [
-    'src/assets/icons',
-    'src/assets/images'
-];
+// const ASSET_DIR_LIST = [
+//     'src/assets/icons',
+//     'src/assets/images'
+// ];
 
 const getFileListRecursively = async (dirName: string) => {
     const items = await Fs.promises.readdir(dirName, { withFileTypes: true });

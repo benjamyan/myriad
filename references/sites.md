@@ -4,6 +4,7 @@
 - https://opensource.glassanimals.com/
 - https://vanholtz.co/
 - itssharl.ee
+- https://whimsy.space/
 
 ## Images/iconography
 - https://www.benvessey.com/mac-old-school

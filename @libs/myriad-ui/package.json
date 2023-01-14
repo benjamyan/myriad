@@ -1,25 +1,27 @@
 {
-  "name": "myriad",
-  "version": "1.0.0",
-  "description": "Browser based OS for basic webpage and desktop procedures",
+  "name": "myriad-ui",
+  "version": "1.1.0",
+  "description": "Shared components for frontends",
   "author": "benjamyan",
   "license": "ISC",
-  "main": "./src/index.tsx",
-  "types": "./src/index.d.ts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "webpack": "webpack",
     "start": "webpack serve",
     "storybook": "start-storybook",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prebuild": "rm -rf ./lib && mkdir ./lib && bash ./assets.sh",
-    "build": "tsc"
+    "prebuild": "rm -rf ./lib && mkdir ./lib",
+    "build": "ts-node ./definitions.ts && tsc",
+    "postbuild": "bash ./assets.sh",
+    "preexport": "rm -f ../myriad-ui.tgz",
+    "export": "npm run build && npm pack --pack-destination=../",
+    "postexport": "cd ../ && mv myriad-ui*.tgz myriad-ui.tgz"
   },
-  "dependencies": {
-    "react": "17.0.0",
-    "react-dom": "17.0.0",
-    "react-icons": "^4.7.1",
-    "react-svg": "^15.1.18"
-  },
+  "files": [
+    "package.json",
+    "lib/*"
+  ],
   "devDependencies": {
     "@babel/core": "^7.20.12",
     "@babel/plugin-proposal-class-properties": "^7.17.12",
@@ -40,6 +42,12 @@
     "css-loader": "^6.7.1",
     "eslint-plugin-react-hooks": "^4.5.0",
     "html-webpack-plugin": "^5.5.0",
+    "mini-css-extract-plugin": "^2.7.2",
+    "react": "17.0.0",
+    "react-dom": "17.0.0",
+    "react-icons": "^4.7.1",
+    "react-svg": "^15.1.18",
+    "resolve-url-loader": "^5.0.0",
     "sass": "^1.52.3",
     "sass-loader": "^13.0.0",
     "storybook": "^6.5.15",
@@ -49,6 +57,12 @@
     "webpack": "^5.73.0",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.9.2"
+  },
+  "peerDependencies": {
+    "react": "17.0.0",
+    "react-dom": "17.0.0",
+    "react-icons": "^4.7.1",
+    "react-svg": "^15.1.18"
   },
   "eslintConfig": {
     "extends": [

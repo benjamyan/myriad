@@ -20,4 +20,6 @@ export interface IconButtonProps extends IconButtonEvents {
     icon: IconType | string;
     disabled?: boolean;
     fRef?: React.ForwardedRef<HTMLButtonElement>;
+    textContent?: string;
+    textTag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p';
 }
