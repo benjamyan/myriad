@@ -11,7 +11,7 @@ let _taskbarMenuClassName: string;
 export const TaskbarActionMenu = ({ className }: TaskbarActionMenuProps)=> {
     _taskbarMenuClassName = className;
 
-    const { navContextState, navContextUpdate, } = useNavigationContext();
+    const { navContextState, navContextUpdate } = useNavigationContext();
     const { appContextDispatch } = useApplicationContext();
     const { navRef, setNavTriggerRef, setNavMenuRef } = useNavRef();
     
@@ -32,7 +32,9 @@ export const TaskbarActionMenu = ({ className }: TaskbarActionMenuProps)=> {
                         title={ menuItem.displayName } 
                         htmlName={ menuItem.menuId }
                         onSingleClick={ ()=> {
+                            console.log(10)
                             if (navContextState.id.length === 0) {
+                                console.log(11)
                                 navContextUpdate({
                                     type: 'SELECT',
                                     payload: {

@@ -34,21 +34,22 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
     );
     // const prevNavState = React.useRef<Pick<NavigationState, 'id'>>(null);
     const currNavState = React.useRef<NavigationState>(navContextState);
-    
-    const navContextUpdate: NavigationDispatchMediary = (action)=> {
-        try {
-            switch (action.type) {
-                // case 'REMOVE': { }
-                // case 'CLEAR': { }
-                default: {
-                    navContextDispatch(action);
-                    currNavState.current = navContextState;
-                }
-            }
-        } catch (err) {
-            console.log(err)
-        }
-    }
+    const navContextUpdate = navContextDispatch;
+
+    // const navContextUpdate: NavigationDispatchMediary = (action)=> {
+    //     try {
+    //         switch (action.type) {
+    //             // case 'REMOVE': { }
+    //             // case 'CLEAR': { }
+    //             default: {
+    //                 navContextDispatch(action);
+    //                 currNavState.current = navContextState;
+    //             }
+    //         }
+    //     } catch (err) {
+    //         console.log(err)
+    //     }
+    // }
     
     const navContextClickEventHandler = React.useCallback(
         (event: React.MouseEvent | Event)=> {
@@ -64,6 +65,7 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
                         let _menu: Element | undefined;
                         for (const id of currNavState.current.id) {
                             if (nodes[id].trigger === event.target) {
+                                console.log(1);
                                 /** If the triggering button is clicked, close the menu it opened */
                                 navContextUpdate({
                                     type: 'REMOVE',
@@ -74,6 +76,7 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
                                 _menu = nodes[id].menu as Element;
 
                                 if (Array.from(_menu.children).includes(event.target as Element)) {
+                                    console.log(2);
                                     // const _menuItem = currNavState.current.menuItem(event.target['data-id']);
                                     // if (_menuItem !== undefined ) {
                                         // if (currNavState.current.menuItem(event.target['data-id'])?.appId !== undefined) {
@@ -83,11 +86,13 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
                                         navContextUpdate({ type: 'CLEAR', payload: null })
                                     // }
                                 } else {
+                                    console.log(3);
                                     navContextUpdate({ type: 'CLEAR', payload: null })
                                 }
                                 _menu = undefined;
                                 return
                             } else {
+                                console.log(4);
                                 navContextUpdate({ type: 'CLEAR', payload: null })
                                 return
                             }
@@ -106,18 +111,18 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
     }, []);
     
     React.useEffect(()=>{
-        currNavState.current = navContextState;
         if (navContextState.id.length === 0) {
             document.removeEventListener('click', navContextClickEventHandler);
         } else if (navContextState.id.length === 1) {
             document.addEventListener('click', navContextClickEventHandler);
         }
+        currNavState.current = navContextState;
     }, [ navContextState.id ])
 
     return (
         <NavigationContext.Provider value={{
             navContextState, 
-            navContextUpdate
+            navContextUpdate: navContextDispatch
         }}>
             { children }
         </NavigationContext.Provider>

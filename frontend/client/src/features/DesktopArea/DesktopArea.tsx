@@ -40,9 +40,12 @@ const DesktopIcons = (props: { desktopRef: React.RefObject<HTMLElement> })=> {
                                 className={`desktop__icon ${lastSelected === appId ? 'active' : ''}`}
                                 textContent={ desktopItem.displayName }
                                 textTag='p'
-                                onSingleClick={(event)=>{
-                                    event.stopPropagation();
-                                    event.nativeEvent.stopImmediatePropagation();
+                                onSingleClick={()=>{
+                                    setLastSelected(lastSelected === appId ? null : appId);
+                                }}
+                                onDoubleClick={(event)=>{
+                                    // event.stopPropagation();
+                                    // event.nativeEvent.stopImmediatePropagation();
 
                                     setLastSelected(appId);
                                     if (appIsActiveInContext(appId)) {

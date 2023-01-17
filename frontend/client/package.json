@@ -16,6 +16,7 @@
     "axios": "^1.2.1",
     "chonky": "^2.3.2",
     "framer-motion": "^6.3.15",
+    "myriad-icons": "file:../../@libs/myriad-icons.tgz",
     "myriad-ui": "file:../../@libs/myriad-ui.tgz",
     "react": "17.0.0",
     "react-dom": "17.0.0",

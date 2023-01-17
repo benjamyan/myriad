@@ -15,6 +15,7 @@ exports.Basic = void 0;
 var jsx_runtime_1 = require("react/jsx-runtime");
 // import { ReactSVG } from 'react-svg';
 var __1 = require("..");
+var useClickEventHandler_1 = require("../../hooks/useClickEventHandler");
 require("./_buttons.scss");
 // const Icon = ({ iconPosition, ...iconProps }: Pick<BasicButtonProps, 'icon' | 'iconPosition'>)=> {
 //     if (typeof(iconProps.icon) === 'string') {
@@ -41,8 +42,32 @@ require("./_buttons.scss");
 //     }
 // };
 var Basic = function (btnProps) {
-    var type = btnProps.type, size = btnProps.size, onHover = btnProps.onHover, onSingleClick = btnProps.onSingleClick;
+    var type = btnProps.type, size = btnProps.size, onHover = btnProps.onHover, onSingleClick = btnProps.onSingleClick, onDoubleClick = btnProps.onDoubleClick;
     var keyString = Math.floor(Math.random() * 25).toString();
+    var clickEventHandler = (0, useClickEventHandler_1.useClickEventHandler)({
+        onSingleClick: onSingleClick,
+        onDoubleClick: onDoubleClick
+    });
+    // const eventTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+    // const clickEventHandler = React.useCallback(
+    //     function(event: any) {
+    //         if (event.type === 'dblclick') {
+    //             if (eventTimeoutRef.current !== null) {
+    //                 clearTimeout(eventTimeoutRef.current);
+    //             }
+    //             if (!!onDoubleClick) {
+    //                 onDoubleClick(event);
+    //             }
+    //         } else if (event.detail === 1) {
+    //             eventTimeoutRef.current = setTimeout(function(){
+    //                 if (!!onSingleClick) {
+    //                     onSingleClick(event);
+    //                 }
+    //             }, 200)
+    //         }
+    //     },
+    //     []
+    // );
     /** Classname appending based on our props */
     var _btnClassName = "button button__".concat((type === null || type === void 0 ? void 0 : type.toLowerCase()) || 'standard', " ").concat(btnProps.className || '');
     if (size) {
@@ -53,13 +78,7 @@ var Basic = function (btnProps) {
         _btnClassName += " button__hover--".concat(onHover.toLowerCase());
     }
     ;
-    return ((0, jsx_runtime_1.jsxs)("button", __assign({ ref: !!btnProps.btnRef ? btnProps.btnRef : undefined, type: 'button', className: _btnClassName, name: btnProps.htmlName || undefined, disabled: btnProps.disabled || false, onClick: function (event) {
-            if (event.button !== 0)
-                return;
-            if (!!onSingleClick) {
-                onSingleClick(event);
-            }
-        }, style: __assign({}, btnProps.customStyle) }, { children: [btnProps.title || '', !!btnProps.icon &&
+    return ((0, jsx_runtime_1.jsxs)("button", __assign({ ref: !!btnProps.btnRef ? btnProps.btnRef : undefined, type: 'button', className: _btnClassName, name: btnProps.htmlName || undefined, disabled: btnProps.disabled || false, onClick: function (e) { return clickEventHandler(e); }, onDoubleClick: function (e) { return clickEventHandler(e); }, style: __assign({}, btnProps.customStyle) }, { children: [btnProps.title || '', !!btnProps.icon &&
                 (0, jsx_runtime_1.jsx)(__1.Action.Icon, { icon: btnProps.icon, iconPosition: btnProps.iconPosition }, "BasicButton_icon-".concat(keyString))] }), "BasicButton_outer_".concat(keyString)));
 };
 exports.Basic = Basic;

@@ -1,25 +1,40 @@
 import * as React from 'react';
 import { IconType } from 'react-icons/lib';
+
 import { Action } from '..';
+import { ClickEventHandlerProps, useClickEventHandler } from '../../hooks/useClickEventHandler';
+
 
 import '../../utils/styles/_sizes.scss';
 
 export const IconButton = (props: IconButtonProps)=> {
-    const { onSingleClick } = props;
+    const { onSingleClick, onDoubleClick } = props;
     const keyString = Math.floor(Math.random() * 25).toString();
-    
 
+    const clickEventHandler = useClickEventHandler({
+        onSingleClick, onDoubleClick
+    })
+    
     return (
         <button 
             key={`IconButton_${keyString}`}
             ref={props.fRef}
             className={`button button__icon button__icon--${props.size === 'INHERIT' ? 'std' : props.size.toLowerCase()} ${props.className || ''}`}
-            onClick={(event)=>{
-                if (event.button !== 0) return;
-                if (onSingleClick !== undefined) {
-                    onSingleClick(event)
-                }
-            }}
+            onClick={ (e)=> clickEventHandler(e) }
+            onDoubleClick={ (e)=> clickEventHandler(e) }
+            // onClick={(event)=>{
+            //     if (event.button !== 0) return;
+            //     eventTimerRef.current = event.timeStamp;
+            //     if (onSingleClick !== undefined) {
+            //         onSingleClick(event)
+            //     }
+            // }}
+            // onDoubleClick={(event)=>{
+            //     if (event.button !== 0) return;
+            //     if (onDoubleClick !== undefined) {
+            //         onDoubleClick(event)
+            //     }
+            // }}
         >
             <Action.Icon icon={ props.icon } />
             { props.textContent &&
@@ -35,13 +50,13 @@ export const IconButton = (props: IconButtonProps)=> {
 
 export interface IconButtonEvents {
     /** event to happen on single-click */
-    onSingleClick?: (event: React.MouseEvent)=> void;
+    // onSingleClick?: (event: React.MouseEvent)=> void;
     /** event to happen on double-click */
-    onDoubleClick?: (event: React.MouseEvent)=> void;
+    // onDoubleClick?: (event: React.MouseEvent)=> void;
     /** Hover event */
     onHover?: (event: any)=> void;
 }
-export interface IconButtonProps extends IconButtonEvents {
+export interface IconButtonProps extends ClickEventHandlerProps, IconButtonEvents {
     
     className?: string;
 

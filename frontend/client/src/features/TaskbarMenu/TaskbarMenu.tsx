@@ -7,15 +7,15 @@ import "./_TaskbarMenu.scss";
 const _baseClassName = 'taskbar__menu';
 
 export const TaskbarMenu = ({taskbarRef}:any)=> {
-    const [ menuActive, setMenuActive ] = React.useState<string | false>(false);
+    // const [ menuActive, setMenuActive ] = React.useState<string | false>(false);
 
-    React.useEffect( ()=>{
-        if (menuActive !== false) {
-            // add
-        } else {
-            // remove
-        }
-    }, [ menuActive ])
+    // React.useEffect( ()=>{
+    //     if (menuActive !== false) {
+    //         // add
+    //     } else {
+    //         // remove
+    //     }
+    // }, [ menuActive ])
 
     return (
         <nav className={ _baseClassName } ref={taskbarRef}>

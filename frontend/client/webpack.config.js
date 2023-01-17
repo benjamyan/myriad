@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     entry: "./src/index.tsx",
@@ -57,7 +58,7 @@ module.exports = {
                 ],
             },
             {
-                test: /\.(jpg|jpeg|png|gif)$/,
+                test: /\.(jpg|jpeg|png|gif|svg)$/,
                 use: ["file-loader"],
                 // loader:require.resolve("url-loader") + "?name=../[path][name].[ext]"
             },

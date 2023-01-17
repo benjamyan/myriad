@@ -38,17 +38,16 @@ exports.IconButton = void 0;
 var jsx_runtime_1 = require("react/jsx-runtime");
 var React = __importStar(require("react"));
 var __1 = require("..");
+var useClickEventHandler_1 = require("../../hooks/useClickEventHandler");
 require("../../utils/styles/_sizes.scss");
 var IconButton = function (props) {
-    var onSingleClick = props.onSingleClick;
+    var onSingleClick = props.onSingleClick, onDoubleClick = props.onDoubleClick;
     var keyString = Math.floor(Math.random() * 25).toString();
-    return ((0, jsx_runtime_1.jsxs)("button", __assign({ ref: props.fRef, className: "button button__icon button__icon--".concat(props.size === 'INHERIT' ? 'std' : props.size.toLowerCase(), " ").concat(props.className || ''), onClick: function (event) {
-            if (event.button !== 0)
-                return;
-            if (onSingleClick !== undefined) {
-                onSingleClick(event);
-            }
-        } }, { children: [(0, jsx_runtime_1.jsx)(__1.Action.Icon, { icon: props.icon }), props.textContent &&
+    var clickEventHandler = (0, useClickEventHandler_1.useClickEventHandler)({
+        onSingleClick: onSingleClick,
+        onDoubleClick: onDoubleClick
+    });
+    return ((0, jsx_runtime_1.jsxs)("button", __assign({ ref: props.fRef, className: "button button__icon button__icon--".concat(props.size === 'INHERIT' ? 'std' : props.size.toLowerCase(), " ").concat(props.className || ''), onClick: function (e) { return clickEventHandler(e); }, onDoubleClick: function (e) { return clickEventHandler(e); } }, { children: [(0, jsx_runtime_1.jsx)(__1.Action.Icon, { icon: props.icon }), props.textContent &&
                 React.createElement(props.textTag || 'p', null, props.textContent)] }), "IconButton_".concat(keyString)));
 };
 exports.IconButton = IconButton;

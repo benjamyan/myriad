@@ -1,6 +1,7 @@
 import React from 'react';
-import { BsCloudsFill } from 'react-icons/bs';
-import { Button, Loader } from 'myriad-ui'
+// import { BsCloudsFill } from 'react-icons/bs';
+import { Button, Loader } from 'myriad-ui';
+import { svg } from 'myriad-icons'
 
 // import { Button, Loader } from '../../../components';
 import { navigation } from '../../../config';
@@ -45,6 +46,7 @@ const WeatherPane = ()=> {
         //         nodes: navRef
         //     }
         // })
+        console.log(svg.cloudSun)
         if (weatherData === undefined) {
             
             applicationDataLoader({
@@ -73,7 +75,8 @@ const WeatherPane = ()=> {
                 // fRef={ setNavTriggerRef(navigation.utilityMenuItems.weather.menuId) }
                 fRef={ weatherIconRef }
                 // icon={ BsCloudsFill }
-                icon='/weather/cloud-sun.svg'
+                icon={ svg.cloudSun as unknown as string }
+                // icon='assets/icons/weather/cloud-sun.svg'
                 onSingleClick={ ()=> {
                     if (navContextState.id.length === 0) {
                         navContextUpdate({

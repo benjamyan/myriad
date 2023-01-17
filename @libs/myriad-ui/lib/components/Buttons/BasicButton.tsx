@@ -2,6 +2,8 @@ import * as React from 'react';
 import { IconType } from 'react-icons/lib';
 // import { ReactSVG } from 'react-svg';
 import { Action } from '..';
+import { ClickEventHandlerProps, useClickEventHandler } from '../../hooks/useClickEventHandler';
+
 import './_buttons.scss';
 
 // const Icon = ({ iconPosition, ...iconProps }: Pick<BasicButtonProps, 'icon' | 'iconPosition'>)=> {
@@ -31,9 +33,34 @@ import './_buttons.scss';
 // };
 
 export const Basic = (btnProps: BasicButtonProps) => {
-    const { type, size, onHover, onSingleClick } = btnProps;
+    const { type, size, onHover, onSingleClick, onDoubleClick } = btnProps;
+    
     
     const keyString = Math.floor(Math.random() * 25).toString();
+
+    const clickEventHandler = useClickEventHandler({
+        onSingleClick, onDoubleClick
+    })
+    // const eventTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+    // const clickEventHandler = React.useCallback(
+    //     function(event: any) {
+    //         if (event.type === 'dblclick') {
+    //             if (eventTimeoutRef.current !== null) {
+    //                 clearTimeout(eventTimeoutRef.current);
+    //             }
+    //             if (!!onDoubleClick) {
+    //                 onDoubleClick(event);
+    //             }
+    //         } else if (event.detail === 1) {
+    //             eventTimeoutRef.current = setTimeout(function(){
+    //                 if (!!onSingleClick) {
+    //                     onSingleClick(event);
+    //                 }
+    //             }, 200)
+    //         }
+    //     },
+    //     []
+    // );
 
     /** Classname appending based on our props */
     let _btnClassName = `button button__${type?.toLowerCase() || 'standard'} ${btnProps.className || ''}`;
@@ -52,12 +79,8 @@ export const Basic = (btnProps: BasicButtonProps) => {
             className={ _btnClassName }
             name={ btnProps.htmlName || undefined }
             disabled={ btnProps.disabled || false }
-            onClick={ (event)=> {
-                if (event.button !== 0) return;
-                if (!!onSingleClick) {
-                    onSingleClick(event);
-                }
-            }}
+            onClick={ (e)=> clickEventHandler(e) }
+            onDoubleClick={ (e)=> clickEventHandler(e) }
             style={{ ...btnProps.customStyle }}>
                 { btnProps.title || '' }
                 { !!btnProps.icon && 
@@ -71,13 +94,13 @@ export const Basic = (btnProps: BasicButtonProps) => {
     )
 }
 
-interface BasicButtonClickEvents {
-    /** event to happen on single-click */
-    onSingleClick?: (event: React.MouseEvent)=> void;
-    /** event to happen on double-click */
-    onDoubleClick?: (event: any)=> void;
-}
-export interface BasicButtonProps extends BasicButtonClickEvents {
+// interface BasicButtonClickEvents {
+//     /** event to happen on single-click */
+//     onSingleClick?: (event: React.MouseEvent)=> void;
+//     /** event to happen on double-click */
+//     onDoubleClick?: (event: any)=> void;
+// }
+export interface BasicButtonProps extends ClickEventHandlerProps {
     /** optional classname to add */
     className?: string;
     /** Custom name for identitifcation */

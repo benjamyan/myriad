@@ -7,10 +7,7 @@
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
-    "webpack": "webpack",
-    "start": "webpack serve",
-    "storybook": "start-storybook",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "story": "start-storybook",
     "prebuild": "rm -rf ./lib && mkdir ./lib",
     "build": "ts-node ./definitions.ts && tsc",
     "postbuild": "bash ./assets.sh",

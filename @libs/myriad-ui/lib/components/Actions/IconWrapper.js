@@ -73,7 +73,7 @@ var Icon = function (_a) {
     if (typeof (iconProps.icon) === 'string') {
         if (iconProps.icon.endsWith('svg')) {
             // https://www.npmjs.com/package/react-svg
-            return ((0, jsx_runtime_1.jsx)(react_svg_1.ReactSVG, { wrapper: 'span', className: className, src: "assets/images/".concat(iconProps.icon), beforeInjection: function (svg) {
+            return ((0, jsx_runtime_1.jsx)(react_svg_1.ReactSVG, { wrapper: 'span', className: className, src: iconProps.icon, beforeInjection: function (svg) {
                     var _a;
                     (_a = svg.querySelector('style')) === null || _a === void 0 ? void 0 : _a.remove();
                     svg.setAttribute('style', '');

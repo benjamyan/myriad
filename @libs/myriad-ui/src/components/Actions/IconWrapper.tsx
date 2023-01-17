@@ -41,7 +41,7 @@ export const Icon = ({ iconPosition, ...iconProps }: IconWrapperProps)=> {
                 <ReactSVG 
                     wrapper='span' 
                     className={ className } 
-                    src={`assets/images/${iconProps.icon}`} 
+                    src={ iconProps.icon } 
                     beforeInjection={ (svg)=> {
                         svg.querySelector('style')?.remove();
                         svg.setAttribute('style','')

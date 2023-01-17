@@ -8,7 +8,6 @@ const getMenuItem = (id: string, source: string)=> {
 let getNodePosition: NavigationState['position'] = null!; 
 
 export const navigationContextReducer: NavigationReducer = (navContextState, navContextAction)=> {
-    
     const { payload } = navContextAction;
     let _state = { ...navContextState };
     
@@ -55,11 +54,24 @@ export const navigationContextReducer: NavigationReducer = (navContextState, nav
         case 'REMOVE': {
             const _payload = payload as NavigationActionResource<'REMOVE'>;
 
-            _state.id = _state.id.splice(
-                _state.id.findIndex( (_id)=> _id === _payload ), 1
-            );
-            delete _state.nodes[_payload]
-            delete _state.source[_payload]
+            if (_state.id.length > 0) {
+                const newState: NavigationState = { ..._state };
+
+                newState.id.splice(
+                    newState.id.findIndex( (_id)=> _id === _payload ), 1
+                );
+                delete newState.nodes[_payload];
+                delete newState.source[_payload];
+
+                _state = {...newState};
+
+                // _state.id = _state.id.splice(
+                //     _state.id.findIndex( (_id)=> _id === _payload ), 1
+                // );
+                // delete _state.nodes[_payload]
+                // delete _state.source[_payload]
+            }
+
             break;
         }
         case 'CLEAR': {

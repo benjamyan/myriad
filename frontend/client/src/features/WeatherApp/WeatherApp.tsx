@@ -110,7 +110,7 @@ export const IconFromWeatherCode = (props: { weatherCode: number })=> {
 
 const WeatherDataContainer = (props: { content: WeatherAppContentDefinition })=> {
     const weather = props.content;
-    console.log(weather);
+    
     return (
         <section className={`${weatherClassName}`}>
             <nav className={`${weatherClassName}--nav`}>

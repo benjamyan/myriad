@@ -5,10 +5,7 @@
 - https://vanholtz.co/
 - itssharl.ee
 - https://whimsy.space/
-
-## Images/iconography
-- https://www.benvessey.com/mac-old-school
-- https://www.benvessey.com/mac
+- https://dustinbrett.com/
 
 ## Docs/tuts:
 - https://reactjs.org/docs/web-components.html
@@ -23,8 +20,10 @@
 - https://itch.io/c/408223/pixel-icons
 - https://graphicriver.net/item/540-perfect-pixel-icons/6793983 
 - https://play.google.com/store/apps/details?id=pixbit.prime&hl=en_US&gl=US
+- https://www.benvessey.com/mac-old-school
+- https://www.benvessey.com/mac
 
-##weahter icons
+## Weather icons
 - https://www.freepik.com/premium-icon/weather_25640878.htm#query=pixelated&position=8&from_view=search&track=sph
 - https://www.freepik.com/premium-icon/weather_25636272.htm#query=pixelated&position=9&from_view=search&track=sph
 - https://www.freepik.com/premium-icon/weather_25684987.htm#query=pixelated&position=25&from_view=search&track=sph

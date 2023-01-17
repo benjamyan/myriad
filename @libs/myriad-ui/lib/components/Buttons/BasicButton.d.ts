@@ -1,14 +1,9 @@
-import * as React from 'react';
+/// <reference types="react" />
 import { IconType } from 'react-icons/lib';
+import { ClickEventHandlerProps } from '../../hooks/useClickEventHandler';
 import './_buttons.scss';
 export declare const Basic: (btnProps: BasicButtonProps) => JSX.Element;
-interface BasicButtonClickEvents {
-    /** event to happen on single-click */
-    onSingleClick?: (event: React.MouseEvent) => void;
-    /** event to happen on double-click */
-    onDoubleClick?: (event: any) => void;
-}
-export interface BasicButtonProps extends BasicButtonClickEvents {
+export interface BasicButtonProps extends ClickEventHandlerProps {
     /** optional classname to add */
     className?: string;
     /** Custom name for identitifcation */
@@ -35,4 +30,3 @@ export interface BasicButtonProps extends BasicButtonClickEvents {
     onHover?: 'HIGHLIGHT' | 'UNDERLINE';
     btnRef?: any;
 }
-export {};
