@@ -53,9 +53,10 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
     // }
     
     const navContextClickEventHandler = React.useCallback(
-        (event: React.MouseEvent | Event)=> {
+        (event: MouseEvent | TouchEvent | Event)=> {
             /** Click event handler when the menu is open or menu triggers are exposed */
             try {
+                console.log(event);
                 if (window.performance.now() - currNavState.current._timestamp < 50) {
                     return
                 };
@@ -78,7 +79,7 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
                                 _menu = nodes[id].menu as Element;
                                 
                                 /// @ts-expect-error
-                                if (event.path.includes(_menu)) {
+                                if (!!event.path && event.path.includes(_menu)) {
                                     if (currNavState.current.menuItem(id)?.defereEventHandling) {
                                         return;
                                     } else {
@@ -128,6 +129,7 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
         //     document.removeEventListener('click', navContextClickEventHandler);
         // } else if (navContextState.id.length >= 1) {
             document.addEventListener('click', navContextClickEventHandler);
+            document.addEventListener('touch', navContextClickEventHandler);
         // }
         currNavState.current = navContextState;
     }, [ navContextState.id ])

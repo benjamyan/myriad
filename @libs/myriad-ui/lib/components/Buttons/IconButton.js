@@ -47,7 +47,7 @@ var IconButton = function (props) {
         onSingleClick: onSingleClick,
         onDoubleClick: onDoubleClick
     });
-    return ((0, jsx_runtime_1.jsxs)("button", __assign({ ref: props.fRef, className: "button button__icon button__icon--".concat(props.size === 'INHERIT' ? 'std' : props.size.toLowerCase(), " ").concat(props.className || ''), onClick: function (e) { return clickEventHandler(e); }, onDoubleClick: function (e) { return clickEventHandler(e); } }, { children: [(0, jsx_runtime_1.jsx)(__1.Action.Icon, { icon: props.icon }), props.textContent &&
+    return ((0, jsx_runtime_1.jsxs)("button", __assign({ ref: props.fRef, className: "button button__icon button__icon--".concat(props.size === 'INHERIT' ? 'std' : props.size.toLowerCase(), " ").concat(props.className || ''), onClick: function (e) { return clickEventHandler(e); }, onDoubleClick: function (e) { return clickEventHandler(e); }, onTouchEnd: function (e) { return clickEventHandler(e); } }, { children: [(0, jsx_runtime_1.jsx)(__1.Action.Icon, { icon: props.icon }), props.textContent &&
                 React.createElement(props.textTag || 'p', null, props.textContent)] }), "IconButton_".concat(keyString)));
 };
 exports.IconButton = IconButton;

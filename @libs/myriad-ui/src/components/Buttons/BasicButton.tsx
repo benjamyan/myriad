@@ -82,6 +82,7 @@ export const Basic = (btnProps: BasicButtonProps) => {
             disabled={ btnProps.disabled || false }
             onClick={ (e)=> clickEventHandler(e) }
             onDoubleClick={ (e)=> clickEventHandler(e) }
+            onTouchEnd={ (e)=> clickEventHandler(e) }
             style={{ ...btnProps.customStyle }}>
                 { btnProps.title || '' }
                 { !!btnProps.icon && 

@@ -23,10 +23,11 @@ export const AppWindowMenuBar = (props: MenuBarProps) => {
     const { appContextDispatch } = useApplicationContext();
     const { menubarClassName, interactionRef } = props;
 
-    const onMenuBarIconClickHandler = (event: React.MouseEvent, action: 'CLOSE' | 'MINIMIZE' | 'MAXIMIZE')=> {
+    const onMenuBarIconClickHandler = (event: React.MouseEvent | React.TouchEvent, action: 'CLOSE' | 'MINIMIZE' | 'MAXIMIZE')=> {
         event.stopPropagation();
         event.nativeEvent.stopImmediatePropagation();
 
+        // @ts-expect-error
         if (event.button !== 0) return;
         switch (action) {
             case 'CLOSE': {
@@ -73,7 +74,9 @@ export const AppWindowMenuBar = (props: MenuBarProps) => {
             <i 
                 ref={ interactionRef.close } 
                 className={`${menubarClassName}-icon close`} 
-                onMouseDown={ (event)=> onMenuBarIconClickHandler(event, 'CLOSE') } 
+                onClick={ (event)=> onMenuBarIconClickHandler(event, 'CLOSE') }
+                onTouchEnd={ (event)=> onMenuBarIconClickHandler(event, 'CLOSE') }
+                // onMouseDown={ (event)=> onMenuBarIconClickHandler(event, 'CLOSE') } 
             >
                 &#x2715;
             </i>

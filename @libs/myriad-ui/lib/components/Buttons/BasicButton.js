@@ -78,7 +78,7 @@ var Basic = function (btnProps) {
         _btnClassName += " button__hover--".concat(onHover.toLowerCase());
     }
     ;
-    return ((0, jsx_runtime_1.jsxs)("button", __assign({ ref: !!btnProps.btnRef ? btnProps.btnRef : undefined, type: 'button', className: _btnClassName, name: btnProps.htmlName || undefined, disabled: btnProps.disabled || false, onClick: function (e) { return clickEventHandler(e); }, onDoubleClick: function (e) { return clickEventHandler(e); }, style: __assign({}, btnProps.customStyle) }, { children: [btnProps.title || '', !!btnProps.icon &&
+    return ((0, jsx_runtime_1.jsxs)("button", __assign({ ref: !!btnProps.btnRef ? btnProps.btnRef : undefined, type: 'button', className: _btnClassName, name: btnProps.htmlName || undefined, disabled: btnProps.disabled || false, onClick: function (e) { return clickEventHandler(e); }, onDoubleClick: function (e) { return clickEventHandler(e); }, onTouchEnd: function (e) { return clickEventHandler(e); }, style: __assign({}, btnProps.customStyle) }, { children: [btnProps.title || '', !!btnProps.icon &&
                 (0, jsx_runtime_1.jsx)(__1.Action.Icon, { icon: btnProps.icon, iconPosition: btnProps.iconPosition }, "BasicButton_icon-".concat(keyString))] }), "BasicButton_outer_".concat(keyString)));
 };
 exports.Basic = Basic;
