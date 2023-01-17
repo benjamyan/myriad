@@ -1,5 +1,5 @@
 import { FaCaretRight, FaPowerOff, FaCompress } from 'react-icons/fa';
-import { BsFillGearFill } from 'react-icons/bs';
+import { svg, png } from 'myriad-icons';
 
 import { SingleMenuItem } from '../types';
 import { default as applications } from './applications';
@@ -20,7 +20,8 @@ const finderMenu: Record<string, SingleMenuItem> = {
         appId: applications.userSettings.appId,
         displayName: 'Settings',
         // icon: BsFillGearFill,
-        icon: 'config-so.svg',
+        // icon: 'config-so.svg',
+        icon: svg.configSo,
         iconPosition: 'RIGHT'
     },
     services: {
@@ -68,7 +69,8 @@ export const utilityMenuItems: Record<string, SingleMenuItem> = {
     weather: {
         menuId: 'weather',
         appId: applications.weatherApp.appId,
-        displayName: 'Weather'
+        displayName: 'Weather',
+        defereEventHandling: true
     },
     clock: {
         menuId: 'clock',
@@ -81,14 +83,16 @@ export const systemTrayItems: Record<string, SingleMenuItem> = {
     fileExplorer: {
         menuId: 'explorer',
         displayName: 'File Explorer',
-        icon: 'folder-so.png',
+        icon: png.folderSo,
+        // icon: 'folder-so.png',
         // icon: applications.fileExplorer.icon,
         appId: applications.fileExplorer.appId
     },
     trash: {
         menuId: 'trash',
         displayName: 'Trash',
-        icon: 'trash-so.png',
+        // icon: 'trash-so.png',
+        icon: png.trashSo,
         appId: applications.trashExplorer.appId
         // icon: applications.fileExplorer.icon,
         // appId: applications.fileExplorer.appId
@@ -99,7 +103,8 @@ export const desktopItems: Record<string, SingleMenuItem> = {
     fileExplorer: {
         menuId: 'explorer',
         displayName: 'File Explorer',
-        icon: 'folder-so.png',
+        icon: png.previewSo,
+        // icon: 'folder-so.png',
         // icon: applications.fileExplorer.icon,
         appId: applications.fileExplorer.appId
     },

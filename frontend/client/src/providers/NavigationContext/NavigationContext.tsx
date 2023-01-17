@@ -1,8 +1,9 @@
 import * as React from 'react';
 
-import { NavigationContextValue, NavigationState, NavigationDispatchMediary, NavigationActionPayload, NavStateNodeType, NavActionNodeRecord } from './types';
+import { NavigationContextValue, NavigationState, NavigationActionPayload, NavStateNodeType, NavActionNodeRecord } from './types';
 import { navigationContextReducer } from './navigationReducer';
 import { useNavRef } from './hooks/useNavRef';
+import { allNavigationItems } from '../../config/navigation';
 
 const initialContextValue: NavigationContextValue = {
     navContextState: {
@@ -58,6 +59,7 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
                 if (window.performance.now() - currNavState.current._timestamp < 50) {
                     return
                 };
+                // if (allNavigationItems.find(({menuId})=> menuId ===  ))
                 if (currNavState.current.id.length > 0) {
                     const { nodes } = currNavState.current;
                     
@@ -65,7 +67,7 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
                         let _menu: Element | undefined;
                         for (const id of currNavState.current.id) {
                             if (nodes[id].trigger === event.target) {
-                                console.log(1);
+                                // console.log(1);
                                 /** If the triggering button is clicked, close the menu it opened */
                                 navContextUpdate({
                                     type: 'REMOVE',
@@ -74,25 +76,36 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
                                 return
                             } else if (nodes[id].menu !== undefined) {
                                 _menu = nodes[id].menu as Element;
-
-                                if (Array.from(_menu.children).includes(event.target as Element)) {
-                                    console.log(2);
+                                
+                                /// @ts-expect-error
+                                if (event.path.includes(_menu)) {
+                                    if (currNavState.current.menuItem(id)?.defereEventHandling) {
+                                        return;
+                                    } else {
+                                        return navContextUpdate({ type: 'CLEAR', payload: null });
+                                    }
+                                //     return
+                                // } else if (Array.from(_menu.children).includes(event.target as Element)) {
+                                    // console.log(2);
                                     // const _menuItem = currNavState.current.menuItem(event.target['data-id']);
                                     // if (_menuItem !== undefined ) {
-                                        // if (currNavState.current.menuItem(event.target['data-id'])?.appId !== undefined) {
-                                        //     navContextUpdate({ type: 'CLEAR', payload: null })
-                                        // }
+                                    //     if (currNavState.current.menuItem(event.target['data-id'])?.appId !== undefined) {
+                                    //         navContextUpdate({ type: 'CLEAR', payload: null })
+                                    //     }
                                     // } else {
-                                        navContextUpdate({ type: 'CLEAR', payload: null })
+                                    //     navContextUpdate({ type: 'CLEAR', payload: null })
+                                    //     // _menu = undefined;
+                                    //     // return
                                     // }
+                                    // return
                                 } else {
-                                    console.log(3);
+                                    // console.log(3);
                                     navContextUpdate({ type: 'CLEAR', payload: null })
                                 }
-                                _menu = undefined;
+                                // _menu = undefined;
                                 return
                             } else {
-                                console.log(4);
+                                // console.log(4);
                                 navContextUpdate({ type: 'CLEAR', payload: null })
                                 return
                             }
@@ -111,11 +124,11 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
     }, []);
     
     React.useEffect(()=>{
-        if (navContextState.id.length === 0) {
-            document.removeEventListener('click', navContextClickEventHandler);
-        } else if (navContextState.id.length === 1) {
+        // if (navContextState.id.length === 0) {
+        //     document.removeEventListener('click', navContextClickEventHandler);
+        // } else if (navContextState.id.length >= 1) {
             document.addEventListener('click', navContextClickEventHandler);
-        }
+        // }
         currNavState.current = navContextState;
     }, [ navContextState.id ])
 

@@ -1,4 +1,5 @@
 import { IconType } from "react-icons";
+import { svg,png } from 'myriad-icons';
 import { AxiosRequestConfig } from 'axios';
 import React from "react";
 
@@ -8,7 +9,7 @@ export type ApplicationDefinition = {
     /** Title/name to be shown to user */
     readonly displayName: string;
     /** An associated icon as URL */
-    readonly icon?: IconType | string;
+    readonly icon?: typeof svg | typeof png | IconType | string;
     /** Dimensions as `[ W, H ]` */
     dimensions?: [number | string, number | string];
     /** The source URL as string for remote or local content fetch */

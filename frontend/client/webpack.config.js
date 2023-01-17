@@ -30,10 +30,6 @@ module.exports = {
                 exclude: /node_modules/,
                 use: ["babel-loader"],
             },
-            // {
-            //     test: /\.(css|scss|sass)$/,
-            //     use: ["style-loader", "css-loader", "sass-loader"],
-            // },
             {
                 test: /\.scss$/,
                 use: [
@@ -57,10 +53,24 @@ module.exports = {
                     },
                 ],
             },
+            // {
+            //     test: /\.(jpg|jpeg|svg|gif|png)$/,
+            //     use: "file-loader"
+            // },
             {
-                test: /\.(jpg|jpeg|png|gif|svg)$/,
-                use: ["file-loader"],
-                // loader:require.resolve("url-loader") + "?name=../[path][name].[ext]"
+                test: /\.(jpg|jpeg|svg|gif|png)$/,
+                loader: "file-loader",
+                options: {
+                    // name: '[path][name].[ext]',
+                    name(resourcePath, resourceQuery) {
+                        return `${resourcePath.split(__dirname + '/')[1]}`
+                    //   if (process.env.NODE_ENV === 'development') {
+                    //     return '[path][name].[ext]';
+                    //   }
+           
+                    //   return '[contenthash].[ext]';
+                    },
+                }
             },
             // {
             //     test: /\.svg$/,

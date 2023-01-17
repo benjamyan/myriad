@@ -1,7 +1,7 @@
 /// <reference types="react" />
 import { IconType } from 'react-icons/lib';
 export declare type IconWrapperProps = {
-    icon: IconType | string;
+    icon: /*SvgIcon | PngIcon | */ IconType | string;
     iconPosition?: string;
     className?: string;
 };

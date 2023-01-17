@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { IconType } from 'react-icons/lib';
 import { ReactSVG } from 'react-svg';
+// import {SvgIcon, PngIcon} from 'myriad-icons'
 
 export type IconWrapperProps = {
-    icon: IconType | string;
+    icon: /*SvgIcon | PngIcon | */IconType | string;
     iconPosition?: string;
     className?: string;
 }
@@ -50,13 +51,14 @@ export const Icon = ({ iconPosition, ...iconProps }: IconWrapperProps)=> {
             )
         } else {
             return (
-                <img className={ className } src={`assets/images/${iconProps.icon}`} />
+                <img className={ className } src={ iconProps.icon } />
             )
         }
     } else {
+        const ReactIcon = iconProps.icon as IconType;
         return (
             <i className={ className }>
-                { !!iconProps.icon ? <iconProps.icon /> : <></> }
+                { !!iconProps.icon ? <ReactIcon /> : <></> }
             </i>
         )
     }

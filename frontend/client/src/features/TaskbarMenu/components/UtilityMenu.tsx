@@ -20,10 +20,11 @@ const utilPaneClassName = 'utility__pane';
 
 const WeatherPane = ()=> {
     const { navContextState, navContextUpdate } = useNavigationContext();
-    const { navRef } = useNavRef();
+    const { navRef, setNavMenuRef, setNavTriggerRef } = useNavRef();
     
     const [ weatherData, setWeatherData ] = React.useState<JSON | Error>(undefined!);
-    const weatherIconRef = React.useRef<HTMLButtonElement>(null!);
+    const [ panelLocation, setPanelLocation ] = React.useState<[number, number]>([0,0]);
+    // const weatherIconRef = React.useRef<HTMLButtonElement>(null!);
 
     const WeatherPaneContent = React.useCallback(
         ()=> {
@@ -46,7 +47,7 @@ const WeatherPane = ()=> {
         //         nodes: navRef
         //     }
         // })
-        console.log(svg.cloudSun)
+        
         if (weatherData === undefined) {
             
             applicationDataLoader({
@@ -66,37 +67,41 @@ const WeatherPane = ()=> {
                 })
         }
     }, []);
+
+    React.useEffect(()=>{
+        if (!!navRef.current.trigger) {
+            setPanelLocation([
+                navRef.current.trigger.offsetHeight,
+                window.innerWidth - navRef.current.trigger.offsetLeft - navRef.current.trigger.offsetWidth
+            ])
+        }
+    }, [navContextState.id])
     
     return (
         <React.Fragment>
             <Button.IconButton 
                 className={`${utilBtnClassName} ${utilBtnClassName}--weather ${navContextState.id.includes(navigation.utilityMenuItems.weather.menuId) ? 'active' : ''}`}
                 size='INHERIT'
-                // fRef={ setNavTriggerRef(navigation.utilityMenuItems.weather.menuId) }
-                fRef={ weatherIconRef }
-                // icon={ BsCloudsFill }
+                fRef={ setNavTriggerRef(navigation.utilityMenuItems.weather.menuId) as any }
+                // fRef={ weatherIconRef }
                 icon={ svg.cloudSun as unknown as string }
-                // icon='assets/icons/weather/cloud-sun.svg'
                 onSingleClick={ ()=> {
-                    if (navContextState.id.length === 0) {
-                        navContextUpdate({
-                            type: 'SELECT',
-                            payload: {
-                                id: navigation.utilityMenuItems.weather.menuId,
-                                nodes: navRef
-                            }
-                        })
-                    }
+                    navContextUpdate({
+                        type: 'SELECT',
+                        payload: {
+                            id: navigation.utilityMenuItems.weather.menuId,
+                            nodes: navRef
+                        }
+                    })
                 }}
             />
-            { navContextState.id[0] === navigation.utilityMenuItems.weather.menuId && 
+            { (navContextState.id[0] === navigation.utilityMenuItems.weather.menuId && panelLocation[0] !== 0 && panelLocation[1] !== 0) &&
                 <div 
                     className={`${utilPaneClassName} ${utilPaneClassName}--weather`}
+                    ref={ setNavMenuRef as any }
                     style={{
-                        top: weatherIconRef.current.offsetHeight,
-                        right: (
-                            window.innerWidth - weatherIconRef.current.offsetLeft - weatherIconRef.current.offsetWidth
-                        )
+                        top: panelLocation[0],
+                        right: panelLocation[1]
                     }}>
                         <WeatherPaneContent />
                 </div>

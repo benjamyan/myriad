@@ -35,6 +35,37 @@ export const navigationContextReducer: NavigationReducer = (navContextState, nav
             const _payload = payload as NavigationActionResource<'SELECT'>;
 
             if (_payload.id !== undefined && _payload.nodes !== undefined) {
+
+                /** Parse the payload nodes to check against currently active navigation items 
+                 * @if the node if not present as a child, clear the context
+                 */
+                let removeCurrentStateEntry = true;
+                navigationChildElementCheck:
+                if (_state.id.length > 0) {
+                    for (const node in _state.nodes) {
+                        if (Object.values(_state.nodes[node]).includes(_payload.nodes.current.trigger)) {
+                            removeCurrentStateEntry = false;
+                            break navigationChildElementCheck;
+                        }
+                    }
+                } else {
+                    removeCurrentStateEntry = false;
+                }
+                
+                /** Perform our ancilary stateful ops here prior to invoking our next item */
+                if (removeCurrentStateEntry) {
+                    _state = navigationContextReducer(_state, {
+                        type: 'CLEAR',
+                        payload: null
+                    })
+                } else if (_state.id.includes(_payload.id)) {
+                    /** If the selected item is already active in the navigation, toggle it closed */
+                    return navigationContextReducer(_state, {
+                        type: 'REMOVE',
+                        payload: _payload.id
+                    })
+                }
+                
                 _state.id = [ 
                     ..._state.id, 
                     _payload.id 

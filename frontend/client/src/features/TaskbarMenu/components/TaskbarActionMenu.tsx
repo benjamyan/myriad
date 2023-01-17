@@ -17,63 +17,58 @@ export const TaskbarActionMenu = ({ className }: TaskbarActionMenuProps)=> {
     
     const taskbarNavItems = Object.values(navigation.taskMenuItems);
 
-    return React.useMemo( ()=> (
-            <div className={ className }>
-                { taskbarNavItems.map( (menuItem, index)=> (
-                    <Button.Basic
-                        key={`TaskbarActionMenu_button_${menuItem.menuId}_${index}`}
-                        btnRef={ setNavTriggerRef(menuItem.menuId) }
-                        className={ navContextState.id[0] === menuItem.menuId ? 'active' : '' }
-                        size='MEDIUM' 
-                        type='NAKED' 
-                        icon={ menuItem.icon || undefined }
-                        iconPosition='RIGHT'
-                        disabled={ !menuItem.subMenu ? true : false }
-                        title={ menuItem.displayName } 
-                        htmlName={ menuItem.menuId }
-                        onSingleClick={ ()=> {
-                            console.log(10)
-                            if (navContextState.id.length === 0) {
-                                console.log(11)
-                                navContextUpdate({
-                                    type: 'SELECT',
-                                    payload: {
-                                        id: menuItem.menuId,
-                                        // source: 'taskbar',
-                                        nodes: navRef
-                                    }
-                                })
+    return (
+        <div className={ className }>
+            { taskbarNavItems.map( (menuItem, index)=> (
+                <Button.Basic
+                    key={`TaskbarActionMenu_button_${menuItem.menuId}_${index}`}
+                    btnRef={ setNavTriggerRef(menuItem.menuId) }
+                    className={ navContextState.id[0] === menuItem.menuId ? 'active' : '' }
+                    size='MEDIUM' 
+                    type='NAKED' 
+                    icon={ menuItem.icon as string || undefined }
+                    iconPosition='RIGHT'
+                    disabled={ !menuItem.subMenu ? true : false }
+                    title={ menuItem.displayName } 
+                    htmlName={ menuItem.menuId }
+                    onSingleClick={ ()=> {
+                        navContextUpdate({
+                            type: 'SELECT',
+                            payload: {
+                                id: menuItem.menuId,
+                                // source: 'taskbar',
+                                nodes: navRef
                             }
-                        } } 
-                    />
-                ) )}
-                { (navContextState.id.length > 0 && taskbarNavItems.some(({menuId})=> menuId === navContextState.id[0])) && (
-                        navContextState.id.map( (id, index)=> (
-                            <Menu.Standard 
-                                key={`TaskbarActionMenu_menu_${id}_${index}`}
-                                menuRef={ setNavMenuRef }
-                                className={`${_taskbarMenuClassName}-menu`}
-                                menuItem={ navContextState.menuItem(id) as SingleMenuItem }
-                                positionX={ navContextState.position(id, 'menu')[0] }
-                                onClick={ (menuItem)=> {
-                                    if (!menuItem.subMenu) {
-                                        appContextDispatch({
-                                            type:'SELECT',
-                                            payload: menuItem.appId as string
-                                        })
-                                    } else {
-                                        // navContextUpdate({
-                                        //     id: `taskbar__${menuItem.subMenu}`,
-                                        //     element: event.currentTarget as HTMLElement
-                                        // })
-                                    }
-                                } } 
-                            />
-                        ) )
-                    ) 
-                }
-            </div>
-        ), [ navContextState.id, navContextState.nodes ]
+                        })
+                    } } 
+                />
+            ) )}
+            { (navContextState.id.length > 0 && taskbarNavItems.some(({menuId})=> menuId === navContextState.id[0])) && (
+                    navContextState.id.map( (id, index)=> (
+                        <Menu.Standard 
+                            key={`TaskbarActionMenu_menu_${id}_${index}`}
+                            menuRef={ setNavMenuRef }
+                            className={`${_taskbarMenuClassName}-menu`}
+                            menuItem={ navContextState.menuItem(id) as any }
+                            positionX={ navContextState.position(id, 'menu')[0] }
+                            onClick={ (menuItem)=> {
+                                if (!menuItem.subMenu) {
+                                    appContextDispatch({
+                                        type:'SELECT',
+                                        payload: menuItem.appId as string
+                                    })
+                                } else {
+                                    // navContextUpdate({
+                                    //     id: `taskbar__${menuItem.subMenu}`,
+                                    //     element: event.currentTarget as HTMLElement
+                                    // })
+                                }
+                            } } 
+                        />
+                    ) )
+                ) 
+            }
+        </div>
     )
 };
 

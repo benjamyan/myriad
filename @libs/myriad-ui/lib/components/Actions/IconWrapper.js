@@ -80,11 +80,12 @@ var Icon = function (_a) {
                 } }));
         }
         else {
-            return ((0, jsx_runtime_1.jsx)("img", { className: className, src: "assets/images/".concat(iconProps.icon) }));
+            return ((0, jsx_runtime_1.jsx)("img", { className: className, src: iconProps.icon }));
         }
     }
     else {
-        return ((0, jsx_runtime_1.jsx)("i", __assign({ className: className }, { children: !!iconProps.icon ? (0, jsx_runtime_1.jsx)(iconProps.icon, {}) : (0, jsx_runtime_1.jsx)(jsx_runtime_1.Fragment, {}) })));
+        var ReactIcon = iconProps.icon;
+        return ((0, jsx_runtime_1.jsx)("i", __assign({ className: className }, { children: !!iconProps.icon ? (0, jsx_runtime_1.jsx)(ReactIcon, {}) : (0, jsx_runtime_1.jsx)(jsx_runtime_1.Fragment, {}) })));
     }
 };
 exports.Icon = Icon;

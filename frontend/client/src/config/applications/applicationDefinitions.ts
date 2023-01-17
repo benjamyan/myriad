@@ -1,3 +1,4 @@
+import { svg, png } from 'myriad-icons';
 import { ApplicationDefinition } from '../../types';
 import { WeatherApp, FileExplorerWrapper } from '../../features';
 import { AiFillFolder } from 'react-icons/ai';
@@ -14,7 +15,8 @@ export const aboutMe: ApplicationDefinition = {
     displayName: 'About me',
     sourceUrl: 'http://localhost:3000/content/aboutme.md',
     sourceType: 'MD',
-    icon: 'preview-so.png',
+    // icon: 'preview-so.png',
+    icon: png.previewSo,
     dimensions: ['33%', '75%']
 };
 export const myResume: ApplicationDefinition = {
@@ -30,7 +32,8 @@ export const badassMf : ApplicationDefinition = {
     sourceType: 'MEDIA',
     sourceContent: 'http://localhost:3000/content/honey2.jpg',
     renderContent: ImageViewer,
-    icon: 'preview-so.png',
+    // icon: 'preview-so.png',
+    icon: png.previewSo,
     dimensions: ['50%', '40%']
 };
 export const imageViewer: ApplicationDefinition = {

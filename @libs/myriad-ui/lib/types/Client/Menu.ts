@@ -1,4 +1,5 @@
 import { IconType } from "react-icons";
+// import { SvgIcon, PngIcon } from 'myriad-icons';
 import { ApplicationDefinition } from "../";
 
 export type MenuTypeOptions = 'CONTEXT' | 'TASKBAR';
@@ -18,7 +19,7 @@ export type SingleMenuItem = {
     /** Text to display for menu item */
     displayName: ApplicationDefinition['displayName'];
     /** Icon as string to display - refactor to `FontAwesome` */
-    icon?: IconType | string;
+    icon?: /*SvgIcon | PngIcon |*/ IconType | string;
     /** Appear to the right or left of content - defaults to `left` */
     iconPosition?: 'RIGHT' | 'LEFT';
     /** The menu can spawn a submenu */

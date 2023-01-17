@@ -21,7 +21,7 @@ export interface BasicButtonProps extends ClickEventHandlerProps {
     /** Title to be displayed */
     title?: string;
     /** URI of the icon */
-    icon?: IconType | string;
+    icon?: /*SvgIcon | PngIcon |*/ IconType | string;
     /** positioon of the icon relative to the title */
     iconPosition?: 'TOP' | 'RIGHT' | 'BOTTOM' | 'LEFT';
     /** custom styles can be added to the base element */

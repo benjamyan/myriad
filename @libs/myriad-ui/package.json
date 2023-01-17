@@ -9,8 +9,7 @@
   "scripts": {
     "story": "start-storybook",
     "prebuild": "rm -rf ./lib && mkdir ./lib",
-    "build": "ts-node ./definitions.ts && tsc",
-    "postbuild": "bash ./assets.sh",
+    "build": "bash ./assets.sh && tsc",
     "preexport": "rm -f ../myriad-ui.tgz",
     "export": "npm run build && npm pack --pack-destination=../",
     "postexport": "cd ../ && mv myriad-ui*.tgz myriad-ui.tgz"
