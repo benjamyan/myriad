@@ -17,6 +17,10 @@ export const TaskbarActionMenu = ({ className }: TaskbarActionMenuProps)=> {
     
     const taskbarNavItems = Object.values(navigation.taskMenuItems);
 
+    React.useEffect(()=>{
+
+    }, [])
+
     return (
         <div className={ className }>
             { taskbarNavItems.map( (menuItem, index)=> (
@@ -49,7 +53,7 @@ export const TaskbarActionMenu = ({ className }: TaskbarActionMenuProps)=> {
                             key={`TaskbarActionMenu_menu_${id}_${index}`}
                             menuRef={ setNavMenuRef }
                             className={`${_taskbarMenuClassName}-menu`}
-                            menuItem={ navContextState.menuItem(id) as any }
+                            menuItem={ navContextState.menuItem(id) as SingleMenuItem }
                             positionX={ navContextState.position(id, 'menu')[0] }
                             onClick={ (menuItem)=> {
                                 if (!menuItem.subMenu) {
