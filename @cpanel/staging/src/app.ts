@@ -47,7 +47,6 @@ try {
             console.log(`Server is listening on http://${httpParams.host}:${httpParams.port}`);
         })
     } else {
-        console.log()
         throw new Error(`Invalid or missing entry for env variable "STAGING_ENV": ${ENV}`);
     }
 } catch (err) {
