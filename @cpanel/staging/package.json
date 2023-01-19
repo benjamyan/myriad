@@ -9,7 +9,7 @@
     "dev": "nodemon",
     "preprod": "npm run build",
     "prod": "STAGING_ENV=prod node ./dist/app.js",
-    "test": "STAGING_ENV=prod ts-node ./src/app.ts",
+    "test": "STAGING_ENV=dev_test nodemon",
     "start": "node ./dist/app.js"
   },
   "author": "benjamyan",

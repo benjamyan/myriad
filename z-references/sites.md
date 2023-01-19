@@ -13,6 +13,7 @@
 - https://css-tricks.com/3-approaches-to-integrate-react-with-custom-elements/
 - https://stackoverflow.com/questions/51101473/script-inside-shadow-dom-not-working
 - https://developer.mozilla.org/en-US/docs/Web/Web_Components
+- https://www.a2hosting.com/kb/cpanel/cpanel-software/create-application-with-nodejs-selector
 
 ## Icons packs
 - https://icomoon.io/#pixelified

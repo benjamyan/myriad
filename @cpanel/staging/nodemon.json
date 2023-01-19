@@ -2,5 +2,5 @@
     "watch": ["src"],
     "ext": "ts,js,json,yaml",
     "ignore": [],
-    "exec": "STAGING_ENV=prod ts-node ./src/app.ts"
+    "exec": "ts-node ./src/app.ts"
 }

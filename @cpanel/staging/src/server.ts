@@ -10,13 +10,14 @@ import express from 'express';
 import * as Yaml from 'yaml';
 
 // import * as Routes from './routes'
-import { Serve } from './types';
+import { Serve, StagingEnv } from './types';
 import { logger, authenticationMiddleware, connectionMiddleware } from './middleware';
+// import { ENV } from './app';
 
 class Server {
     public process: NodeJS.Process;
     public app;
-    public locals!: Serve.Configuration;
+    public locals!: Serve.LocalConfig;
 
     constructor() {
         this.process = process;
@@ -37,8 +38,14 @@ class Server {
                 const localConfig: Serve.Configuration = (
                     Yaml.parse(Fs.readFileSync(configFile, 'utf-8'))
                 );
-                this.locals = { ...localConfig }
-                this.app.response.locals = { ...localConfig };
+                const env = this.process.env.STAGING_ENV as StagingEnv;
+                this.locals = { 
+                    ...localConfig,
+                    staging_env: env,
+                    url: localConfig.url[env],
+                    host: localConfig.host[env]
+                };
+                this.app.response.locals = { ...this.locals };
             } else throw new Error('Failed to locate required configurations')
         } catch (err) {
             console.log(err)
@@ -47,23 +54,6 @@ class Server {
     }
 
     private setMiddleware(): void {
-        // const _self = this;
-        // this.app.use(cors(function(req, callback) {
-        //     const corsOptions: cors.CorsOptions = {
-        //         methods: [ 'OPTIONS', 'GET', 'PUT', 'HEAD' ],
-        //         optionsSuccessStatus: 200
-        //     };
-        // console.log()
-        //     if (_self.locals.allowedOrigins.includes(req.header('Origin'))) {
-        //         corsOptions.origin = true
-        //     } else {
-        //         corsOptions.origin = false
-        //     }
-        //     callback(null, corsOptions)
-        // }))
-        // this.app.use(express.static(Path.join(__dirname, '../static')));
-        // this.app.response.locals = this.locals;
-
         this.app.use(express.json());
         this.app.use(express.urlencoded());
 
@@ -71,23 +61,38 @@ class Server {
         this.app.use('*', logger.bind(this));
         
         // Validate connections before proceeding to auth
-        // this.app.use('*', connectionMiddleware.bind(this))
+        // this.app.use('*', connectionMiddleware.bind(this));
 
         // auth middleware for all connections
         this.app.use('*', authenticationMiddleware.bind(this));
     }
 
     private mountRoutes(): void {
-        this.app.use('/', (req: Serve.Request, res: Serve.Response)=>{
+        this.app.use('*', (req: Serve.Request, res: Serve.Response)=>{
+            let url: string = '';
             try {
-                if (!req.url) {
+                if (req.baseUrl === undefined) {
                     throw new Error('url param not present')
                 } else {
-                    const url = (
-                        this.process.env.STAGING_ENV === 'prod'
-                            ? req.url.replace('/' + this.locals.dir_name, '')
-                            : req.url
-                    );
+                    const _self = this;
+                    url = (function(){
+                        switch (_self.locals.staging_env) {
+                            case 'dev_test':
+                            case 'prod_test': {
+                                if (req.baseUrl.indexOf(_self.locals.url) === -1) {
+                                    res.setHeader('X-Updated-Route', 'false');
+                                    return req.baseUrl;
+                                }
+                                res.setHeader('X-Updated-Route', 'true');
+                                return req.baseUrl.replace('/' + _self.locals.url, '');
+                            }
+                            default: {
+                                return req.baseUrl;
+                            }
+                        }
+                    })();
+                    res.setHeader('X-Original-Route', '"' + req.baseUrl + '"');
+                    res.setHeader('X-Final-Route', '"' + url + '"');
                     if (url === '' || url === '/') {
                         res.sendFile(Path.resolve(__dirname, `./static/index.html`));
                     } else {
@@ -96,7 +101,8 @@ class Server {
                 }
             } catch (err) {
                 console.log(err);
-                res.sendFile(Path.resolve(__dirname, 'views/error.html'));
+                res.setHeader('X-Route-Error', '"' + url + '"');
+                res.sendFile(Path.resolve(__dirname, 'static/error.html'));
             }
         });
     }

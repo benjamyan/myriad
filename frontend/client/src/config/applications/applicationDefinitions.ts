@@ -13,7 +13,7 @@ export const userSettings: ApplicationDefinition = {
 export const aboutMe: ApplicationDefinition = {
     appId: 'about-me',
     displayName: 'About me',
-    sourceUrl: '/content/aboutme.md',
+    sourceUrl: 'content/aboutme.md',
     // sourceUrl: 'http://localhost:3000/content/aboutme.md',
     sourceType: 'MD',
     // icon: 'preview-so.png',
@@ -23,7 +23,7 @@ export const aboutMe: ApplicationDefinition = {
 export const myResume: ApplicationDefinition = {
     appId: 'my-resume',
     displayName: 'My resume',
-    sourceUrl: '/content/myresume.json',
+    sourceUrl: 'content/myresume.json',
     // sourceUrl: 'http://localhost:3000/content/myresume.json',
     sourceType: 'JSON',
     dimensions: ['40%', '90%']
@@ -33,7 +33,7 @@ export const badassMf : ApplicationDefinition = {
     displayName: 'coolguy.jpg',
     sourceType: 'MEDIA',
     // sourceContent: 'http://localhost:3000/content/honey2.jpg',
-    sourceContent: '/content/honey2.jpg',
+    sourceContent: 'content/honey2.jpg',
     renderContent: ImageViewer,
     // icon: 'preview-so.png',
     icon: png.previewSo,
@@ -51,7 +51,7 @@ export const fileExplorer: ApplicationDefinition = {
     appId: 'file-explorer',
     displayName: 'File Explorer [Read only]',
     dimensions: ['33%', '50%'],
-    sourceUrl: '/content/fileExplorer.json',
+    sourceUrl: 'content/fileExplorer.json',
     // sourceUrl: 'http://localhost:3000/content/fileExplorer.json',
     sourceType: 'JSON',
     renderContent: FileExplorerWrapper,
@@ -61,7 +61,7 @@ export const trashExplorer: ApplicationDefinition = {
     appId: 'trash-explorer',
     displayName: 'File Explorer [Read only]',
     dimensions: ['33%', '50%'],
-    sourceUrl: '/content/trashExplorer.json',
+    sourceUrl: 'content/trashExplorer.json',
     // sourceUrl: 'http://localhost:3000/content/trashExplorer.json',
     sourceType: 'JSON',
     renderContent: FileExplorerWrapper,
@@ -72,7 +72,7 @@ export const systemOverview: ApplicationDefinition = {
     displayName: 'System',
     dimensions: ['50%','33%'],
     sourceType: 'HTML',
-    sourceUrl: '/content/systemInfo.html'
+    sourceUrl: 'content/systemInfo.html'
     // sourceUrl: 'http://localhost:3000/content/systemInfo.html'
 };
 export const weatherApp: ApplicationDefinition = {
