@@ -4,7 +4,7 @@ import * as Path from 'path';
 
 import App from './server';
 
-// 'dev' | 'dev-s' | 'prod' | 'prod-s'
+// 'dev' | 'dev-s' | 'prod' | 'prod-s' 
 const ENV: string | undefined = process.env.STAGING_ENV;
 const httpParams = (function(){
     switch (ENV) {
