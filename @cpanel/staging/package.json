@@ -5,7 +5,7 @@
   "scripts": {
     "prebuild": "rm -rf ./dist",
     "build": "tsc",
-    "postbuild": "cp -r ./src/views ./dist",
+    "postbuild": "cp -r ./src/static ./dist",
     "dev": "nodemon",
     "preprod": "npm run build",
     "prod": "STAGING_ENV=prod node ./dist/app.js",

@@ -88,10 +88,10 @@ class Server {
                             ? req.url.replace('/' + this.locals.dir_name, '')
                             : req.url
                     );
-                    if (url === '') {
-                        res.sendFile(Path.resolve(__dirname, `./views/index.html`));
+                    if (url === '' || url === '/') {
+                        res.sendFile(Path.resolve(__dirname, `./static/index.html`));
                     } else {
-                        res.sendFile(Path.resolve(__dirname, `./views/${url}`));
+                        res.sendFile(Path.resolve(__dirname, `./static/${url}`));
                     }
                 }
             } catch (err) {

@@ -5,16 +5,17 @@ import * as Path from 'path';
 import App from './server';
 
 // 'dev' | 'dev-s' | 'prod' | 'prod-s' 
-const ENV: string | undefined = process.env.STAGING_ENV;
+type StagingEnv = 'dev' | 'dev-https' | 'prod' | 'prod-https' | undefined
+const ENV = process.env.STAGING_ENV as StagingEnv; 
 const httpParams = (function(){
     switch (ENV) {
         case 'dev': {
             return {
-                host: '192.168.0.11',
-                port: 88
+                host: 'localhost',
+                port: 8080
             }
         }
-        case 'dev-s': {
+        case 'dev-https': {
             return {
                 host: '192.168.0.11',
                 port: 89
@@ -33,7 +34,7 @@ const httpParams = (function(){
 })()
 
 try {
-    if (ENV === 'dev-s') {
+    if (ENV === 'dev-https') {
         Https
             .createServer({
                 key: Fs.readFileSync(Path.resolve(__dirname, '../cert/192.168.0.11-key.pem'), 'utf8'),
