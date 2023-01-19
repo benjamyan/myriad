@@ -27,12 +27,11 @@ var jsx_runtime_1 = require("react/jsx-runtime");
 var __1 = require("..");
 require("./_Menu.scss");
 var Standard = function (_a) {
-    var _b;
     var menuItem = _a.menuItem, onClick = _a.onClick, menuProps = __rest(_a, ["menuItem", "onClick"]);
     return ((0, jsx_runtime_1.jsx)("aside", __assign({ ref: !!menuProps.menuRef ? menuProps.menuRef : undefined, className: "menu__".concat(menuProps.type || 'standard', " ").concat(menuProps.className || ''), style: {
             top: menuProps.positionY || undefined,
             left: menuProps.positionX || undefined
-        } }, { children: (_b = menuItem.subMenu) === null || _b === void 0 ? void 0 : _b.map(function (subMenuItem, index) { return ((0, jsx_runtime_1.jsx)(__1.Button.Basic, { 
+        } }, { children: menuItem.subMenu && menuItem.subMenu.map(function (subMenuItem, index) { return ((0, jsx_runtime_1.jsx)(__1.Button.Basic, { 
             // dataId={subMenuItem.menuId || undefined }
             type: 'NAKED', onHover: 'HIGHLIGHT', disabled: false, icon: subMenuItem.icon || undefined, iconPosition: subMenuItem.iconPosition || undefined, title: subMenuItem.displayName, onSingleClick: function () {
                 if (onClick) {

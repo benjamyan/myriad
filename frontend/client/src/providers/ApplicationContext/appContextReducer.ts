@@ -36,6 +36,7 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
         active: [...appContextState.active],
         previous: appContextState.previous,
         values: appContextState.values,
+        bucket: appContextState.bucket,
         _targeted: appContextState._targeted
     };
     const _appId = typeof(payload) === 'string' ? payload : payload.appId;
@@ -47,7 +48,7 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
         }
         return undefined
     };
-    const setValueBucketEntry = ()=> {
+    const setValueStateEntry = ()=> {
         _state.values.current.set(_appId, {
             dimensions: [..._state.active[activeAppIndexById].dimensions],
             positions: [..._state.active[activeAppIndexById].positions],
@@ -88,7 +89,7 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                     } else {
                         _state.active.unshift( newActiveApp );
                         activeAppIndexById = getActiveAppIndexById();
-                        setValueBucketEntry()
+                        setValueStateEntry()
                     }
                 }
             };
@@ -111,7 +112,7 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                         switch (action) {
                             case 'MAXIMIZE': {
                                 if (referencedActiveApp._visibility === 'DEFAULT') {
-                                    setValueBucketEntry()
+                                    setValueStateEntry()
                                     _state.active[activeAppIndexById] = {
                                         ...referencedActiveApp,
                                         dimensions: ['100%','100%'],
@@ -129,7 +130,7 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                                 break;
                             }
                             case 'MINIMIZE': {
-                                setValueBucketEntry()
+                                setValueStateEntry()
                                 _state.active[activeAppIndexById] = {
                                     ..._state.active[activeAppIndexById],
                                     _visibility: 'MINIMIZED'
@@ -143,7 +144,7 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                                         _visibility: appValuesById?._visibility
                                     }
                                 } else {
-                                    setValueBucketEntry()
+                                    setValueStateEntry()
                                     _state.active[activeAppIndexById] = {
                                         ..._state.active[activeAppIndexById],
                                         _visibility: 'MINIMIZED'

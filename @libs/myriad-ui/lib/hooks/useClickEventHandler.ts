@@ -24,10 +24,12 @@ export const useClickEventHandler = (props: ClickEventHandlerProps)=> {
                 if (!!onDoubleClick) {
                     onDoubleClick(event);
                 }
+                eventCounterRef.current = 0;
             } else /*if (event.detail === 1 && !!onSingleClick)*/ {
                 if (!!onSingleClick) {
                     if (onDoubleClick === undefined) {
                         onSingleClick(event);
+                        eventCounterRef.current = 0;
                     } else {
                         eventTimeoutRef.current = setTimeout(function(){
                             // if (eventCounterRef.current >= 2 && !!onDoubleClick) {

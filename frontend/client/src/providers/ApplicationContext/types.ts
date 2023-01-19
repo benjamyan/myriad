@@ -1,13 +1,16 @@
 import React from "react";
-import { ActiveApplication, ApplicationDefinition, ExtractValueByPropKey } from "../../types";
+import { ActiveApplication, ApplicationDefinition } from "../../types";
 
-export type AppContextActiveValues = React.MutableRefObject<Map<ActiveApplication['appId'],  Pick<ActiveApplication, 'dimensions' | 'positions' | '_visibility'>>>;;
+export type AppContextActiveValues = React.MutableRefObject<Map<ActiveApplication['appId'],  Pick<ActiveApplication, 'dimensions' | 'positions' | '_visibility'>>>;
+export type ApplicationDataSiloEntry = string | JSON | Error;
 
 export type AppContextState = {
     active: ActiveApplication[];
     previous: React.MutableRefObject<Map<ActiveApplication['appId'],  ActiveApplication>>;
     // previous: React.MutableRefObject<Map<`${ActiveApplication['appId']}-${ActiveApplication['instanceId']}`, ActiveApplication | Pick<ActiveApplication, 'dimensions' | 'positions'>>>;
     values: AppContextActiveValues;
+
+    bucket: React.MutableRefObject<Map<ActiveApplication['appId'],  ApplicationDataSiloEntry>>;
     /** Whether the applications are the focused item in general - can be false if the user is interacting with other elements on the page like the desktop, taskbars, menus, etc. */
     _targeted: boolean;
 };
