@@ -36,6 +36,7 @@
     "@storybook/react": "^6.5.15",
     "@types/react": "^18.0.12",
     "@types/react-dom": "^18.0.5",
+    "@types/sax": "^1.2.4",
     "babel-loader": "^8.3.0",
     "css-loader": "^6.7.1",
     "eslint-plugin-react-hooks": "^4.5.0",
@@ -48,6 +49,7 @@
     "resolve-url-loader": "^5.0.0",
     "sass": "^1.52.3",
     "sass-loader": "^13.0.0",
+    "sax": "^1.2.4",
     "storybook": "^6.5.15",
     "style-loader": "^3.3.1",
     "ts-loader": "^9.3.0",
@@ -76,5 +78,7 @@
     "plugins": [
       "@babel/plugin-proposal-class-properties"
     ]
+  },
+  "dependencies": {
   }
 }
