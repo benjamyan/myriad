@@ -2,6 +2,7 @@ import { default as Sax } from 'sax'; // https://www.npmjs.com/package/sax
 import * as Fs from 'fs';
 import * as Path from 'path';
 
+// https://stackoverflow.com/questions/51312543/node-js-remove-tags-from-svg-xml
 const newFile = Path.resolve(__dirname, './src/file-image-so-copy.svg');
 let strict = true, // set to false for html-mode
 	parser = Sax.parser(strict);
@@ -54,6 +55,7 @@ SaxStream.on("error", function (e) {
 SaxStream.on("opentag", function (node) {
 	// same object as above
 	console.log("\nopentag")
+	console.log(this)
 	console.log(node)
 	if (node.name === 'STYLE') {
 		console.log(this._parser.line)
@@ -77,7 +79,7 @@ SaxStream.on("closetag", function (node) {
 		//
 	}
 })
-parser.write('<xml>Hello, <who name="world">world</who>!</xml>').close();
+// parser.write('<xml>Hello, <who name="world">world</who>!</xml>').close();
 
 // pipe is supported, and it's readable/writable
 // same chunks coming in also go out.
