@@ -11,6 +11,8 @@ node_modules
 *.sh
 **/*.sh
 **/**/*.sh
-*.yaml
 cmd.txt
 .htaccess
+*.bak
+*.tgz
+*.yaml
