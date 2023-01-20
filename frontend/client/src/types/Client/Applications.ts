@@ -66,8 +66,12 @@ export type ActiveApplication = {
     readonly appId: ApplicationDefinition['appId'];
     /** So we can have multiple instances of the same kind of applicaton at once in memeory */
     readonly instanceId: string;
-    /** position as `[ W, H ]` */
-    positions: [number , number ];
+    /** position as `[ X, Y ]` 
+     * X accepts 'right' |'middle' |  'left'
+     * Y accepts 'middle' | 'top'
+     * TODO 'bottom'
+     */
+    positions: [number | string, number | string];
     /** dimensions as `[ W, H ]` */
     dimensions: [number | string, number | string];
     /** Application is minized or not */

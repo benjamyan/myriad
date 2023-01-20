@@ -5,6 +5,7 @@ import path from 'path';
 const config: StorybookConfig = {
     framework: '@storybook/react',
     stories: [
+        '*.stories.@(js|jsx|ts|tsx)',
         '../src/*.stories.@(js|jsx|ts|tsx)',
         '../src/**/*.stories.@(js|jsx|ts|tsx)',
         '../src/**/**/*.stories.@(js|jsx|ts|tsx)'

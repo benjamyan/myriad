@@ -18,7 +18,7 @@ export const aboutMe: ApplicationDefinition = {
     sourceType: 'MD',
     // icon: 'preview-so.png',
     icon: svg.filepreviewSo,
-    dimensions: ['33%', '75%']
+    dimensions: ['50%', '80%']
 };
 export const myResume: ApplicationDefinition = {
     appId: 'my-resume',
@@ -33,12 +33,12 @@ export const badassMf : ApplicationDefinition = {
     displayName: 'coolguy.jpg',
     sourceType: 'MEDIA',
     // sourceContent: 'http://localhost:3000/content/honey2.jpg',
-    sourceContent: 'content/honey2.jpg',
+    sourceContent: 'content/coolguy.jpg',
     renderContent: ImageViewer,
     // icon: 'preview-so.png',
     // icon: png.previewSo,
     icon: svg.fileImageSo,
-    dimensions: ['50%', '40%']
+    dimensions: ['40%', '50%']
 };
 export const imageViewer: ApplicationDefinition = {
     appId: 'image-viewer',

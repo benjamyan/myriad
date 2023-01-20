@@ -2,7 +2,7 @@ import * as React from 'react';
 // import Axios from 'axios';
 import { Rnd, RndResizeCallback, RndDragCallback } from 'react-rnd' // https://github.com/bokuweb/react-rnd
 import ReactMarkdown from 'react-markdown';
-import { Loader, Action } from 'myriad-ui';
+import { Loader } from 'myriad-ui';
 
 // import { Loader, Action } from '../../components';
 import { applications } from '../../config';
@@ -172,8 +172,8 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
                 height: dimensions[1] 
             }}
             position={{ 
-                x: positions[0], 
-                y: positions[1] 
+                x: positions[0] as number, 
+                y: positions[1] as number
             }}
             style={{ zIndex: props.stackPosition }}>
                 <AppWindowMenuBar 
@@ -185,7 +185,9 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
                 />
                 <div className={ `${windowClassname}--content` }>
                     <article className={`${windowClassname}--content-article`}>
-                        <AppWindowArticleContent />
+                        <div className={`${windowClassname}--content-article__inner ${applicationItem.sourceType.toLowerCase()}`}>
+                            <AppWindowArticleContent />
+                        </div>
                     </article>
                     {/* <Action.Scrollbar 
                         direction='HORIZONTAL' 
@@ -222,6 +224,23 @@ export const ApplicationWrapper = ()=> {
             className: appWindowClassname,
             menubarClassName
         });
+
+    React.useEffect(()=>{
+        appContextDispatch({
+            type: 'SELECT',
+            payload: {
+                appId: applications.default.badassMf.appId,
+                positions: ['middle', 'middle']
+            }
+        })
+        appContextDispatch({
+            type: 'SELECT',
+            payload: {
+                appId: applications.default.aboutMe.appId,
+                positions: ['right', 25]
+            }
+        })
+    }, [])
 
     return React.useMemo(
         ()=> (

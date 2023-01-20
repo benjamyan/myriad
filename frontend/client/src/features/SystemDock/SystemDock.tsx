@@ -67,10 +67,30 @@ const SystemTrayButton = (props: { className?: string, icon?: IconType | string,
 };
 const ActiveApplicationDockButtons = ()=> {
     const { appContextState } = useApplicationContext();
+    const [ appButtons, setAppButtons ] = React.useState<ActiveApplication['appId'][]>([]);
     
+    React.useEffect(()=>{
+        /** Initial check against each length; if theyre equal do nothing */
+        if (appContextState.active.length > appButtons.length) {
+            /** More context items than buttons - find the missing items and add to state */
+            for (const appContextItem of appContextState.active) {
+                if (!appButtons.some((appId)=> appContextItem.appId === appId)) {
+                    setAppButtons([appContextItem.appId, ...appButtons ])
+                }
+            }
+        } else if (appContextState.active.length < appButtons.length) {
+            for (const appId of appButtons) {
+                if (!appContextState.active.some((appContextItem)=> appContextItem.appId === appId)) {
+                    appButtons.splice(appButtons.findIndex(id=> id === appId), 1)
+                    setAppButtons([ ...appButtons ])
+                }
+            }
+        }
+    }, [ appContextState ])
+
     return (
         <>
-            {   Object.values(appContextState.active).map(({appId}, i)=> {
+            {   appButtons.map((appId, i)=> {
                     if (systemTrayDefaultItems.findIndex((trayItem)=> trayItem.appId === appId) === -1) {
                         return (
                             <SystemTrayButton 
@@ -84,6 +104,22 @@ const ActiveApplicationDockButtons = ()=> {
             }
         </>
     )
+    // return (
+    //     <>
+    //         {   Object.values(appContextState.active).map(({appId}, i)=> {
+    //                 if (systemTrayDefaultItems.findIndex((trayItem)=> trayItem.appId === appId) === -1) {
+    //                     return (
+    //                         <SystemTrayButton 
+    //                             key={`SystemDock-trayItem-${appId}-${i}`}
+    //                             appId={appId} 
+    //                         />
+    //                     )
+    //                 }
+    //                 return null
+    //             }) 
+    //         }
+    //     </>
+    // )
 };
 
 export const SystemDock = ()=> {

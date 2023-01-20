@@ -43,7 +43,7 @@ export type AppContextReducerActions =
     {
         type: 'SELECT';
         /** ID of application as payload */
-        payload: ApplicationDefinition['appId'];
+        payload: ApplicationDefinition['appId'] | Required<Pick<ActiveApplication, 'appId'>> & Partial<Omit<ActiveApplication, 'appId'>>;
     } | {
     //     type: 'FOCUS';
     //     /** ID of application as payload */

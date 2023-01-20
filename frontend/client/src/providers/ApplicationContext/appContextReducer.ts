@@ -62,7 +62,12 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
         case 'SELECT': {
             log('SELECT');
 
-            const _payload = payload as string;
+            const _payload = (
+                typeof(payload) === 'object'
+                    ? payload.appId
+                    : payload
+            );
+
             if (activeAppIndexById !== -1) {
                 /** If the app is in the currently active context */
                 if (_state.active[activeAppIndexById]._visibility && !!appValuesById) {
@@ -81,7 +86,11 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                 } else {
                     /** App has not been opened before - make a new entry in `active` */
                     const newActiveApp = (
-                        Factory.newAppInContext(applications.appItemsById[_payload], _state.active.length)
+                        Factory.newAppInContext(
+                            applications.appItemsById[_payload], 
+                            _state.active.length,
+                            ( typeof(payload) === 'string' ? {} : payload )
+                        )
                     );
                     if (newActiveApp instanceof Error) {
                         console.error(`Factory failed for id: ${_appId}`);

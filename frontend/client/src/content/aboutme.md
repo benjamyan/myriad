@@ -1,24 +1,8 @@
-# Howdy!
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. In quis felis et nibh consequat pulvinar. In sit amet mauris nec purus consequat ornare. Donec in dictum mi, eget semper tellus. Etiam nec nulla consequat elit vestibulum aliquam. Ut et mauris vel sapien varius fermentum sit amet vel erat. Nam sit amet sodales dui. Ut sed felis tortor. Sed lectus velit, aliquet condimentum arcu ut, bibendum dictum est. Duis tincidunt dolor in elit tempor, non rutrum tellus consectetur.
+## Howdy! 
+### I'm Ben (but you knew that)
+I'm a fullstack engineer with a focus on frontend, and a penchant for creating intuituve, easy-to-use interfaces for big-data applications. My main stack consists of TypeScript, React, Node and SQL - however, I dable in whatever tickles my fancy when it gets tickled.
 
-## Who am I?
-I’m a software engineer focused on modern web technologies like React, GraphQL, and serverless computing. Occasionally, I work with deep learning (AI) technologies in Python.
+I believe with a deep-seated passion that usability and accessibility are the driving forces behind not only a products success, but the determining factors in how long it stays successful. We have all seen fantastic ideas and innovations falter because they just weren't usable to the average Joe. 
 
-My by-the-bootstraps education is the subject of a chapter on grit and resilience in the bestselling book "Mindshift" by Barbara Oakley.
-
-An angel investor once described my core soft skill in the role of founder or early team member as: "The ability to perceive exactly what needs to be done. And then to do it."
-
-My experience working in difficult environments around the world means that I can be trusted to get things done, even when things go wrong.
-
-In the past, I coined the term "Startup Cities" as co-founder of StartupCities.org and a startup spinoff, both of which focused on why startups should build cities. I now write about Startup Cities at StartupCities.com
-
-I won several awards for economic research and was published or interviewed in Virgin Entrepreneur, The Atlantic's CityLab, Foreign Policy, and in academic volumes by Routledge and Palgrave MacMillan.
-
-## Wait... what is this site?
-This is my personal portfolio, inspired by the question: "What would the opposite of the two-color template developer blog look like?"
-
-Have fun exploring!
-
-Click the Start Menu to learn more.
-
-Contact:hello @ zach.dev
+#### I built this site to solve a basic problem
+I wanted a single area that can serve up anything I needed it to. Be it pictures, small projects that need a home, or the random tangents that my mind sometimes produces. 
