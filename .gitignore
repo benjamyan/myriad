@@ -15,4 +15,10 @@ cmd.txt
 .htaccess
 *.bak
 *.tgz
+**/*.tgz
 *.yaml
+lib/
+**/lib
+**/lib/
+**/**/lib
+**/**/lib/
