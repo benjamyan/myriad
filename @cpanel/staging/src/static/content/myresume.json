@@ -1,0 +1,14 @@
+{
+    "SKILLS": {
+        "Core Stack": "Typescript, Node, React, Redux, Webpack, RESTful Integration, Storybook, HTML/CSS, SASS",
+        "Proficiencies": "SQL/MySQL, NoSQL/Mongo, GraphQL, Python, UI/UX, SSG, Gulp, Git, Figma, TDD, Jasmine"
+    },
+    "EXPERIENCE": {
+
+    },
+    "sections": [
+        {
+            "":""
+        }
+    ]
+}

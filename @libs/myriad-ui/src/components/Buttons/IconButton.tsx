@@ -22,6 +22,7 @@ export const IconButton = (props: IconButtonProps)=> {
             className={`button button__icon button__icon--${props.size === 'INHERIT' ? 'std' : props.size.toLowerCase()} ${props.className || ''}`}
             onClick={ (e)=> clickEventHandler(e) }
             onDoubleClick={ (e)=> clickEventHandler(e) }
+            onTouchEnd={ (e)=> clickEventHandler(e) }
             // onClick={(event)=>{
             //     if (event.button !== 0) return;
             //     eventTimerRef.current = event.timeStamp;

@@ -19,6 +19,10 @@
         vertical-align: top;
         font-size: 18px;
     }
+    .icon svg {
+        max-width: 25px;
+        height: auto;
+    }
     &--logo {
         width: 60px;
         height: 100%;
@@ -49,6 +53,9 @@
                 width: 100%;
                 height: $taskbarHeight;
                 text-align: left;
+                .icon svg {
+                    width: 20px;
+                }
                 &:nth-child(1),
                 &:nth-last-child(2) {
                     border-bottom: 1px solid $menu_outlineColor;
@@ -105,5 +112,11 @@
                 // height: 150px;
             }
         }
+    }
+}
+
+@media screen and (max-width:500px) {
+    .taskbar__menu {
+        
     }
 }

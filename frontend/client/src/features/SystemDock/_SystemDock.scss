@@ -36,9 +36,13 @@
     &--button {
         position: relative;
         padding: 0 20px;
-        margin-top: -10px;
+        margin-top: -15px;
         display: inline-block;
         z-index: 2;
+        .icon svg {
+            height: auto;
+            width: 55px;
+        }
         // &:not(.default) {
         //     transition-property: display, position, right, left, margin-right, opacity;
         //     // transition-duration: 0.05s;
@@ -92,7 +96,7 @@
         //     margin-right: -30px;
         //     opacity: 0.25;
         // }
-        &.trash img {
+        &.trash svg {
             width: 50px;
         }
         &.about-me {

@@ -6,7 +6,7 @@ import { svg } from 'myriad-icons'
 // import { Button, Loader } from '../../../components';
 import { navigation } from '../../../config';
 import { default as applications } from '../../../config/applications'
-import { applicationDataLoader, useNavigationContext, useNavRef } from '../../../providers';
+import { applicationDataLoader, useApplicationContext, useNavigationContext, useNavRef } from '../../../providers';
 import { WeatherApp } from '../../';
 
 import * as Time from '../utils/timeUtils';
@@ -20,11 +20,11 @@ const utilPaneClassName = 'utility__pane';
 
 const WeatherPane = ()=> {
     const { navContextState, navContextUpdate } = useNavigationContext();
+    const { appContextState, appContextDispatch } = useApplicationContext();
     const { navRef, setNavMenuRef, setNavTriggerRef } = useNavRef();
     
     const [ weatherData, setWeatherData ] = React.useState<JSON | Error>(undefined!);
     const [ panelLocation, setPanelLocation ] = React.useState<[number, number]>([0,0]);
-    // const weatherIconRef = React.useRef<HTMLButtonElement>(null!);
 
     const WeatherPaneContent = React.useCallback(
         ()=> {
@@ -40,17 +40,9 @@ const WeatherPane = ()=> {
     );
 
     React.useEffect(()=>{
-        // navContextUpdate({
-        //     type: 'SELECT',
-        //     payload: {
-        //         id: navigation.utilityMenuItems.weather.menuId,
-        //         nodes: navRef
-        //     }
-        // })
-        
         if (weatherData === undefined) {
-            
             applicationDataLoader({
+                appContextData: appContextState.bucket,
                 appId: applications.weatherApp.appId
             })
                 .then((res)=>{
@@ -83,7 +75,6 @@ const WeatherPane = ()=> {
                 className={`${utilBtnClassName} ${utilBtnClassName}--weather ${navContextState.id.includes(navigation.utilityMenuItems.weather.menuId) ? 'active' : ''}`}
                 size='INHERIT'
                 fRef={ setNavTriggerRef(navigation.utilityMenuItems.weather.menuId) as any }
-                // fRef={ weatherIconRef }
                 icon={ svg.cloudSun as unknown as string }
                 onSingleClick={ ()=> {
                     navContextUpdate({
@@ -93,6 +84,10 @@ const WeatherPane = ()=> {
                             nodes: navRef
                         }
                     })
+                    // appContextDispatch({
+                    //     type: 'SELECT',
+                    //     payload: applications.weatherApp.appId
+                    // })
                 }}
             />
             { (navContextState.id[0] === navigation.utilityMenuItems.weather.menuId && panelLocation[0] !== 0 && panelLocation[1] !== 0) &&
@@ -143,11 +138,6 @@ export const UtilityMenu = (utilProps: { className: string }) => {
         <div className={ utilProps.className }>
             <WeatherPane />
             <UtilityClock toggleConfigPane={ ()=> setConfigPane(!configPane) } />
-            {/* { configPane &&
-                <div className={`${utilPaneProps.className}-config`}>
-                    hi
-                </div>
-            } */}
         </div>
     )
 }

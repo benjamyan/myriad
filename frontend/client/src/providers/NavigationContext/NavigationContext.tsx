@@ -4,6 +4,7 @@ import { NavigationContextValue, NavigationState, NavigationActionPayload, NavSt
 import { navigationContextReducer } from './navigationReducer';
 import { useNavRef } from './hooks/useNavRef';
 import { allNavigationItems } from '../../config/navigation';
+import { navigation } from '../../config';
 
 const initialContextValue: NavigationContextValue = {
     navContextState: {
@@ -53,7 +54,7 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
     // }
     
     const navContextClickEventHandler = React.useCallback(
-        (event: React.MouseEvent | Event)=> {
+        (event: MouseEvent | TouchEvent | Event)=> {
             /** Click event handler when the menu is open or menu triggers are exposed */
             try {
                 if (window.performance.now() - currNavState.current._timestamp < 50) {
@@ -78,7 +79,7 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
                                 _menu = nodes[id].menu as Element;
                                 
                                 /// @ts-expect-error
-                                if (event.path.includes(_menu)) {
+                                if (!!event.path && event.path.includes(_menu)) {
                                     if (currNavState.current.menuItem(id)?.defereEventHandling) {
                                         return;
                                     } else {
@@ -120,6 +121,22 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
     );
 
     React.useEffect( ()=> {
+        initialContextValue.navContextState.position = (id, nodeType)=> {
+            const nodeInContext = navContextState.nodes[id]
+            if (!!nodeInContext) {
+                const _node = nodeInContext[nodeType] as HTMLElement;
+                if (!!_node) {
+                    return [
+                        _node.offsetTop,
+                        0, // calc to get right
+                        0, // calc to get bottom
+                        _node.offsetLeft
+                    ]
+                }
+            }
+            return [0,0,0,0]
+        };
+        initialContextValue.navContextState.menuItem = (id: string)=> navigation.allNavigationItems[id];
         initialContextValue.navContextUpdate = navContextUpdate;
     }, []);
     
@@ -128,6 +145,7 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
         //     document.removeEventListener('click', navContextClickEventHandler);
         // } else if (navContextState.id.length >= 1) {
             document.addEventListener('click', navContextClickEventHandler);
+            document.addEventListener('touch', navContextClickEventHandler);
         // }
         currNavState.current = navContextState;
     }, [ navContextState.id ])

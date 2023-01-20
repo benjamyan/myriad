@@ -1,6 +1,8 @@
 import { default as Fs } from 'node:fs';
 import { default as Path } from 'node:path';
 
+import { optimizeSvg } from './svg';
+
 const TS_FILE_DIR = './src';
 const TS_FILE_NAME = 'index';
 const DECLARATIONS_FILE_NAME = 'assets';
@@ -80,6 +82,10 @@ const getFileListRecursively = async (dirName: string) => {
                     })
                     .join('')
             );
+            if (tempExt === 'svg') {
+                console.log('Optimizing ' + tempName)
+                await optimizeSvg(assetList[i])
+            }
             if (typeof(tempName) === 'string') {
                 if (i > 0 && importList[tempExt] !== undefined) {
                     duplicateIndex = (

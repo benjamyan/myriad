@@ -7,7 +7,7 @@ import { Loader, Action } from 'myriad-ui';
 // import { Loader, Action } from '../../components';
 import { applications } from '../../config';
 import { ActiveApplication } from '../../types';
-import { useApplicationContext, applicationContextData, AppContextDispatch, useNavigationContext } from '../../providers';
+import { useApplicationContext, AppContextDispatch, useNavigationContext } from '../../providers';
 
 // import { shadowComponentLoader } from './utils/shadowComponentLoader';
 import { reactRndSettings } from './libs';
@@ -15,6 +15,7 @@ import { AppWindowMenuBar } from './components'
 import './_ApplicationWindow.scss';
 import { shadowComponentLoader } from './utils/shadowComponentLoader';
 import { ImageViewer } from '../ImageViewer/ImageViewer';
+import { ApplicationDataSiloEntry } from '../../providers/ApplicationContext/types';
 
 type ApplicationWindowAdditionalProps = {
     windowClassname: string;
@@ -22,6 +23,7 @@ type ApplicationWindowAdditionalProps = {
     menubarClassName: string;
     rndSettings: ReturnType<typeof reactRndSettings>;
     stackPosition: number;
+    appDataBuckerContent: ApplicationDataSiloEntry | undefined;
     appContextDispatch: AppContextDispatch;
 } 
 export type IconRef = {
@@ -150,7 +152,7 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
         } else if (_ready instanceof Error) {
             setAppState('ERR')
         } else {
-            appContent.current = applicationContextData.get(appId);
+            appContent.current = props.appDataBuckerContent;
             setAppState('COMPLETE')
         }
     }, [ _ready ])
@@ -233,6 +235,7 @@ export const ApplicationWrapper = ()=> {
                         menubarClassName={ menubarClassName }
                         rndSettings={ rndSettings }
                         stackPosition={ activeWindows.length - index }
+                        appDataBuckerContent={ appContextState.bucket.current.get(application.appId) }
                         appContextDispatch={ appContextDispatch }
                     />
                 )) }

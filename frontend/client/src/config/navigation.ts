@@ -21,7 +21,7 @@ const finderMenu: Record<string, SingleMenuItem> = {
         displayName: 'Settings',
         // icon: BsFillGearFill,
         // icon: 'config-so.svg',
-        icon: svg.configSo,
+        icon: svg.configTr,
         iconPosition: 'RIGHT'
     },
     services: {
@@ -47,7 +47,7 @@ const finderMenu: Record<string, SingleMenuItem> = {
     shutdown: {
         menuId: 'shutdown',
         displayName: 'Power off',
-        icon: FaPowerOff,
+        icon: svg.powerTr,
         iconPosition: 'RIGHT'
     }
 }
@@ -83,7 +83,7 @@ export const systemTrayItems: Record<string, SingleMenuItem> = {
     fileExplorer: {
         menuId: 'explorer',
         displayName: 'File Explorer',
-        icon: png.folderSo,
+        icon: svg.folderOpenSo,
         // icon: 'folder-so.png',
         // icon: applications.fileExplorer.icon,
         appId: applications.fileExplorer.appId
@@ -92,7 +92,7 @@ export const systemTrayItems: Record<string, SingleMenuItem> = {
         menuId: 'trash',
         displayName: 'Trash',
         // icon: 'trash-so.png',
-        icon: png.trashSo,
+        icon: svg.trashSo,
         appId: applications.trashExplorer.appId
         // icon: applications.fileExplorer.icon,
         // appId: applications.fileExplorer.appId
@@ -103,7 +103,8 @@ export const desktopItems: Record<string, SingleMenuItem> = {
     fileExplorer: {
         menuId: 'explorer',
         displayName: 'File Explorer',
-        icon: png.previewSo,
+        // icon: png.previewSo,
+        icon: svg.folderOpenSo,
         // icon: 'folder-so.png',
         // icon: applications.fileExplorer.icon,
         appId: applications.fileExplorer.appId

@@ -12,7 +12,7 @@ export const Standard = ({ menuItem, onClick, ...menuProps }: MenuDropdownProps)
             top: menuProps.positionY || undefined,
             left: menuProps.positionX || undefined  
         }}>
-            { menuItem.subMenu?.map(
+            { menuItem.subMenu && menuItem.subMenu.map(
                 (subMenuItem, index)=> (
                     <Button.Basic
                         key={`MenuStandard_btn_${index}_${menuItem.appId}`}

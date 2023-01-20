@@ -71,7 +71,7 @@ module.exports = {
                     //   return '[contenthash].[ext]';
                     },
                 }
-            },
+            }, 
             // {
             //     test: /\.svg$/,
             //     use: [

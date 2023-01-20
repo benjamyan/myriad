@@ -1,6 +1,7 @@
 
 import { NavigationReducer, NavigationActionResource, NavigationState } from "./types";
 import { navigation } from '../../config';
+import { build_navStateItemFromPayload } from "./factories";
 
 const getMenuItem = (id: string, source: string)=> {
     return navigation.allNavigationItems[id]
@@ -11,33 +12,31 @@ export const navigationContextReducer: NavigationReducer = (navContextState, nav
     const { payload } = navContextAction;
     let _state = { ...navContextState };
     
-    if (getNodePosition === null) {
-        getNodePosition = (id, nodeType)=> {
-            const nodeInContext = _state.nodes[id]
-            if (!!nodeInContext) {
-                const _node = nodeInContext[nodeType] as HTMLElement;
-                if (!!_node) {
-                    return [
-                        _node.offsetTop,
-                        0, // calc to get right
-                        0, // calc to get bottom
-                        _node.offsetLeft
-                    ]
-                }
-            }
-            return [0,0,0,0]
-        };
-    }
+    // if (getNodePosition === null) {
+    //     getNodePosition = (id, nodeType)=> {
+    //         const nodeInContext = _state.nodes[id]
+    //         if (!!nodeInContext) {
+    //             const _node = nodeInContext[nodeType] as HTMLElement;
+    //             if (!!_node) {
+    //                 return [
+    //                     _node.offsetTop,
+    //                     0, // calc to get right
+    //                     0, // calc to get bottom
+    //                     _node.offsetLeft
+    //                 ]
+    //             }
+    //         }
+    //         return [0,0,0,0]
+    //     };
+    // }
 
     switch (navContextAction.type) {
-        case 'SELECT':
-        case 'UPDATE': {
+        case 'SELECT':{
             const _payload = payload as NavigationActionResource<'SELECT'>;
 
             if (_payload.id !== undefined && _payload.nodes !== undefined) {
-
                 /** Parse the payload nodes to check against currently active navigation items 
-                 * @if the node if not present as a child, clear the context
+                 * @if the node if not present as a child, clear the context 
                  */
                 let removeCurrentStateEntry = true;
                 navigationChildElementCheck:
@@ -66,21 +65,32 @@ export const navigationContextReducer: NavigationReducer = (navContextState, nav
                     })
                 }
                 
-                _state.id = [ 
-                    ..._state.id, 
-                    _payload.id 
-                ];
-                _state.nodes[_payload.id] = _payload.nodes.current;
-                if (!!_payload.source) {
-                    _state.source[_payload.id] = _payload.source
-                } else {
-                    _state.source[_payload.id] = Object.values(_state.source)[-1]
-                }
-                _state.position = getNodePosition;
-                _state.menuItem = (id: string)=> getMenuItem(id, _state.source[id]);
-                _state._timestamp = window.performance.now();
+                _state = build_navStateItemFromPayload(_state, _payload);
+                // _state.id = [ 
+                //     ..._state.id, 
+                //     _payload.id 
+                // ];
+                // _state.nodes[_payload.id] = _payload.nodes.current;
+                // if (!!_payload.source) {
+                //     _state.source[_payload.id] = _payload.source
+                // } else {
+                //     _state.source[_payload.id] = Object.values(_state.source)[-1]
+                // }
+                // _state.position = getNodePosition;
+                // _state.menuItem = (id: string)=> getMenuItem(id, _state.source[id]);
+                // _state._timestamp = window.performance.now();
             }
             break;
+        }
+        case 'UPDATE': {
+            const _payload = payload as NavigationActionResource<'SELECT'>;
+
+            if (_payload.id !== undefined && _payload.nodes !== undefined) {
+                _state = build_navStateItemFromPayload(_state, _payload);
+            }
+
+            break;
+
         }
         case 'REMOVE': {
             const _payload = payload as NavigationActionResource<'REMOVE'>;
@@ -95,12 +105,6 @@ export const navigationContextReducer: NavigationReducer = (navContextState, nav
                 delete newState.source[_payload];
 
                 _state = {...newState};
-
-                // _state.id = _state.id.splice(
-                //     _state.id.findIndex( (_id)=> _id === _payload ), 1
-                // );
-                // delete _state.nodes[_payload]
-                // delete _state.source[_payload]
             }
 
             break;
@@ -117,6 +121,27 @@ export const navigationContextReducer: NavigationReducer = (navContextState, nav
             console.error(`Unhandled type: ${navContextAction.type}`)
         }
     }
+
+    // if (!_state.position) {
+    //     _state.position = (id, nodeType)=> {
+    //         const nodeInContext = _state.nodes[id]
+    //         if (!!nodeInContext) {
+    //             const _node = nodeInContext[nodeType] as HTMLElement;
+    //             if (!!_node) {
+    //                 return [
+    //                     _node.offsetTop,
+    //                     0, // calc to get right
+    //                     0, // calc to get bottom
+    //                     _node.offsetLeft
+    //                 ]
+    //             }
+    //         }
+    //         return [0,0,0,0]
+    //     };
+    // }
+    // if (!_state.menuItem) {
+    //     _state.menuItem = (id: string)=> navigation.allNavigationItems[id];
+    // }
     
     return _state
 }

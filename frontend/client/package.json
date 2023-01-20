@@ -6,7 +6,8 @@
   "license": "ISC",
   "main": "./src/index.tsx",
   "scripts": {
-    "webpack": "webpack",
+    "build": "webpack",
+    "postbuild": "cp -r ./src/content ./dist",
     "start": "webpack serve",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
