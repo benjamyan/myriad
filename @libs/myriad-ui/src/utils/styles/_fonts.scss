@@ -61,8 +61,8 @@
 
  :root, 
  :host {
-    --header-typeface: 'PressStart2P';
-    --body-typeface: 'RobotoMono';
+    --font-press-start: 'PressStart2P';
+    --font-roboto-mono: 'RobotoMono';
 }
 html {
     font-size: 18px;
@@ -70,45 +70,121 @@ html {
 
 
 h1, h2, h3, h4, h5 {
-    font-family: var(--header-typeface);
+    font-family: var(--font-press-start);
     font-weight: 400;
     line-height: 1.5;
+    margin: 0;
+    padding-top: 10px;
     b {
-        font-family: var(--header-typeface);
+        font-family: var(--font-press-start);
         font-weight: 900; 
     }
     span, i {
-        font-family: var(--header-typeface);
+        font-family: var(--font-press-start);
         font-weight: 400; 
+    }
+    &:first-child {
+        padding-top: 0;
+    }
+    & + p {
+        padding-top: 15px;
+    }
+}
+p {
+    & + h1, 
+    & + h2, 
+    & + h3, 
+    & + h4, 
+    & + h5 {
+        padding-top: 20px;
     }
 }
 h1 {
+    font-size: 2rem;
     letter-spacing: -.075rem;
+    line-height: 1.25;
 }
 h2 {
-    
+    font-size: 1.75rem;
+    letter-spacing: -.05rem;
+    line-height: 1.25;
 }
 h3 {
-    
+    font-size: 1.45rem;
+    letter-spacing: -.035rem;
+    line-height: 1.35; 
 }
 h4 {
-    
+    font-size: 1.25rem;
+    letter-spacing: -.025rem;
+    line-height: 1.4;
 }
 h5 {
-    // line-height: 1.5;  
+    font-size: 1.2rem;
+    font-family: var(--font-roboto-mono);
+    font-weight: 900;
+    letter-spacing: -0.015rem;
+    line-height: 1.2; 
 }
-
-
-p, span, b, i, button, ul, ol {
-    font-family: var(--body-typeface);
-    font-size: 1rem;
+h1, h2, h3, h4, h5, p, button {
+    &:only-child {
+        padding: 0;
+    }
+}
+i {
+    font-style: normal;
+}
+p, button, ul, ol {
+    font-family: var(--font-roboto-mono);
+    font-size: 0.9rem;
     font-weight: 400;
     font-style: normal;
+    margin: 0;
+    padding: 0;
+}
+// blockquote {
+//     &:not(:first-child) {
+//         padding-top: 10px;
+//     }
+// }
+p {
+    font-size: 1rem;
     letter-spacing: -0.02rem;
-    b {
+    line-height: 1.5;
+    &:not(:first-of-type) {
+        padding-top: 20px;
+    }
+    b { // Bold text
         font-weight: 900;
         letter-spacing: -0.005rem;
     }
+    // strong { // Important text
+    
+    // }
+    i { // Italic text
+        font-style: italic;
+    }
+    // em { // Emphasized text
+    
+    // }
+    // small { // Smaller text
+    
+    // }
+    // mark { // Marked text
+    
+    // }
+    // sub { // Subscript text
+    
+    // }
+    // sup { // Superscript text
+    
+    // }
+    // del { // Deleted text
+
+    // }
+    // ins { // Inserted text
+
+    // }
 }
-
-
+// Codeblocks -- todo
+// code {}

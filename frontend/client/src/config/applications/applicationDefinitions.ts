@@ -18,7 +18,7 @@ export const aboutMe: ApplicationDefinition = {
     sourceType: 'MD',
     // icon: 'preview-so.png',
     icon: svg.filepreviewSo,
-    dimensions: ['50%', '80%']
+    dimensions: ['40%', '75%']
 };
 export const myResume: ApplicationDefinition = {
     appId: 'my-resume',

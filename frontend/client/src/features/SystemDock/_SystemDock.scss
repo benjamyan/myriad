@@ -36,7 +36,7 @@
     &--button {
         position: relative;
         padding: 0 20px;
-        margin-top: -15px;
+        margin-top: -20px;
         display: inline-block;
         z-index: 2;
         .icon svg {
@@ -105,9 +105,9 @@
         .button__icon--local {
             width: 55px;
         }
-        span.open {
+        aside.open {
             position: absolute;
-            bottom: -7px;
+            bottom: -10px;
             right: 0;
             left: 0;
             margin: 0 auto;

@@ -27,6 +27,7 @@ export const ImageViewer = (props: ApplicationRenderProps<string>): JSX.Element 
     return (
         <img 
             src={ props.content as string }
+            draggable={ false }
             style={{ 
                 objectFit: 'cover',
                 width: '100%', 

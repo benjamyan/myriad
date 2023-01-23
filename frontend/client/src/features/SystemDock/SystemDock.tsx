@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { BsTrashFill } from 'react-icons/bs';
 import { HiDocument } from 'react-icons/hi';
 import { Button } from 'myriad-ui';
+// import {  } from 'myriad-icons'
 
 import { applications, navigation } from '../../config';
 import { useApplicationContext } from '../../providers';
@@ -13,21 +13,13 @@ import { IconType } from 'react-icons';
 
 type SystemDockButtonProps = {
 
-    // app: ActiveApplication | undefined;
-
     appId: ApplicationDefinition['appId'];
 
     menuIcon?: IconType | string;
 
     className?: string;
-
-    // isDefault: boolean;
-
-    // onClickHandler: (event: MouseEvent | TouchEvent, appId: Pick<ApplicationDefinition, 'appId'>)=> void;
+    
     onClickHandler: (event: MouseEvent | TouchEvent, appId: string)=> void;
-    // shouldRemove: boolean;
-    // isActive: boolean;
-    // onSelectDispatch?: ()=> void;
 }
 
 const BUTTON_CLASS = 'system__dock--button';
@@ -61,7 +53,7 @@ const SystemTrayButton = (props: { className?: string, icon?: IconType | string,
                     }
                 }}
             />
-            <span className={appIsActive ? 'open' : ''}></span>
+            <aside className={appIsActive ? 'open' : ''} />
         </div>
     )
 };

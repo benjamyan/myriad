@@ -1,8 +1,12 @@
 import { default as Sax } from 'sax'; // https://www.npmjs.com/package/sax
 import { default as Fs, promises as Fsp } from 'fs';
-import * as Path from 'path';
+import { default as Path } from 'path';
 
-export interface MyriadSaxParser extends Sax.SAXStream {
+const OUTPUT_ARG = '--output';
+const FILELIST_ARG = '--filelist';
+let outputDir: string = '';
+
+interface MyriadSaxParser extends Sax.SAXStream {
 	_myriad: {
 		start: number;
 		end: number;
@@ -10,10 +14,10 @@ export interface MyriadSaxParser extends Sax.SAXStream {
 }
 
 /** This utility solves the problem of overbloated SVG `style` tags that a website might use to insert its own assets 
- * @param file should be the absolute file path to the SVG asset you want to optimize
- * @returns true | Error based on the results of the operation. `true` if a clean resolve occurs, `Error` if.. well, an error. 
- */
-export const optimizeSvg = async function(file: Fs.PathLike): Promise<string | Error> {
+* @param file should be the absolute file path to the SVG asset you want to optimize
+* @returns true | Error based on the results of the operation. `true` if a clean resolve occurs, `Error` if.. well, an error. 
+*/
+const optimizeSvg = function(file: Fs.PathLike): Promise<string | Error> {
 	return new Promise(async (resolve, reject)=> {
 		Fs.createReadStream(file)
 			.pipe(
@@ -41,47 +45,73 @@ export const optimizeSvg = async function(file: Fs.PathLike): Promise<string | E
 				console.error(err)
 				reject(err instanceof Error ? err : new Error('Unhandled exception when optimizing SVG'))
 			})
-			.on('end', async function() {
+			.on('end', function() {
 				try {
 					if (this._myriad.start === 0 || this._myriad.end === 0) {
 						resolve(file.toString())
 						return
 					} else {
-						const fileContent = await (
-							Fsp
-								.readFile(file, { encoding:'utf8' })
-								.then((content)=>{
-									return content.substring(0, this._myriad.start - 1) + content.substring(this._myriad.end)
-								})
-								.catch((err)=> {
-									console.error(err)
-									reject(err instanceof Error ? err : new Error('Unhandled exception when optimizing SVG'))
-								})
-						);
-						if (typeof fileContent === 'string') {
-							await Fsp.rename(file, Path.resolve(`${file.toString().split('.svg')[0]}.svg.bak`));
-							await (
-								Fsp
-									.writeFile(file, fileContent)
+						Fsp
+							.readFile(file, { encoding:'utf8' })
+							.then(async (content)=>{
+								await Fsp.rename(
+										file, 
+										Path.resolve(`${file.toString().split('.svg')[0]}.svg.bak`)
+									)
+									.catch((err)=>{
+										console.error(err)
+										reject(err instanceof Error ? err : new Error('Unhandled exception when renaming file'))
+										return;
+									});
+								Fsp.writeFile(
+										file, 
+										content.substring(0, this._myriad.start - 1) + content.substring(this._myriad.end)
+									)
 									.then(()=>{
 										resolve(file.toString())
-										return
+										return;
 									})
 									.catch((err)=> {
 										console.error(err)
-										reject(err instanceof Error ? err : new Error('Unhandled exception when optimizing SVG'))
-										return
-									})
-							)
-						} else {
-							throw new Error('var fileContent is not of type string')
-						}
+										reject(err instanceof Error ? err : new Error('Unhandled exception when optimizing SVG'));
+										return;
+									});
+							})
+							.catch((err)=> {
+								console.error(err)
+								reject(err instanceof Error ? err : new Error('Unhandled exception when optimizing SVG'))
+								return;
+							});
 					}
 				} catch (err) {
 					console.error(err)
 					reject(err instanceof Error ? err : new Error('Unhandled exception when optimizing SVG'))
-					return
+					return;
 				}
-			});
+			})
 	})
-}
+};
+
+(async function() {
+	if (process.send !== undefined 
+		&& process.argv.includes(FILELIST_ARG) 
+		&& process.argv.includes(OUTPUT_ARG)
+	) {
+		process.argv.splice(0, process.argv.findIndex((arg)=>arg===FILELIST_ARG) + 1);
+		for (let i = 0; i < process.argv.length; i++) {
+			optimizeSvg(process.argv[i])
+				.then(()=>{
+					process.argv[i] === undefined;
+					if (process.argv.filter(Boolean).length === 0) {
+						process.exit();
+					}
+				})
+				.catch((err)=>{
+					console.error(err);
+					process.exit();
+				})
+		}
+	} else {
+		process.exit()	
+	}
+})()

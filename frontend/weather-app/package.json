@@ -1,27 +1,18 @@
 {
-  "name": "myriad-icons",
+  "name": "system-info",
   "version": "1.0.0",
-  "description": "Shared components for frontends",
+  "description": "",
   "author": "benjamyan",
   "license": "ISC",
-  "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
+  "main": "./src/index.tsx",
   "scripts": {
-    "story": "start-storybook",
-    "prebuild": "rm -rf ./lib && mkdir ./lib",
-    "build": "bash ./assets.sh && ts-node ./definitions.ts",
-    "postbuild": "bash ./postbuild.sh --silent && tsc --silent",
-    "preexport": "rm -f ../myriad-icons.tgz",
-    "export": "npm run build && npm pack --pack-destination=../ --silent",
-    "postexport": "rm -f ./assets.d.ts ./src/*.ts && rm -rf ./lib && cd ../ && mv myriad-icons*.tgz myriad-icons.tgz"
+    "webpack": "webpack",
+    "start": "BUILD_ENV=DEV webpack serve",
+    "build": "rm -rf ./lib && BUILD_ENV=PROD webpack build",
+    "export": "npm run build && npm pack"
   },
-  "files": [
-    "package.json",
-    "lib/*",
-    "assets.d.ts"
-  ],
   "devDependencies": {
-    "@babel/core": "^7.20.12",
+    "@babel/core": "^7.18.2",
     "@babel/plugin-proposal-class-properties": "^7.17.12",
     "@babel/preset-env": "^7.18.2",
     "@babel/preset-react": "^7.17.12",
@@ -33,24 +24,23 @@
     "@storybook/core": "^6.5.15",
     "@storybook/core-common": "^6.5.15",
     "@storybook/manager-webpack5": "^6.5.15",
-    "@storybook/react": "^6.5.15",
     "@types/react": "^18.0.12",
     "@types/react-dom": "^18.0.5",
-    "@types/sax": "^1.2.4",
-    "babel-loader": "^8.3.0",
+    "babel-loader": "^8.2.5",
     "css-loader": "^6.7.1",
+    "dotenv": "^16.0.3",
     "eslint-plugin-react-hooks": "^4.5.0",
+    "html-inline-css-webpack-plugin": "^1.11.1",
     "html-webpack-plugin": "^5.5.0",
-    "mini-css-extract-plugin": "^2.7.2",
+    "mini-css-extract-plugin": "^2.6.1",
+    "myriad-ui": "file:../../@libs/myriad-ui.tgz",
+    "myriad-icon": "file:../../@libs/myriad-icons.tgz",
     "react": "17.0.0",
+    "react-dev-utils": "^12.0.1",
     "react-dom": "17.0.0",
-    "react-icons": "^4.7.1",
-    "react-svg": "^15.1.18",
     "resolve-url-loader": "^5.0.0",
     "sass": "^1.52.3",
     "sass-loader": "^13.0.0",
-    "sax": "^1.2.4",
-    "storybook": "^6.5.15",
     "style-loader": "^3.3.1",
     "ts-loader": "^9.3.0",
     "typescript": "^4.7.3",
@@ -58,17 +48,18 @@
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.9.2"
   },
-  "peerDependencies": {
-    "react": "17.0.0",
-    "react-dom": "17.0.0",
-    "react-icons": "^4.7.1",
-    "react-svg": "^15.1.18"
-  },
   "eslintConfig": {
     "extends": [
       "plugin:react-hooks/recommended"
     ]
   },
+  "peerDependencies": {
+    "myriad-ui": "file:../../@libs/myriad-ui.tgz",
+    "myriad-icon": "file:../../@libs/myriad-icons.tgz",
+    "react": "17.0.0",
+    "react-dom": "17.0.0"
+  },
+  "proxy": "http://localhost:4000",
   "babel": {
     "presets": [
       "@babel/env",
@@ -78,7 +69,5 @@
     "plugins": [
       "@babel/plugin-proposal-class-properties"
     ]
-  },
-  "dependencies": {
   }
 }

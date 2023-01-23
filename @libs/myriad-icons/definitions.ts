@@ -1,16 +1,16 @@
 import { default as Fs } from 'node:fs';
 import { default as Path } from 'node:path';
+import { default as Child } from 'node:child_process';
+import { performance } from 'node:perf_hooks';
 
-import { optimizeSvg } from './svg';
+const TS_FILE_DIR = Path.resolve(__dirname, './src');
 
-const TS_FILE_DIR = './src';
+const ASSET_DIR = 'icons';
+const OUTPUT_DIR = Path.join(__dirname, 'lib', ASSET_DIR);
+
 const TS_FILE_NAME = 'index';
 const DECLARATIONS_FILE_NAME = 'assets';
 const INCLUDE_EXT = ['svg','png'];
-// const ASSET_DIR_LIST = [
-//     'src/assets/icons',
-//     'src/assets/images'
-// ];
 
 const getFileListRecursively = async (dirName: string) => {
     const items = await Fs.promises.readdir(dirName, { withFileTypes: true });
@@ -33,15 +33,54 @@ const getFileListRecursively = async (dirName: string) => {
     return files;
 };
 
-(async function () {
+type MyriadIconProcess = {
+    processRuntimeMs: number;
+    // svgOptimizeLengthMs: number;
+    svgOptimize: {
+        uptimeMs: number;
+        childProcess: Child.ChildProcess | undefined;
+    }
+}
+const _self: MyriadIconProcess = {
+    processRuntimeMs: performance.now(),
+    svgOptimize: {
+        uptimeMs: -1,
+        childProcess: undefined
+    }
+};
+
+(async function() {
     console.log("\nStarting...");
-    console.log("\nBuilding asset list");
+    // _self.processRuntimeMs = new Date().getMilliseconds();
     
-    const assetList = await getFileListRecursively(Path.join(__dirname, 'src/icons'));
+    const assetList = await getFileListRecursively(Path.resolve(__dirname, TS_FILE_DIR, ASSET_DIR));
     const importList: Record<string, string[]> = {};
     const exportList: Record<string, string[]> = {};
+
+    const exitGraceful = ()=> {
+        console.log('\n');
+        if (_self.svgOptimize.childProcess !== undefined) {
+            console.log('SVG Optimization TTC: ' + _self.svgOptimize.uptimeMs + 'ms');
+        }
+        console.log(`Total process TTC: ${Math.round(performance.now())}ms`);
+        process.exit(0)
+    }
     
-    console.log("\nBuilding files...")
+    if (assetList.find((file)=>file.endsWith('.svg')) !== undefined) {
+        _self.svgOptimize.childProcess = Child.fork(
+            `${__dirname}/svg.ts`,
+            [ 
+                '--output', OUTPUT_DIR,
+                '--filelist', ...assetList.filter((asset)=> asset.endsWith('.svg') && asset)
+            ]
+        );
+        _self.svgOptimize.childProcess.on('spawn', ()=> {
+            console.log('Optimizing SVG images...');
+            _self.svgOptimize.uptimeMs = Date.parse(new Date().toUTCString());
+        });
+    }
+
+    console.log("Building files...");
     /** Write the index file the new namespaces will be exported */
     await Fs.promises.writeFile(`${TS_FILE_DIR}/${TS_FILE_NAME}.ts`, '');
     /** Build the namespace file for our specific extension and append that extension to the necessary import/export lists*/
@@ -59,21 +98,20 @@ const getFileListRecursively = async (dirName: string) => {
             }\n`
         );
     }
-    
-    console.log("\nBuilding file list...")
-    let tempDir: string | undefined = null!,
-        tempName: string | undefined = null!,
-        tempExt: string | undefined = null!,
-        duplicateIndex: number = -1,
-        namespaceString: string = null!,
-        declarationString: string = null!;
+
+    /** Use the asset lists built, parse their extensions, build lists of assets to export */
+    console.log("Building file list...");
+    let assetDirectory: string | undefined = null!,
+        iconAssetName: string | undefined = null!,
+        imageExtension: string | undefined = null!;
+    parseAssetsToDefinitionsList:
     for (let i = 0; assetList.length > i; i++) {
-        tempDir = assetList[i].split(Path.resolve(__dirname, TS_FILE_DIR))[1];
-        tempExt = assetList[i].split('/').at(-1)?.split('.')[1];
-        tempName = assetList[i].split('/').at(-1)?.split('.')[0];
-        if (!!tempDir && !!tempName && !!tempExt) {
-            tempName = (
-                tempName.split('-')
+        assetDirectory = assetList[i].split(Path.resolve(__dirname, TS_FILE_DIR))[1];
+        imageExtension = assetList[i].split('/').at(-1)?.split('.')[1];
+        iconAssetName = assetList[i].split('/').at(-1)?.split('.')[0];
+        if (!!assetDirectory && !!iconAssetName && !!imageExtension) {
+            iconAssetName = (
+                iconAssetName.split('-')
                     .map((substr, i)=>{
                         if (i !== 0) {
                             return substr.charAt(0).toUpperCase() + substr.slice(1)
@@ -82,43 +120,49 @@ const getFileListRecursively = async (dirName: string) => {
                     })
                     .join('')
             );
-            if (tempExt === 'svg') {
-                console.log('Optimizing ' + tempName)
-                await optimizeSvg(assetList[i])
-            }
-            if (typeof(tempName) === 'string') {
-                if (i > 0 && importList[tempExt] !== undefined) {
-                    duplicateIndex = (
-                        importList[tempExt].findIndex((importItem)=>importItem.indexOf(` ${tempName} `) > -1)
-                    );
+            if (typeof(iconAssetName) === 'string') {
+                if (i > 0 && importList[imageExtension] !== undefined) {
+                    if (importList[imageExtension].includes(iconAssetName as string)) {
+                        console.warn(`Duplicate (omiting!): ${iconAssetName}`);
+                        continue parseAssetsToDefinitionsList;
+                    }
                 }
-                if (duplicateIndex > -1) {
-                    console.log(`Duplicate (omiting!): ${tempName}`);
-                } else {
-                    importList[tempExt].push(`import ${tempName} from '.${tempDir}';`);
-                    exportList[tempExt].push(`${tempName}`);
-                }
+                importList[imageExtension].push(`import ${iconAssetName} from '.${assetDirectory}';`);
+                exportList[imageExtension].push(`${iconAssetName}`);
             }
         }
     }
-    
-    console.log("\nAppending data to files...")
+
+    console.log("Appending data to files...");
+    let namespaceString: string = null!,
+        declarationString: string = null!;
     for await (const ext of INCLUDE_EXT) {
-        // console.log(`-- Starting ${ext}`);
         declarationString = ext.charAt(0).toUpperCase() + ext.slice(1);
         namespaceString = declarationString + 'Icon';
         await Fs.promises.writeFile(
             `${TS_FILE_DIR}/${ext}.ts`, 
             `/// <reference path="../${DECLARATIONS_FILE_NAME}.d.ts"/>\n\n${importList[ext].join('\n')}\n\ntype ${namespaceString} = { \n${exportList[ext].map((item)=> `\n${item}: typeof ${item};`).join('\n') }\n};\nconst ${declarationString.toLowerCase()}: Record<keyof ${namespaceString}, ${namespaceString}> = { ${exportList[ext].map((item)=> `\n${item}`).join(',') }};\nexport type { ${namespaceString} };\nexport { ${declarationString.toLowerCase()} };`
-            // `${importList[ext].join('\n')}\n\ntype ${namespaceString} = { \n${exportList[ext].map((item)=> `\n${item}: typeof ${item};`).join('\n') }\n};\nconst ${declarationString.toLowerCase()}: Record<keyof ${namespaceString}, ${namespaceString}> = { ${exportList[ext].map((item)=> `\n${item}`).join(',') }};\nexport type { ${namespaceString} };\nexport { ${declarationString.toLowerCase()} };`
         );
         await Fs.promises.appendFile(
             `${TS_FILE_DIR}/${TS_FILE_NAME}.ts`, 
             `export * from './${ext}';\n`
         );
-        // console.log(`-- Finished ${ext}\n`);
     }
     
+    if (_self.svgOptimize.childProcess !== undefined) {
+        _self.svgOptimize.childProcess
+            .on('error', (err)=> {
+                console.error(err);
+                _self.svgOptimize.uptimeMs = Date.parse(new Date().toUTCString()) - _self.svgOptimize.uptimeMs;
+                _self.svgOptimize.childProcess?.emit('finish');
+            })
+            .on('exit', ()=> {
+                _self.svgOptimize.uptimeMs = Date.parse(new Date().toUTCString()) - _self.svgOptimize.uptimeMs;
+                _self.svgOptimize.childProcess?.emit('finish');
+            })
+            .once('finish', exitGraceful);
+    } else {
+        exitGraceful();
+    }
     
-    console.log("\n\nDone!\n")
 })();

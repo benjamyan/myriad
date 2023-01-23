@@ -9,7 +9,6 @@
             "dom.iterable",
             "esnext"
         ],
-        // "module": "esnext",
         "module": "commonjs",
         "removeComments": false,
         "allowJs": true,
@@ -25,13 +24,10 @@
         "noEmit": false,
         "jsx": "react-jsx"
     },
-    "include": [
-        "src"
-    ],
     "exclude": [
-        "node_modules",
-        "*.stories.tsx",
-        "src/**/*.stories.tsx",
-        "src/**/**/*.stories.tsx"
+        "node_modules"
+    ],
+    "include": [
+        "src"   
     ]
 }

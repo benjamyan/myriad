@@ -1,7 +1,8 @@
 import React from 'react';
 import { ComponentMeta } from '@storybook/react';
 
-import './styles.scss'
+import './styles.scss';
+import './_Styles.stories.scss';
 // import { Button } from '..';
 
 // import config from 'assets/icons/config-so.svg';
@@ -18,7 +19,7 @@ export default {
 export const Typography = () => {
 
 	return (
-		<>
+		<div className='typography'>
 			<h1>Lorem ipsum dolor sit amet</h1>
 			<h1>Consectetur adipiscing elit, <br/>sed do eiusmod tempor</h1>
             <br/>
@@ -32,9 +33,25 @@ export const Typography = () => {
             <h4>Consectetur adipiscing elit, <br/>sed do eiusmod tempor</h4>
             <br/>
             <h5>Lorem ipsum dolor sit amet</h5>
-            <h4>Consectetur adipiscing elit, <br/>sed do eiusmod tempor</h4>
+            <h5>Consectetur adipiscing elit, <br/>sed do eiusmod tempor</h5>
             <br/>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+		</div>
+	)
+}
+export const TypeUsage = () => {
+
+	return (
+		<>
+			<h1>Lorem ipsum dolor sit amet</h1>
+            <h5>Consectetur adipiscing elit, <br/>sed do eiusmod tempor</h5>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <h4>Consectetur adipiscing elit, <br/>sed do eiusmod tempor</h4>
+            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+            <blockquote>
+                <h4>Consectetur adipiscing elit, <br/>sed do eiusmod tempor</h4>
+            </blockquote>
+            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
 		</>
 	)
 }

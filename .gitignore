@@ -14,6 +14,7 @@ node_modules
 cmd.txt
 .htaccess
 *.bak
+*.bak.*
 *.tgz
 **/*.tgz
 *.yaml
