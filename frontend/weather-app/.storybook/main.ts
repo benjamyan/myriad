@@ -1,34 +1,23 @@
-// .storybook/main.js
-
-// module.exports = {
-//     addons: ['@storybook/addon-essentials'],
-//     babel: async (options) => ({
-//         // Update your babel configuration here
-//         ...options,
-//     }),
-//     framework: '@storybook/react',
-//     stories: ['../src/**/*.stories.@(ts|tsx)'],
-//     // stories: ['../src/**/*.stories.@(js|mdx)'],
-//     webpackFinal: async (config, { configType }) => {
-//         // Make whatever fine-grained changes you need
-//         // Return the altered config
-//         return config;
-//     },
-// };
-
-
-// .storybook/main.ts
-
-// Imports the Storybook's configuration API
 import type { StorybookConfig } from '@storybook/core-common';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import path from 'path';
 
 const config: StorybookConfig = {
-    staticDirs: ['../public'],
-    stories: [
-        '../src/**/*.stories.mdx', 
-        '../src/**/*.stories.@(js|jsx|ts|tsx)'
-    ],
     framework: '@storybook/react',
+    staticDirs: [
+        '../public',
+        // '../src/assets/icons'
+        // {
+        //     from: '../src/assets/icons',
+        //     to: 'assets/icons/'
+        // }
+    ],
+    stories: [
+        '*.stories.@(js|jsx|ts|tsx)',
+        '../src/*.stories.@(js|jsx|ts|tsx)',
+        '../src/**/*.stories.@(js|jsx|ts|tsx)',
+        '../src/**/**/*.stories.@(js|jsx|ts|tsx)'
+    ],
     addons: [
         '@storybook/addon-links',
         '@storybook/addon-essentials',
@@ -51,7 +40,97 @@ const config: StorybookConfig = {
         enableCrashReports: false,
     },
     features: {
-        postcss: false,
+        postcss: true,
+    },
+    webpackFinal: async (config, { configType }) => {
+      // `configType` has a value of 'DEVELOPMENT' or 'PRODUCTION'
+      // You can change the configuration based on that.
+      // 'PRODUCTION' is used when building the static version of storybook.
+  
+      // Make whatever fine-grained changes you need
+      if (!config.module) config.module = {};
+      if (!config.module.rules) config.module.rules = [];
+      config.module?.rules?.push(
+        // {
+        //     test: /\.scss$/,
+        //     use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        //     // use: ['style-loader', 'css-loader?url=false', 'sass-loader'],
+        //     include: path.resolve(__dirname, '../'),
+        // },         
+        {
+            test: /\.scss$/,
+            use: [
+                { loader: 'style-loader' },
+                { loader: 'css-loader' },
+                // CHANGE HERE
+                {
+                    loader: 'resolve-url-loader',
+                    options: {
+                      root: '/', // considering all your images are placed in specified folder. Note: this is just a string that will get as prefix to image path
+                      includeRoot: true,
+                      absolute: true,
+                    },
+                },
+                {
+                    loader: 'sass-loader',
+                    options: {
+                        sourceMap: true,
+                        // sourceMapContents: false,
+                    },
+                },
+            ],
+        },
+
+        // {
+        //     test: /\.(jpg|jpeg|png|gif|mp3|svg)$/,
+        //     use: ["file-loader"],
+        // },  
+        // {
+        //     test: /\.(jpg|jpeg|svg|gif|png)$/,
+        //     loader: "file-loader",
+        //     options: {
+        //         // name: '[path][name].[ext]',
+        //         name(resourcePath, resourceQuery) {
+        //             console.log(resourcePath)
+        //             console.log(resourceQuery)
+        //             return `${resourcePath.split(__dirname + '/')[1]}`
+        //         //   if (process.env.NODE_ENV === 'development') {
+        //         //     return '[path][name].[ext]';
+        //         //   }
+       
+        //         //   return '[contenthash].[ext]';
+        //         },
+        //     }
+        // }, 
+        // {
+        //     test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        //     type: 'asset/resource',
+        // },
+
+        // {
+        //     test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        //     loader: "file-loader",
+        //     options: {
+        //         // name: '[path][name].[ext]',
+        //         name(resourcePath, resourceQuery) {
+        //             console.log(resourcePath)
+        //             console.log(resourceQuery)
+        //             return `${resourcePath.split(__dirname + '/')[1]}`
+        //         //   if (process.env.NODE_ENV === 'development') {
+        //         //     return '[path][name].[ext]';
+        //         //   }
+       
+        //         //   return '[contenthash].[ext]';
+        //         },
+        //     }
+        // }, 
+      );
+
+      if (!config.plugins) config.plugins = [];
+      config.plugins.push(new MiniCssExtractPlugin({ filename: '[name].css' }))
+
+      // Return the altered config
+      return config;
     },
     // refs: {
     //     'design-system': {

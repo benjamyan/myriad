@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconType } from 'react-icons/lib';
 
-import { Action } from '..';
+import { Wrapper } from '..';
 import { ClickEventHandlerProps, useClickEventHandler } from '../../hooks/useClickEventHandler';
 
 
@@ -37,7 +37,7 @@ export const IconButton = (props: IconButtonProps)=> {
             //     }
             // }}
         >
-            <Action.Icon icon={ props.icon } />
+            <Wrapper.Icon icon={ props.icon } />
             { props.textContent &&
                 React.createElement(props.textTag || 'p', null, props.textContent)
             }

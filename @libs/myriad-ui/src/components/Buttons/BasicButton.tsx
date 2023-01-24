@@ -2,7 +2,7 @@ import * as React from 'react';
 // import { SvgIcon, PngIcon } from 'myriad-icons';
 import { IconType } from 'react-icons/lib';
 // import { ReactSVG } from 'react-svg';
-import { Action } from '..';
+import { Wrapper } from '..';
 import { ClickEventHandlerProps, useClickEventHandler } from '../../hooks/useClickEventHandler';
 
 import './_buttons.scss';
@@ -86,7 +86,7 @@ export const Basic = (btnProps: BasicButtonProps) => {
             style={{ ...btnProps.customStyle }}>
                 { btnProps.title || '' }
                 { !!btnProps.icon && 
-                    <Action.Icon 
+                    <Wrapper.Icon 
                         key={`BasicButton_icon-${keyString}`}
                         icon={ btnProps.icon } 
                         iconPosition={ btnProps.iconPosition } 

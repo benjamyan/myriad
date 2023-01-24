@@ -43,7 +43,22 @@ module.exports = {
             //         "css-loader",
             //         "sass-loader"
             //     ],
-            // },            
+            // },    
+            {
+                test: /\.(jpg|jpeg|svg|gif|png)$/,
+                loader: "file-loader",
+                options: {
+                    // name: '[path][name].[ext]',
+                    name(resourcePath, resourceQuery) {
+                        return `${resourcePath.split(__dirname + '/')[1]}`
+                    //   if (process.env.NODE_ENV === 'development') {
+                    //     return '[path][name].[ext]';
+                    //   }
+           
+                    //   return '[contenthash].[ext]';
+                    },
+                }
+            },         
             {
                 test: /\.scss$/,
                 use: [
@@ -66,17 +81,32 @@ module.exports = {
                         },
                     },
                 ],
-            },
+            },    
+            // {
+            //     test: /\.(woff|woff2|eot|ttf|otf)$/i,
+            //     loader: "file-loader",
+            //     options: {
+            //         // name: '[path][name].[ext]',
+            //         name(resourcePath, resourceQuery) {
+            //             return `${resourcePath.split(__dirname + '/')[1]}`
+            //         //   if (process.env.NODE_ENV === 'development') {
+            //         //     return '[path][name].[ext]';
+            //         //   }
+           
+            //         //   return '[contenthash].[ext]';
+            //         },
+            //     }
+            // }, 
             {
-                test: /\.(jpg|jpeg|png|gif|mp3|svg)$/,
-                use: ["file-loader"],
+                test: /\.(woff|woff2|eot|ttf|otf)$/i,
+                type: 'asset/resource',
             },
         ],
     },
-    output: {
-        publicPath: "",
-        // clean: true
-    },
+    // output: {
+    //     publicPath: "",
+    //     // clean: true
+    // },
     plugins: [
         // new MiniCssExtractPlugin({
         //     filename: "[name].css",

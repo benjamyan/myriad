@@ -1,15 +1,24 @@
+import { MyriadFrontendOptions } from ".";
+
+export interface WeatherApiRequestParams {
+    latitude: number;
+    longitude: number;
+    current_weather: boolean;
+    temperature_unit: 'fahrenheit' | 'celsius';
+}
+
 export interface WeatherAppContentDefinition {
-    "latitude": number,
-    "longitude": number,
-    "generationtime_ms": number,
-    "utc_offset_seconds": 0,
-    "timezone": string,
-    "timezone_abbreviation": string,
-    "elevation": number,
-    "current_weather": {
-        "temperature": number,
-        "windspeed": number,
-        "winddirection": number,
+    latitude: number,
+    longitude: number,
+    generationtime_ms: number,
+    utc_offset_seconds: 0,
+    timezone: string,
+    timezone_abbreviation: string,
+    elevation: number,
+    current_weather: {
+        temperature: number,
+        windspeed: number,
+        winddirection: number,
         /**
          * - 0	Clear(No cloud at any level)
          * - 1	Partly cloudy(Scattered or broken)
@@ -22,7 +31,17 @@ export interface WeatherAppContentDefinition {
          * - 8	Shower(s)
          * - 9	Thunderstorm(s)
          */
-        "weathercode": number,
-        "time": Date
+        weathercode: number,
+        time: Date
     }
 }
+
+export interface WeatherAppOptionalApiRequestOptions extends Pick<MyriadFrontendOptions, 'apiParams'> {
+    longitude: number;
+    latitude: number;
+    unit?: 'F' | 'C';
+}
+
+// export interface WeatherAppProps extends Omit<MyriadFrontendOptions, 'apiParams'> {
+//     apiParams: WeatherAppOptionalApiRequestOptions;
+// }

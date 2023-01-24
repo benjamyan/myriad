@@ -18,9 +18,8 @@ import { ImageViewer } from '../ImageViewer/ImageViewer';
 import { ApplicationDataSiloEntry } from '../../providers/ApplicationContext/types';
 
 type ApplicationWindowAdditionalProps = {
-    windowClassname: string;
     windowVisibility: string;
-    menubarClassName: string;
+    // menubarClassName: string;
     rndSettings: ReturnType<typeof reactRndSettings>;
     stackPosition: number;
     appDataBuckerContent: ApplicationDataSiloEntry | undefined;
@@ -33,16 +32,19 @@ export type IconRef = {
     drag: React.RefObject<HTMLDivElement>;
 };
 
-export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAdditionalProps) => {
+// so we can have dynaic classnames
+const WINDOW_CLASSNAME = 'app__window';
+// this is being used in both rnd and an external component - keep it global
+const MENUBAR_CLASSNAME = `${WINDOW_CLASSNAME}--menubar`;
+// invoke rnd settings on component mount, pass them down on each instance
+let rndSettings: ReturnType<typeof reactRndSettings> = null!;
+
+const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAdditionalProps) => {
     const { 
         _ready,
         appId, 
         positions, 
         dimensions, 
-        windowClassname, 
-        menubarClassName, 
-        rndSettings,
-        // activeApplications,
         appContextDispatch
     } = props;
     const applicationItem = applications.appItemsById[appId];
@@ -52,7 +54,6 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
     const windowRef = React.useRef<any>(null);
     const appContent = React.useRef<Error | JSON | string>();
     const mountRef = React.useRef<any>(null);
-    // const dragRef = React.useRef<any>(null);
     const interactionRef: IconRef = {
         close: React.useRef(null),
         minimize: React.useRef(null),
@@ -110,7 +111,7 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
                             if (mountRef.current === null) {
                                 mountRef.current = shadowComponentLoader({
                                     html: new DOMParser().parseFromString(appContent.current as string, "text/html"),
-                                    className: props.windowClassname,
+                                    className: WINDOW_CLASSNAME,
                                     refHandler: mountRef.current
                                 })
                             }
@@ -123,6 +124,9 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
                             return <ImageViewer content={ appContent.current as string } options={{ windowRef }} />;
                         }
                         case 'MD': {
+                            if (!!applicationItem.renderContent) {
+                                return <>{ applicationItem.renderContent({ content: appContent.current as string }) }</>
+                            }
                             return <ReactMarkdown>{ appContent.current as string }</ReactMarkdown>
                         }
                         case 'JSON': {
@@ -147,6 +151,14 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
     );
     
     React.useEffect(()=>{
+        if (rndSettings === null) {
+            rndSettings = reactRndSettings({
+                className: WINDOW_CLASSNAME,
+                menubarClassName: MENUBAR_CLASSNAME
+            })
+        }
+    }, [])
+    React.useEffect(()=>{
         if (_ready === false) {
             setAppState('LOAD')
         } else if (_ready instanceof Error) {
@@ -162,7 +174,7 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
             { ...rndSettings }
             ref={ windowRef }
             key={`ApplicationWindow_${appId}`}
-            className={`${props.windowVisibility} ${windowClassname} ${props._visibility === 'MINIMIZED' ? 'minimized' : ''} ${props.appId}`}
+            className={`${props.windowVisibility} ${WINDOW_CLASSNAME} ${props._visibility === 'MINIMIZED' ? 'minimized' : ''} ${props.appId}`}
             bounds='parent'
             onMouseDown={onFocusEventHandler}
             onDragStop={ onDragStopEventHandler }
@@ -178,21 +190,17 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
             style={{ zIndex: props.stackPosition }}>
                 <AppWindowMenuBar 
                     appWindowId={ appId }
-                    menubarClassName={ menubarClassName }
+                    menubarClassName={ MENUBAR_CLASSNAME }
                     displayName={ applicationItem.displayName }
                     interactionRef={interactionRef}
                     windowVisiblity={ props._visibility }
                 />
-                <div className={ `${windowClassname}--content` }>
-                    <article className={`${windowClassname}--content-article`}>
-                        <div className={`${windowClassname}--content-article__inner ${applicationItem.sourceType.toLowerCase()}`}>
+                <div className={ `${WINDOW_CLASSNAME}--content` }>
+                    <article className={`${WINDOW_CLASSNAME}--content-article ${appId}`}>
+                        <div className={`article__wrapper article__wrapper--${applicationItem.sourceType.toLowerCase()}`}>
                             <AppWindowArticleContent />
                         </div>
                     </article>
-                    {/* <Action.Scrollbar 
-                        direction='HORIZONTAL' 
-                        givenClass={`${windowClassname}--scroll ${windowClassname}--scroll-x`} 
-                    /> */}
                 </div>
         </Rnd>
     )
@@ -201,10 +209,7 @@ export const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAd
 export const ApplicationWrapper = ()=> {
     const { navContextState } = useNavigationContext();
     const { appContextState, appContextDispatch } = useApplicationContext();
-
-    // so we can have dynaic classnames
-    const appWindowClassname: string = 'app__window';
-
+    
     const appWindowVisibility = React.useCallback(
         (appIndex: number)=> {
             if (navContextState.id.length > 0) {
@@ -217,13 +222,6 @@ export const ApplicationWrapper = ()=> {
         },
         [ navContextState.id ]
     );
-    // this is being used in both rnd and an external component - keep it here so it can be referenced
-    const menubarClassName: string = `${appWindowClassname}--menubar`;
-    // invoke out rnd settings on component mount, pass them down on each instance
-    const rndSettings = reactRndSettings({
-            className: appWindowClassname,
-            menubarClassName
-        });
 
     React.useEffect(()=>{
         appContextDispatch({
@@ -250,8 +248,6 @@ export const ApplicationWrapper = ()=> {
                         { ...application } 
                         key={`DesktopApplicationWindowWrapper_window_${application.appId}`}
                         windowVisibility={ appWindowVisibility(index) }
-                        windowClassname={ appWindowClassname }
-                        menubarClassName={ menubarClassName }
                         rndSettings={ rndSettings }
                         stackPosition={ activeWindows.length - index }
                         appDataBuckerContent={ appContextState.bucket.current.get(application.appId) }

@@ -45,7 +45,7 @@ export interface ApplicationRenderProps<C extends any> {
         windowRef?: React.RefObject<HTMLElement>;
     };
 }
-export type ApplicationRenderComponent = (props: ApplicationRenderProps<JSON>)=> JSX.Element;
+export type ApplicationRenderComponent = (props: ApplicationRenderProps<JSON | string>)=> JSX.Element;
 // export type ApplicationRenderComponent = ({ content, options }: { 
 //         /**
 //          * @param content is the actual content to be passed to your custom component 

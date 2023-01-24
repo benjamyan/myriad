@@ -10,7 +10,7 @@
     "story": "start-storybook",
     "prebuild": "rm -rf ./lib && mkdir ./lib",
     "build": "bash ./assets.sh && ts-node ./definitions.ts",
-    "postbuild": "bash ./postbuild.sh --silent && tsc --silent",
+    "postbuild": "bash ./postbuild.sh && tsc",
     "preexport": "rm -f ../myriad-icons.tgz",
     "export": "npm run build && npm pack --pack-destination=../ --silent",
     "postexport": "rm -f ./assets.d.ts ./src/*.ts && rm -rf ./lib && cd ../ && mv myriad-icons*.tgz myriad-icons.tgz"

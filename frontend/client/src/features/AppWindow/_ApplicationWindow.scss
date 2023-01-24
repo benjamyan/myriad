@@ -119,7 +119,22 @@
                 zoom: 0.4;
                 margin-top: 50px;
             }
-            &__inner {
+            // &__inner {
+            //     width: 100%;
+            //     height: 100%;
+            //     max-width: unset;
+            //     max-height: unset;
+            //     display: inline-block;
+            //     padding: 0;
+            //     margin: 0;
+            //     &.md,
+            //     &.json {
+            //         width: calc(100% - 50px);
+            //         height: auto;
+            //         padding: 25px;
+            //     }
+            // };
+            > .article__wrapper {
                 width: 100%;
                 height: 100%;
                 max-width: unset;
@@ -127,14 +142,12 @@
                 display: inline-block;
                 padding: 0;
                 margin: 0;
-                &.md,
-                &.json {
+                &--md {
                     width: calc(100% - 50px);
                     height: auto;
                     padding: 25px;
                 }
-            };
-
+            }
             /* Scroll track and handle */
             &::-webkit-scrollbar {
                 width: 21px;
