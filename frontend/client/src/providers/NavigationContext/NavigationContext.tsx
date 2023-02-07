@@ -55,6 +55,7 @@ const NavigationContextProvider = ({ children }: NavigationContextProvider) => {
     
     const navContextClickEventHandler = React.useCallback(
         (event: MouseEvent | TouchEvent | Event)=> {
+            // console.log('navContextClickEventHandler')
             /** Click event handler when the menu is open or menu triggers are exposed */
             try {
                 if (window.performance.now() - currNavState.current._timestamp < 50) {

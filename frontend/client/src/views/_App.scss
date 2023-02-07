@@ -11,13 +11,6 @@ html {
         margin: 0;
         padding: 0;
         overflow: hidden;
-        // pointer-events: none;
-        // #root {
-        //     pointer-events: none;
-        //     * {
-        //         pointer-events: all;
-        //     }
-        // }
         > * {
             height: 100%;
             font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
@@ -29,11 +22,7 @@ html {
             background: $focus1_light;
             background: linear-gradient(335deg, $focus2_dark 0%, $focus2_light 100%);
             z-index: 0;
-            // &.inert {
-            //     > .app_window {
-    
-            //     }
-            // }
+            overflow: hidden;
         }
     }
 }

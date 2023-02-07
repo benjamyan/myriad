@@ -1,7 +1,14 @@
 import { ActiveApplication, ApplicationDefinition } from "../../../types";
-import * as Util from './appContextUtils';
+import { applicationDefaultValues } from "../../../config/applications/applicationDefaults";
 import { Generic } from '../../../utils';
+import { calculateDomRenderValue } from "./appContextUtils";
 
+/** Factory function to build and return an applications object to be used in ApplicationContext
+ * @param app 
+ * @param contentLen
+ * @param options Optional parameters you can send along with the dispatch function to override the default `applicationDefinition`
+ * 
+ */
 export const newAppInContext = (app: ApplicationDefinition, contentLen: number, options: Partial<ActiveApplication>): ActiveApplication | Error => {
     try {
         const newApp: Partial<ActiveApplication> = {
@@ -9,30 +16,35 @@ export const newAppInContext = (app: ApplicationDefinition, contentLen: number, 
             instanceId: Generic.generateUuid(),
             _ready: false 
         };
-
+        
         if (!!options.dimensions) {
             newApp.dimensions = [
-                Util.handleDimensionConversion(options.dimensions[0], 'x'),
-                Util.handleDimensionConversion(options.dimensions[1], 'y')
+                Generic.handleDomValueConversion(options.dimensions[0], 'x'),
+                Generic.handleDomValueConversion(options.dimensions[1], 'y')
             ]
+        } else if (app.dimensions !== undefined) {
+            newApp.dimensions = calculateDomRenderValue(app.dimensions, 'dimensions');
         } else {
-            newApp.dimensions = (
-                app.dimensions !== undefined
-                    ? [
-                        Util.handleDimensionConversion(app.dimensions[0], 'x'),
-                        Util.handleDimensionConversion(app.dimensions[1], 'y')
-                    ]
-                    : [300, 300]
-            )
+            newApp.dimensions = applicationDefaultValues.dimensions.default;
         }
 
         if (!!options.positions) {
             newApp.positions = [
-                Util.handlePositionConversion(options.positions[0], 'x', newApp.dimensions[0]),
-                Util.handlePositionConversion(options.positions[1], 'y', newApp.dimensions[1])
+                Generic.handlePositionConversion(options.positions[0], 'x', newApp.dimensions[0]),
+                Generic.handlePositionConversion(options.positions[1], 'y', newApp.dimensions[1])
+            ]
+        } else if (app.positions !== undefined) {
+            const calculatedPositions = calculateDomRenderValue(app.positions, 'positions');
+            newApp.positions = [
+                Generic.handlePositionConversion(calculatedPositions[0], 'x', newApp.dimensions[0]),
+                Generic.handlePositionConversion(calculatedPositions[1], 'y', newApp.dimensions[1])
             ]
         } else {
-            newApp.positions = [25  * (contentLen + 1), 25];
+            console.log(3)
+            newApp.positions = [
+                25  * (contentLen + 1), 
+                25
+            ];
         }
 
         if (!!options._visibility) {
@@ -41,30 +53,7 @@ export const newAppInContext = (app: ApplicationDefinition, contentLen: number, 
             newApp._visibility = 'DEFAULT'
         }
 
-        return { ...newApp } as ActiveApplication
-        // return {
-        //     appId: app.appId,
-        //     instanceId: Generic.generateUuid(),
-        //     positions: (
-        //         options?.positions
-        //             ? options.positions
-        //             : [25  * (contentLen + 1), 25]
-        //     ),
-        //     dimensions: (
-        //         app.dimensions !== undefined
-        //             ? [
-        //                 Util.handleDimensionConversion(app.dimensions[0], 'x'),
-        //                 Util.handleDimensionConversion(app.dimensions[1], 'y')
-        //             ]
-        //             : [300, 300]
-        //     ),
-        //     _visibility: (
-        //         options?._visibility
-        //             ? options._visibility
-        //             : 'DEFAULT'
-        //     ),
-        //     _ready: false
-        // }
+        return { ...newApp } as ActiveApplication;
     } catch (err) {
         console.log(err)
         if (err instanceof Error) {

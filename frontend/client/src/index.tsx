@@ -6,13 +6,13 @@ import { ClientWrapper } from "./views/ClientWrapper";
 
 ReactDOM.render(
     <React.StrictMode>
-        <ClientSettingsContextProvider>
-            <ApplicationContextProvider>
-                <NavigationContextProvider>
+        <ApplicationContextProvider>
+            <NavigationContextProvider>
+                <ClientSettingsContextProvider>
                     <ClientWrapper />
-                </NavigationContextProvider>
-            </ApplicationContextProvider>
-        </ClientSettingsContextProvider>
+                </ClientSettingsContextProvider>
+            </NavigationContextProvider>
+        </ApplicationContextProvider>
     </React.StrictMode>,
     document.getElementById("root")
 );

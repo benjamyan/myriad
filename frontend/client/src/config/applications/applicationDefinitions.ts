@@ -16,9 +16,37 @@ export const aboutMe: ApplicationDefinition = {
     sourceUrl: 'content/aboutme.md',
     // sourceUrl: 'http://localhost:3000/content/aboutme.md',
     sourceType: 'MD',
-    // icon: 'preview-so.png',
     icon: svg.filepreviewSo,
-    dimensions: ['40%', '75%']
+    dimensions: {
+        default: ['40%', '80%'],
+        x1100: ['50%', 'default'],
+        x800: ['80%', 'default'],
+        x600: ['90%', '70%'],
+        x400: ['100%', '60%']
+    },
+    positions: {
+        default: ['right', 25],
+        x600: ['right', 25],
+        x400: [0, 0]
+    }
+};
+export const badassMf : ApplicationDefinition = {
+    appId: 'badassmf',
+    displayName: 'coolguy.jpg',
+    sourceType: 'MEDIA',
+    sourceContent: 'content/coolguy.jpg',
+    renderContent: ImageViewer,
+    icon: svg.fileImageSo,
+    dimensions: {
+        default: ['40%', '50%'],
+        x1100: ['75%', '50%'],
+        x800: ['90%', '50%'],
+        x600: ['100%', '50%']
+    },
+    positions: {
+        default: ['middle', 'middle'],
+        x800: ['middle', 'bottom']
+    }
 };
 export const myResume: ApplicationDefinition = {
     appId: 'my-resume',
@@ -26,19 +54,9 @@ export const myResume: ApplicationDefinition = {
     sourceUrl: 'content/myresume.json',
     // sourceUrl: 'http://localhost:3000/content/myresume.json',
     sourceType: 'JSON',
-    dimensions: ['40%', '90%']
-};
-export const badassMf : ApplicationDefinition = {
-    appId: 'badassmf',
-    displayName: 'coolguy.jpg',
-    sourceType: 'MEDIA',
-    // sourceContent: 'http://localhost:3000/content/honey2.jpg',
-    sourceContent: 'content/coolguy.jpg',
-    renderContent: ImageViewer,
-    // icon: 'preview-so.png',
-    // icon: png.previewSo,
-    icon: svg.fileImageSo,
-    dimensions: ['40%', '50%']
+    dimensions: {
+        default: ['40%', '90%']
+    }
 };
 export const imageViewer: ApplicationDefinition = {
     appId: 'image-viewer',
@@ -46,12 +64,16 @@ export const imageViewer: ApplicationDefinition = {
     // sourceUrl: 'http://localhost:3000/content/aboutme.md',
     sourceType: 'JSON',
     sourceContent: '',
-    dimensions: ['50%', '33%']
+    dimensions: {
+        default: ['50%', '33%']
+    }
 };
 export const fileExplorer: ApplicationDefinition = {
     appId: 'file-explorer',
     displayName: 'File Explorer [Read only]',
-    dimensions: ['33%', '50%'],
+    dimensions: {
+        default: ['33%', '50%']
+    },
     sourceUrl: 'content/fileExplorer.json',
     // sourceUrl: 'http://localhost:3000/content/fileExplorer.json',
     sourceType: 'JSON',
@@ -61,7 +83,9 @@ export const fileExplorer: ApplicationDefinition = {
 export const trashExplorer: ApplicationDefinition = {
     appId: 'trash-explorer',
     displayName: 'File Explorer [Read only]',
-    dimensions: ['33%', '50%'],
+    dimensions: {
+        default: ['33%', '50%']
+    },
     sourceUrl: 'content/trashExplorer.json',
     // sourceUrl: 'http://localhost:3000/content/trashExplorer.json',
     sourceType: 'JSON',
@@ -71,7 +95,9 @@ export const trashExplorer: ApplicationDefinition = {
 export const systemOverview: ApplicationDefinition = {
     appId: 'system-overview',
     displayName: 'System',
-    dimensions: ['50%','33%'],
+    dimensions: {
+        default: ['50%','33%']
+    },
     sourceType: 'HTML',
     sourceUrl: 'content/systemInfo.html'
     // sourceUrl: 'http://localhost:3000/content/systemInfo.html'
@@ -108,7 +134,9 @@ export const weatherApp: ApplicationDefinition = {
     //     }
     // },
     renderContent: WeatherApp,
-    dimensions: ['33%', '33%']
+    dimensions: {
+        default: ['33%', '33%']
+    }
 }
 
 export const blogArea: ApplicationDefinition = {

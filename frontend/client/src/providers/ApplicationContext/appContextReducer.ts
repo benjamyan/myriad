@@ -3,6 +3,8 @@ import * as Util from './utils/appContextUtils';
 import * as Factory from './utils/contextFactories';
 import { applications } from '../../config';
 import { ActiveApplication } from '../../types';
+import { Generic } from '../../utils';
+import { calculateDomRenderValue } from './utils/appContextUtils';
 
 const log = (msg: string)=> true ? undefined : console.log(msg);
 
@@ -18,10 +20,7 @@ const handleAppContextItemUpdate  = (appToUpdate: ActiveApplication, updates: Pa
             appWithUpdates[_prop] = updates[_prop] as keyof ActiveApplication;
         }
         if (updates.dimensions !== undefined) {
-            appWithUpdates.dimensions = [
-                Util.handleDimensionConversion(updates.dimensions[0], 'x'),
-                Util.handleDimensionConversion(updates.dimensions[1], 'y')
-            ];
+            appWithUpdates.dimensions = {...updates.dimensions};
         }
         if (updates._ready !== undefined) {
             appWithUpdates._ready = updates._ready;
@@ -50,14 +49,19 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
     };
     const setValueStateEntry = ()=> {
         _state.values.current.set(_appId, {
-            dimensions: [..._state.active[activeAppIndexById].dimensions],
-            positions: [..._state.active[activeAppIndexById].positions],
+            dimensions: {
+                ..._state.active[activeAppIndexById].dimensions
+            },
+            positions: {
+                ..._state.active[activeAppIndexById].positions
+            },
             _visibility: _state.active[activeAppIndexById]._visibility
         })
     };
     let activeAppIndexById = getActiveAppIndexById(),
         appValuesById = getAppValuesById();
 
+    appContextReducerType:
     switch (type) {
         case 'SELECT': {
             log('SELECT');
@@ -114,7 +118,7 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                 if (appContextReducerAction.action !== undefined) {
                     if (!appValuesById) {
                         console.error(`Failed to locate ${_appId} in value bucket`)
-                        break
+                        break;
                     };
                     for (const action of appContextReducerAction.action) {
                         log(action);
@@ -131,7 +135,8 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                                 } else {
                                     _state.active[activeAppIndexById] = {
                                         ...referencedActiveApp,
-                                        dimensions: appValuesById?.dimensions,
+                                        // @ts-expect-error
+                                        dimensions: calculateDomRenderValue(appValuesById?.dimensions, 'dimensions'),
                                         positions: appValuesById?.positions,
                                         _visibility: 'DEFAULT'
                                     }
@@ -169,6 +174,21 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                                 }
                                 break;
                             }
+                            case 'RESIZE': {
+                                if (_state.active[activeAppIndexById]._visibility === 'MAXIMIZED') {
+                                    break appContextReducerType;
+                                };
+                                const appInConfig = applications.appItemsById[_appId];
+                                // @ts-expect-error
+                                const calculatedPositions = calculateDomRenderValue(appInConfig.positions, 'positions');
+                                // @ts-expect-error
+                                _state.active[activeAppIndexById].dimensions = calculateDomRenderValue(appInConfig.dimensions, 'dimensions')
+                                _state.active[activeAppIndexById].positions = [
+                                    Generic.handlePositionConversion(calculatedPositions[0], 'x', _state.active[activeAppIndexById].dimensions[0]),
+                                    Generic.handlePositionConversion(calculatedPositions[1], 'y', _state.active[activeAppIndexById].dimensions[1])
+                                ]
+                                break;
+                            }
                             default: {
                                 console.error(`Unhandled action type of ${appContextReducerAction.action}`)
                             }
@@ -203,7 +223,7 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                 _state.previous.current.set(
                     appDefinition.appId, appDefinition
                 );
-                _state.values.current.delete(_appId);
+                // _state.values.current.delete(_appId);
                 _state.active.splice(activeAppIndex, 1);
             }
             break;

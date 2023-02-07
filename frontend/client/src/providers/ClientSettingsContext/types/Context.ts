@@ -1,5 +1,5 @@
 import { ClientSettingsContextState } from "../../../types";
 
-export {
+export type {
     ClientSettingsContextState
 }

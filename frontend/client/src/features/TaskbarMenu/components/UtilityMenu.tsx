@@ -136,7 +136,7 @@ export const UtilityMenu = (utilProps: { className: string }) => {
     
     return (
         <div className={ utilProps.className }>
-            <WeatherPane />
+            {/* <WeatherPane /> */}
             <UtilityClock toggleConfigPane={ ()=> setConfigPane(!configPane) } />
         </div>
     )

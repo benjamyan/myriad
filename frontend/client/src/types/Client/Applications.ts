@@ -3,6 +3,18 @@ import { svg,png } from 'myriad-icons';
 import { AxiosRequestConfig } from 'axios';
 import React from "react";
 
+
+export type ApplicationDomOptionsValue = number | string;// `${number}%`;
+export type ApplicationDomOptions = {
+    default: [ApplicationDomOptionsValue, ApplicationDomOptionsValue];
+    /** TODO support various key references in the value */
+    [key: `${'x' | 'y'}${number}`]: [
+        ApplicationDomOptionsValue | 'default', //keyof ApplicationDomOptions, 
+        ApplicationDomOptionsValue | 'default' //keyof ApplicationDomOptions
+    ];
+}
+export type ApplicationDomOptionTypes = 'dimensions' | 'positions';
+
 export type ApplicationDefinition = {
     /** Application ID for reference */
     readonly appId: string;
@@ -10,8 +22,24 @@ export type ApplicationDefinition = {
     readonly displayName: string;
     /** An associated icon as URL */
     readonly icon?: typeof svg | typeof png | IconType | string;
-    /** Dimensions as `[ W, H ]` */
-    dimensions?: [number | string, number | string];
+    /** 
+     * Application dimensions given as key/value pairs of `{ string: Array<number | string, number | string> }`
+     * @type `key` represents the usage of the value pair. `default` is given always, with optional properties defining media queries
+     * @type `value` is a tuple representing the `width X height`
+     * @propererty `default` the baseline dimensions to be used 
+     * @property `(width | height){number}` where `number` is the _min-width_ or _min-height_ to be used in accordance with CSS media query `min-width` standard
+     * - `width600:[500,'75%']` would render the width at 500px and the height at 75% of the viewport
+     * - `width600:['default', '75%']` will render 75% viewport height, and use the required _default_ property declared
+     * @optional Optional overrides 
+     * - TODO: this value can refer to __other__ keys here, and be applied as such. Ie if you pass the `height` value as `'default'`, the it will use the height set by the `default` value (`dimensions.default[1]`)
+     * - TODO support for `height${number}` not yet implemented
+     * */
+    dimensions?: ApplicationDomOptions;
+    /** Dimensions as `[ X, Y ]` 
+     * @see {@link ApplicationDefinition.dimensions}
+    */
+    positions?: ApplicationDomOptions;
+    // positions?: [number | string, number | string];
     /** The source URL as string for remote or local content fetch */
     readonly sourceUrl?: string;
     /** 
@@ -71,9 +99,11 @@ export type ActiveApplication = {
      * Y accepts 'middle' | 'top'
      * TODO 'bottom'
      */
-    positions: [number | string, number | string];
+    positions: [ApplicationDomOptionsValue, ApplicationDomOptionsValue];
+    // positions: ApplicationDomOptions;
     /** dimensions as `[ W, H ]` */
-    dimensions: [number | string, number | string];
+    dimensions: [ApplicationDomOptionsValue, ApplicationDomOptionsValue];
+    // dimensions: ApplicationDomOptions;
     /** Application is minized or not */
     _visibility: 'MINIMIZED' | 'DEFAULT' | 'MAXIMIZED';
     /** 

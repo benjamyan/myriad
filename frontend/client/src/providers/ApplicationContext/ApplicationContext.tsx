@@ -4,11 +4,13 @@ import { applications } from '../../config';
 
 import { updateAppContextData, applicationDataLoader } from './appContextDataSilo';
 import { appContextReducer } from './appContextReducer';
+import { useWindowSize } from '../../hooks';
 import { AppContextReturnValue } from './types';
 
 const ApplicationContext = React.createContext<AppContextReturnValue>(undefined!);
 
 const ApplicationContextProvider = ({ children }: any) => {
+    const [width, height] = useWindowSize();
     const [ appContextState, appContextDispatch] = React.useReducer(
         appContextReducer,
         {
@@ -20,6 +22,9 @@ const ApplicationContextProvider = ({ children }: any) => {
         }
     );
     const activeAppLength = React.useRef<number>(0);
+    
+    // useWindowSize()
+
 
     React.useEffect(()=>{
         if (activeAppLength.current !== appContextState.active.length) {
@@ -42,7 +47,7 @@ const ApplicationContextProvider = ({ children }: any) => {
                                 /** if it already exists in our context, we dont need to do anything, the data should automaticaally load into the component */
                                 return
                             } else if (appDefinition.sourceContent !== undefined) {
-                                console.log(appContextState.bucket)
+                                /** Local content is to be used instead of a provided source URL */
                                 appInContextData = updateAppContextData(
                                     appContextState.bucket,
                                     {
@@ -50,6 +55,7 @@ const ApplicationContextProvider = ({ children }: any) => {
                                         content: appDefinition.sourceContent
                                     }
                                 );
+                                return;
                             } else if (appDefinition.sourceUrl !== undefined && appDefinition.sourceUrl.length > 0) {
                                 const remoteContent = (
                                     await Axios(appDefinition.sourceUrl, appDefinition.sourceConfig || {})
@@ -69,7 +75,6 @@ const ApplicationContextProvider = ({ children }: any) => {
                                             content: remoteContent
                                         }
                                     );
-                                    // appInContextData = updateAppContextData(app.appId, remoteContent);
                                     return
                                 }
                                 throw new Error(`Unhandled exception fetching remote content`);
@@ -88,15 +93,13 @@ const ApplicationContextProvider = ({ children }: any) => {
                             return; 
                         } finally {                                   
                             if (appInContextData !== undefined && !(appInContextData instanceof Error)) {
-                                // setTimeout(()=>{
-                                    appContextDispatch({
-                                        type: 'UPDATE',
-                                        payload:{
-                                            appId: app.appId, 
-                                            _ready: true 
-                                        }
-                                    }); 
-                                // }, 1000);
+                                appContextDispatch({
+                                    type: 'UPDATE',
+                                    payload:{
+                                        appId: app.appId, 
+                                        _ready: true 
+                                    }
+                                });
                             } 
                         }
                     })()
@@ -104,6 +107,21 @@ const ApplicationContextProvider = ({ children }: any) => {
             }
         }
     }, [ appContextState.active ])
+
+    React.useEffect(()=>{
+        /** Automatically subscribe to width and height changes on the window 
+         * This will keep our applications position and dimensions uptodate with the DOM
+         */
+        for (const active of appContextState.active) {
+            appContextDispatch({
+                type: 'UPDATE',
+                action: ['RESIZE'],
+                payload: {
+                    appId: active.appId
+                }
+            })
+        }
+    }, [ width, height ])
 
     return (
         <ApplicationContext.Provider value={{

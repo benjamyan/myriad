@@ -17,6 +17,8 @@ export type MenuBarProps = {
     interactionRef: IconRef;
 
     windowVisiblity: ActiveApplication['_visibility'];
+
+    dragEventHandler: any;
 }
 
 export const AppWindowMenuBar = (props: MenuBarProps) => {
@@ -24,9 +26,9 @@ export const AppWindowMenuBar = (props: MenuBarProps) => {
     const { menubarClassName, interactionRef } = props;
 
     const onMenuBarIconClickHandler = (event: React.MouseEvent | React.TouchEvent, action: 'CLOSE' | 'MINIMIZE' | 'MAXIMIZE')=> {
-        event.stopPropagation();
-        event.nativeEvent.stopImmediatePropagation();
-
+        // event.stopPropagation();
+        // event.nativeEvent.stopImmediatePropagation();
+// console.log('das')
         // @ts-expect-error
         if (event.button !== 0) return;
         switch (action) {
@@ -95,7 +97,25 @@ export const AppWindowMenuBar = (props: MenuBarProps) => {
                     -
                 </i>
             </div>
-            <div ref={interactionRef.drag} className={`${menubarClassName}-bg`} />
+            <div 
+                ref={interactionRef.drag} 
+                className={`${menubarClassName}-bg`} 
+                onMouseMove={
+                    function() {
+                        console.log('onMouseMove')
+                    }
+                }
+                onDrag={
+                    function() {
+                        console.log('onMouseMove')
+                    }
+                }
+                onDragCapture={
+                    function() {
+                        console.log('onMouseMove')
+                    }
+                }
+            />
         </nav>
     )
 }

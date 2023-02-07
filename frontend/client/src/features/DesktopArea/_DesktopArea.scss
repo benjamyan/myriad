@@ -27,10 +27,12 @@
     .desktop {
         display: flex;
         flex-direction: column;
+        margin-top: 20px;
         &__icon {    
-            max-width: calc(33% - 30px);
+            width: calc(33% - 30px);
+            height: 100px;
             padding: 0;
-            margin: 15px;
+            margin: 0 15px;
             text-align: center;
             img, svg {
                 width: 40px;
@@ -38,6 +40,9 @@
             h5, p {
                 line-height: 1.1;
                 margin: 10px 0 0;
+            }
+            &:not(:first-child) {
+                margin-top: 5px;
             }
         }
     }

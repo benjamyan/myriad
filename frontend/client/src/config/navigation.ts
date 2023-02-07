@@ -66,12 +66,18 @@ export const taskMenuItems: Record<string, SingleMenuItem> = {
 }
 
 export const utilityMenuItems: Record<string, SingleMenuItem> = {
-    weather: {
-        menuId: 'weather',
-        appId: applications.weatherApp.appId,
-        displayName: 'Weather',
-        defereEventHandling: true
-    },
+    // weather: {
+    //     menuId: 'weather',
+    //     appId: applications.weatherApp.appId,
+    //     displayName: 'Weather',
+    //     defereEventHandling: true
+    // },
+
+    // github: {
+    //     menuId: 'github-link',
+    //     displayName: 'github'
+    // },
+    
     clock: {
         menuId: 'clock',
         displayName: 'Clock',

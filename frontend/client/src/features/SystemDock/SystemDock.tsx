@@ -36,7 +36,8 @@ const SystemTrayButton = (props: { className?: string, icon?: IconType | string,
             <Button.IconButton 
                 size='INHERIT' 
                 icon={ props.icon || applications.appItemsById[props.appId].icon || HiDocument }
-                onSingleClick={()=>{
+                onSingleClick={(event)=>{
+                    if (event.type !== 'click') return;
                     if (!appIsActive) {
                         appContextDispatch({
                             type: 'SELECT',

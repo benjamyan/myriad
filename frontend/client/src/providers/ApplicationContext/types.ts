@@ -5,11 +5,14 @@ export type AppContextActiveValues = React.MutableRefObject<Map<ActiveApplicatio
 export type ApplicationDataSiloEntry = string | JSON | Error;
 
 export type AppContextState = {
+    /** Bucket for currently active applications */
     active: ActiveApplication[];
+    /** A ref object housing previously used applications */
     previous: React.MutableRefObject<Map<ActiveApplication['appId'],  ActiveApplication>>;
     // previous: React.MutableRefObject<Map<`${ActiveApplication['appId']}-${ActiveApplication['instanceId']}`, ActiveApplication | Pick<ActiveApplication, 'dimensions' | 'positions'>>>;
+    /** A ref object holding the previous dimensions/position/visibility attributes of an application */
     values: AppContextActiveValues;
-
+    /** A ref object for the data to be used in a specific application  */
     bucket: React.MutableRefObject<Map<ActiveApplication['appId'],  ApplicationDataSiloEntry>>;
     /** Whether the applications are the focused item in general - can be false if the user is interacting with other elements on the page like the desktop, taskbars, menus, etc. */
     _targeted: boolean;
@@ -32,7 +35,7 @@ export type AppContextState = {
  * - `MAXIMIZE` will set the `_visibility` to 'MAXIMIZE', and update the `dimensions` and `positions` values so that the window covers the entire screen
  * - `TOGGLE` will get the last `_visibility` property from the value bucket and set the desired apps `_visibility` prop as such
  */
-type AppContextReducerUpdateActions = 'FOCUS' | 'MINIMIZE' | 'TOGGLE' |  'MAXIMIZE';
+type AppContextReducerUpdateActions = 'FOCUS' | 'MINIMIZE' | 'TOGGLE' |  'MAXIMIZE' | 'RESIZE';
 // type ExpectedUpdatePayload<A extends AppContextReducerUpdateActions | void = void> = (
 //     A extends void 
 //         ? Required<Pick<ActiveApplication, 'appId'>> & Partial<Omit<ActiveApplication, 'appId'>>
@@ -45,19 +48,10 @@ export type AppContextReducerActions =
         /** ID of application as payload */
         payload: ApplicationDefinition['appId'] | Required<Pick<ActiveApplication, 'appId'>> & Partial<Omit<ActiveApplication, 'appId'>>;
     } | {
-    //     type: 'FOCUS';
-    //     /** ID of application as payload */
-    //     payload: ApplicationDefinition['appId'];
-    // } | {
         type: 'UPDATE';
         /** An optional, preconfigured set of actions that can be performed  */
         action?: AppContextReducerUpdateActions[];
         /** Object containinig changes */
-        // payload: (
-        //     typeof action extends void 
-        //         ? Required<Pick<ActiveApplication, 'appId'>> & Partial<Omit<ActiveApplication, 'appId'>>
-        //         : ApplicationDefinition['appId']
-        // )
         payload: Required<Pick<ActiveApplication, 'appId'>> & Partial<Omit<ActiveApplication, 'appId'>>;
     } | {
         type: 'REMOVE';
