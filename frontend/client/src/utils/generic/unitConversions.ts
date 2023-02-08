@@ -1,10 +1,12 @@
+// import { ApplicationDomPositionXOptionsValueElement, ApplicationDomPositionYOptionsValueElement } from "../../types";
+
 export const handleDomValueConversion = (value: string | number, axis: 'x' | 'y'): number => {
     if (typeof(value) === 'string' && value.indexOf('%') > -1) {
         const percentage: number = parseInt(value.substring(0, value.length - 1));
         if (axis === 'x') {
-            return ( window.innerWidth *  percentage) / 100
+            return Math.round(( window.innerWidth *  percentage) / 100)
         } else {
-            return ( window.innerHeight * percentage ) / 100
+            return Math.round(( window.innerHeight * percentage ) / 100)
         }
     } else {
         return value as number
@@ -13,7 +15,8 @@ export const handleDomValueConversion = (value: string | number, axis: 'x' | 'y'
 
 export const handlePositionConversion = (value: string | number, axis: 'x' | 'y', dimension: string | number): number => {
     switch (value) {
-        case 'top': {
+        case 'top':
+        case 'left': {
             
             return 0
         }
@@ -30,21 +33,9 @@ export const handlePositionConversion = (value: string | number, axis: 'x' | 'y'
         case 'right': {
             return window.innerWidth - handleDomValueConversion(dimension, axis)
         }
-        case 'left': {
-            return 0
-        }
         default: {
-            return value as number
-            // if (typeof(value) === 'string') {
-            //     const percentage: number = parseInt(value.substring(0, value.length - 1));
-            //     if (axis === 'x') {
-            //         return ( window.innerWidth *  percentage) / 100
-            //     } else {
-            //         return ( window.innerHeight * percentage ) / 100
-            //     }
-            // } else {
-            //    return value as number
-            // }
+            return handleDomValueConversion(value, axis)
+            // return value as number
         }
     }
 }

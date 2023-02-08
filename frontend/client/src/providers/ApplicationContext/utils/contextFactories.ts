@@ -1,5 +1,5 @@
-import { ActiveApplication, ApplicationDefinition } from "../../../types";
-import { applicationDefaultValues } from "../../../config/applications/applicationDefaults";
+import { ActiveApplication, ApplicationDefinition, ApplicationDomOptions, ApplicationDomOptionsValue } from "../../../types";
+import { applications } from "../../../config";
 import { Generic } from '../../../utils';
 import { calculateDomRenderValue } from "./appContextUtils";
 
@@ -14,31 +14,31 @@ export const newAppInContext = (app: ApplicationDefinition, contentLen: number, 
         const newApp: Partial<ActiveApplication> = {
             appId: app.appId,
             instanceId: Generic.generateUuid(),
-            _ready: false 
+            _ready: false,
+            _controlled: false
         };
-        
-        if (!!options.dimensions) {
-            newApp.dimensions = [
-                Generic.handleDomValueConversion(options.dimensions[0], 'x'),
-                Generic.handleDomValueConversion(options.dimensions[1], 'y')
-            ]
-        } else if (app.dimensions !== undefined) {
-            newApp.dimensions = calculateDomRenderValue(app.dimensions, 'dimensions');
-        } else {
-            newApp.dimensions = applicationDefaultValues.dimensions.default;
+        const predefinedValues: Pick<ApplicationDefinition, 'dimensions' | 'positions'> = {
+            dimensions: (
+                app.dimensions || applications.applicationDefaultValues.dimensions
+            ),
+            positions: (
+                app.positions || applications.applicationDefaultValues.positions
+            )
         }
 
-        if (!!options.positions) {
-            newApp.positions = [
-                Generic.handlePositionConversion(options.positions[0], 'x', newApp.dimensions[0]),
-                Generic.handlePositionConversion(options.positions[1], 'y', newApp.dimensions[1])
-            ]
-        } else if (app.positions !== undefined) {
-            const calculatedPositions = calculateDomRenderValue(app.positions, 'positions');
-            newApp.positions = [
-                Generic.handlePositionConversion(calculatedPositions[0], 'x', newApp.dimensions[0]),
-                Generic.handlePositionConversion(calculatedPositions[1], 'y', newApp.dimensions[1])
-            ]
+        newApp.dimensions = calculateDomRenderValue({
+            valueOptions: predefinedValues.dimensions as ApplicationDomOptions,
+            additionalValue: options.dimensions !== undefined ? options.dimensions : null, 
+            geometricType: 'dimensions'
+        });
+        
+        if (app.positions !== undefined) {
+            newApp.positions = calculateDomRenderValue({
+                valueOptions: predefinedValues.positions as ApplicationDomOptions, 
+                geometricType: 'positions', 
+                additionalValue: options.positions !== undefined ? options.positions : null,
+                applicationDimensions: newApp.dimensions
+            });
         } else {
             console.log(3)
             newApp.positions = [

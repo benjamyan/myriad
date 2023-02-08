@@ -2,25 +2,25 @@ import { AppContextState, AppContextReducerActions } from './types';
 import * as Util from './utils/appContextUtils';
 import * as Factory from './utils/contextFactories';
 import { applications } from '../../config';
-import { ActiveApplication } from '../../types';
-import { Generic } from '../../utils';
+import { ActiveApplication, ApplicationDomOptions, ApplicationDomValueCalculated } from '../../types';
 import { calculateDomRenderValue } from './utils/appContextUtils';
 
-const log = (msg: string)=> true ? undefined : console.log(msg);
-
-// let getActiveAppIndexById: number = null!,
-//     getAppValuesById: Pick<AppContextActiveValues['current'], keyof AppContextActiveValues['current']> | false = null!
+const dontLog = true;
+const log = (msg: string)=> dontLog ? undefined : console.log(msg);
 
 const handleAppContextItemUpdate  = (appToUpdate: ActiveApplication, updates: Partial<ActiveApplication>)=> {
     const appWithUpdates: ActiveApplication = {...appToUpdate};
     for (const _prop in updates) {
-        if (_prop !== 'appId') {
+        if (_prop !== 'appId' && _prop !== 'instanceId') {
             // Object.defineProperty(appWithUpdates, _prop, updates[_prop] as keyof ActiveApplication);
             // @ts-expect-error
-            appWithUpdates[_prop] = updates[_prop] as keyof ActiveApplication;
+            appWithUpdates[_prop as keyof ActiveApplication] = updates[_prop as keyof ActiveApplication];
         }
         if (updates.dimensions !== undefined) {
-            appWithUpdates.dimensions = {...updates.dimensions};
+            appWithUpdates.dimensions = [...updates.dimensions] as ApplicationDomValueCalculated;
+        }
+        if (updates.dimensions !== undefined || updates.positions !== undefined) {
+            appWithUpdates._controlled = true;
         }
         if (updates._ready !== undefined) {
             appWithUpdates._ready = updates._ready;
@@ -49,13 +49,10 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
     };
     const setValueStateEntry = ()=> {
         _state.values.current.set(_appId, {
-            dimensions: {
-                ..._state.active[activeAppIndexById].dimensions
-            },
-            positions: {
-                ..._state.active[activeAppIndexById].positions
-            },
-            _visibility: _state.active[activeAppIndexById]._visibility
+            dimensions: [ ..._state.active[activeAppIndexById].dimensions ] as ApplicationDomValueCalculated,
+            positions: [ ..._state.active[activeAppIndexById].positions ] as ApplicationDomValueCalculated,
+            _visibility: _state.active[activeAppIndexById]._visibility,
+            _controlled: _state.active[activeAppIndexById]._controlled
         })
     };
     let activeAppIndexById = getActiveAppIndexById(),
@@ -121,7 +118,7 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                         break;
                     };
                     for (const action of appContextReducerAction.action) {
-                        log(action);
+                        log(`- ${action}`);
                         switch (action) {
                             case 'MAXIMIZE': {
                                 if (referencedActiveApp._visibility === 'DEFAULT') {
@@ -129,17 +126,31 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                                     _state.active[activeAppIndexById] = {
                                         ...referencedActiveApp,
                                         dimensions: ['100%','100%'],
+                                        // dimensions: [
+                                        //     Generic.handleDomValueConversion('100%', 'x'),
+                                        //     Generic.handleDomValueConversion('100%', 'y')
+                                        // ],
                                         positions: [0,0],
                                         _visibility: 'MAXIMIZED'
                                     }
                                 } else {
                                     _state.active[activeAppIndexById] = {
                                         ...referencedActiveApp,
-                                        // @ts-expect-error
-                                        dimensions: calculateDomRenderValue(appValuesById?.dimensions, 'dimensions'),
-                                        positions: appValuesById?.positions,
+                                        dimensions: calculateDomRenderValue({
+                                            valueOptions: applications.appItemsById[_appId].dimensions as ApplicationDomOptions, 
+                                            geometricType: 'dimensions', 
+                                            additionalValue: appValuesById?.dimensions
+                                        }),
                                         _visibility: 'DEFAULT'
                                     }
+                                    _state.active[activeAppIndexById].positions = (
+                                        calculateDomRenderValue({
+                                            valueOptions: applications.appItemsById[_appId].positions as ApplicationDomOptions, 
+                                            geometricType: 'positions', 
+                                            additionalValue: appValuesById?.positions, 
+                                            applicationDimensions: _state.active[activeAppIndexById].dimensions
+                                        })
+                                    )
                                 }
                                 break;
                             }
@@ -179,14 +190,24 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                                     break appContextReducerType;
                                 };
                                 const appInConfig = applications.appItemsById[_appId];
-                                // @ts-expect-error
-                                const calculatedPositions = calculateDomRenderValue(appInConfig.positions, 'positions');
-                                // @ts-expect-error
-                                _state.active[activeAppIndexById].dimensions = calculateDomRenderValue(appInConfig.dimensions, 'dimensions')
-                                _state.active[activeAppIndexById].positions = [
-                                    Generic.handlePositionConversion(calculatedPositions[0], 'x', _state.active[activeAppIndexById].dimensions[0]),
-                                    Generic.handlePositionConversion(calculatedPositions[1], 'y', _state.active[activeAppIndexById].dimensions[1])
-                                ]
+                                
+                                _state.active[activeAppIndexById].dimensions = calculateDomRenderValue({
+                                    valueOptions: appInConfig.dimensions as ApplicationDomOptions, 
+                                    geometricType: 'dimensions', 
+                                    additionalValue: null, // _state.active[activeAppIndexById].dimensions 
+                                    // additionalValue: _state.active[activeAppIndexById]._controlled ? _state.active[activeAppIndexById].dimensions : null
+                                });
+                                _state.active[activeAppIndexById].positions = calculateDomRenderValue({
+                                    valueOptions: appInConfig.positions as ApplicationDomOptions, 
+                                    additionalValue: null, // _state.active[activeAppIndexById].positions,
+                                    // additionalValue: _state.active[activeAppIndexById]._controlled ? _state.active[activeAppIndexById].positions : null,
+                                    geometricType: 'positions',
+                                    applicationDimensions: _state.active[activeAppIndexById].dimensions
+                                })
+
+                                // if (!add1.every((value, i)=> value === _state.active[activeAppIndexById].dimensions[i])) {
+                                //     _state.active[activeAppIndexById].dimensions = add1;
+                                // }
                                 break;
                             }
                             default: {

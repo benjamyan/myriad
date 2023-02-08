@@ -10,7 +10,6 @@ import { AppContextReturnValue } from './types';
 const ApplicationContext = React.createContext<AppContextReturnValue>(undefined!);
 
 const ApplicationContextProvider = ({ children }: any) => {
-    const [width, height] = useWindowSize();
     const [ appContextState, appContextDispatch] = React.useReducer(
         appContextReducer,
         {
@@ -21,11 +20,9 @@ const ApplicationContextProvider = ({ children }: any) => {
             _targeted: true
         }
     );
+    const [ width, height ] = useWindowSize();
     const activeAppLength = React.useRef<number>(0);
     
-    // useWindowSize()
-
-
     React.useEffect(()=>{
         if (activeAppLength.current !== appContextState.active.length) {
             /** Change out ref to active contexts len here so we can handle changes quickly */
@@ -108,9 +105,9 @@ const ApplicationContextProvider = ({ children }: any) => {
         }
     }, [ appContextState.active ])
 
-    React.useEffect(()=>{
+    React.useLayoutEffect(()=>{
         /** Automatically subscribe to width and height changes on the window 
-         * This will keep our applications position and dimensions uptodate with the DOM
+         * This will keep our applications position and dimensions up to date with the DOM
          */
         for (const active of appContextState.active) {
             appContextDispatch({

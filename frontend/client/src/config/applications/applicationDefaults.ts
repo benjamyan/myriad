@@ -1,9 +1,9 @@
-import { ApplicationDomOptions } from "../../types"
+import { ApplicationDomOptions, ApplicationDomPositionOptions } from "../../types"
 
 const defaultApplicationDimensions: ApplicationDomOptions = {
     default: [ 300, 300 ]
 }
-const defaultApplicationPositions: ApplicationDomOptions = {
+const defaultApplicationPositions: ApplicationDomPositionOptions = {
     default: [25, 25]
 }
 

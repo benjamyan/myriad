@@ -136,7 +136,20 @@ export const UtilityMenu = (utilProps: { className: string }) => {
     
     return (
         <div className={ utilProps.className }>
-            {/* <WeatherPane /> */}
+            { Object.values(navigation.utilityMenuItems).map( (item)=> (
+                    <Button.IconButton 
+                        key={`UtilityMenu-${item.menuId}`}
+                        className={`${utilBtnClassName} ${utilBtnClassName}--${item.menuId} `}
+                        size='INHERIT'
+                        icon={ item.icon as unknown as string }
+                        onSingleClick={ ()=> {
+                            if (!!item.onClick) {
+                                item.onClick();
+                            }
+                        }}
+                    />
+                ))
+            }
             <UtilityClock toggleConfigPane={ ()=> setConfigPane(!configPane) } />
         </div>
     )

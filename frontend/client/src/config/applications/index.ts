@@ -1,5 +1,5 @@
 import { ApplicationDefinition } from '../../types';
-
+import { applicationDefaultValues } from './applicationDefaults'
 import * as appItems from './applicationDefinitions';
 
 type AppsById = {
@@ -35,5 +35,6 @@ const applications = appItems;
 
 export default appItems;
 export {
-    appItemsById
+    appItemsById,
+    applicationDefaultValues
 }

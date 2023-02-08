@@ -1,7 +1,7 @@
 import React from "react";
 import { ActiveApplication, ApplicationDefinition } from "../../types";
 
-export type AppContextActiveValues = React.MutableRefObject<Map<ActiveApplication['appId'],  Pick<ActiveApplication, 'dimensions' | 'positions' | '_visibility'>>>;
+export type AppContextActiveValues = React.MutableRefObject<Map<ActiveApplication['appId'],  Pick<ActiveApplication, 'dimensions' | 'positions' | '_visibility' | '_controlled'>>>;
 export type ApplicationDataSiloEntry = string | JSON | Error;
 
 export type AppContextState = {

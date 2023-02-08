@@ -3,13 +3,17 @@ import { applications } from "../../config";
 import { ApplicationDefinition } from "../../types";
 import { AppContextState, ApplicationDataSiloEntry } from "./types";
 
+/** 
+ * 
+ * TODO
+ * - Move data bucket into localStorage/indexDB API 
+ */
+
 export type ApplicationDataLoaderProps = {
     appContextData: AppContextState['bucket'];
     appId: ApplicationDefinition['appId']
 }
-// export const applicationContextData: Map<string, ApplicationDataSiloEntry> = new Map();
 
-// export const updateAppContextData = (appId: string, content: JSON | string): ApplicationDataSiloEntry => {
 export const updateAppContextData = (appContextData: AppContextState['bucket'], updates: { appId: ApplicationDefinition['appId'], content: JSON | string }): ApplicationDataSiloEntry => {
     /** Handle validation and whatnot here */
     try {

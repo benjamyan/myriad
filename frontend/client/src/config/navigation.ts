@@ -73,16 +73,23 @@ export const utilityMenuItems: Record<string, SingleMenuItem> = {
     //     defereEventHandling: true
     // },
 
-    // github: {
-    //     menuId: 'github-link',
-    //     displayName: 'github'
-    // },
-    
-    clock: {
-        menuId: 'clock',
-        displayName: 'Clock',
-        appId: applications.userSettings.appId
+    github: {
+        menuId: 'github-link',
+        displayName: 'github',
+        icon: svg.githubSo,
+        onClick: ()=> window.open('https://github.com/benjamyan', '_blank')
+    },
+    linkedin: {
+        menuId: 'linkin-link',
+        displayName: 'linkin',
+        icon: svg.linkedinSo,
+        onClick: ()=> window.open('https://linkedin.com/in/benyannella', '_blank')
     }
+    // clock: {
+    //     menuId: 'clock',
+    //     displayName: 'Clock',
+    //     appId: applications.userSettings.appId
+    // }
 }
 
 export const systemTrayItems: Record<string, SingleMenuItem> = {

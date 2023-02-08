@@ -60,16 +60,16 @@ const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAdditiona
 
     const onFocusEventHandler = (event: MouseEvent)=> {
         // console.log('onFocusEventHandler')
-        if (event.target !== interactionRef.close.current 
-            && event.target !== interactionRef.maximize.current 
-            && event.target !== interactionRef.minimize.current
-        ) {
+        // if (event.target !== interactionRef.close.current 
+        //     && event.target !== interactionRef.maximize.current 
+        //     && event.target !== interactionRef.minimize.current
+        // ) {
             appContextDispatch({
                 type:'UPDATE',
                 action:['FOCUS'],
                 payload: { appId }
             })
-        }
+        // }
     };
     const onResizeEventHandler: RndResizeCallback = (_event, _dir, ref, _delta, _pos)=> {
         // console.log('onResizeEventHandler')
@@ -94,15 +94,13 @@ const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAdditiona
         }
     };
     const onMenuBarIconClickHandler = (event: React.MouseEvent | React.TouchEvent, action: 'CLOSE' | 'MINIMIZE' | 'MAXIMIZE')=> {
-        console.log('onMenuBarIconClickHandler')
-        // console.log(event.type)
+        // console.log(`onMenuBarIconClickHandler ${action}`);
         event.stopPropagation();
         event.nativeEvent.stopImmediatePropagation();
         // @ts-expect-error
         if (event.button !== undefined && event.button !== 0) return;
         switch (action) {
             case 'CLOSE': {
-                console.log('onMenuBarIconClickHandler CLOSE')
                 appContextDispatch({
                     type:'REMOVE',
                     payload: appId
@@ -110,7 +108,6 @@ const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAdditiona
                 break;
             }
             case 'MAXIMIZE': {
-                console.log('onMenuBarIconClickHandler MAXIMIZE')
                 appContextDispatch({
                     type:'UPDATE',
                     action: ['MAXIMIZE','FOCUS'],
@@ -121,7 +118,6 @@ const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAdditiona
                 break;
             }
             case 'MINIMIZE': {
-                console.log('onMenuBarIconClickHandler MINIMIZE')
                 appContextDispatch({
                     type:'UPDATE',
                     action: ['MINIMIZE'],
@@ -202,10 +198,11 @@ const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAdditiona
     
     return (
         <Rnd
-            { ...reactRndSettings({
-                className: WINDOW_CLASSNAME,
-                menubarClassName: MENUBAR_CLASSNAME + '-bg'
-            }) }
+            {   ...reactRndSettings({
+                    className: WINDOW_CLASSNAME,
+                    menubarClassName: MENUBAR_CLASSNAME + '-bg'
+                }) 
+            }
             ref={ windowRef }
             key={`ApplicationWindow_${appId}`}
             className={`${props.windowVisibility} ${WINDOW_CLASSNAME} ${props._visibility === 'MINIMIZED' ? 'minimized' : ''} ${props.appId}`}
@@ -240,7 +237,6 @@ const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAdditiona
                         />
                         <i 
                             ref={ interactionRef.minimize } 
-                            // children={['-']}
                             className={`${MENUBAR_CLASSNAME}-icon minimize`} 
                             onMouseDown={ (event)=> onMenuBarIconClickHandler(event, 'MINIMIZE') } 
                             onTouchEnd={ (event)=> onMenuBarIconClickHandler(event, 'MINIMIZE') }
@@ -262,7 +258,7 @@ const ApplicationWindow = (props: ActiveApplication & ApplicationWindowAdditiona
 export const ApplicationWrapper = ()=> {
     const { navContextState } = useNavigationContext();
     const { appContextState, appContextDispatch } = useApplicationContext();
-    
+
     const appWindowVisibility = React.useCallback(
         (appIndex: number)=> {
             if (navContextState.id.length > 0) {

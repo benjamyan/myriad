@@ -4,4 +4,4 @@ export * from './Client/Settings';
 
 export * as Model from './Models';
 
-export * from './utils';
+export * as TsUtil from './utils';

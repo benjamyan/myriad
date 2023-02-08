@@ -1,5 +1,5 @@
 import { applicationDefaultValues } from "../../../config/applications/applicationDefaults";
-import { ActiveApplication, ApplicationDefinition, ApplicationDomOptions, ApplicationDomOptionsValue, ApplicationDomOptionTypes } from "../../../types";
+import { ActiveApplication, ApplicationDefinition, ApplicationDomOptions, ApplicationDomOptionsValue, ApplicationDomOptionType, ApplicationDomPositionOptions, ApplicationDomPositionOptionsValue, ApplicationDomValueCalculated } from "../../../types";
 import { Generic } from "../../../utils";
 
 /** Returns the index of the app that matches the suppled ID inside of the supplied array relative to our active context state 
@@ -14,10 +14,25 @@ export const findAppIndexById = (givenArr: (ApplicationDefinition | ActiveApplic
     return givenArr.findIndex( arrItem=> arrItem.appId === id );
 }
 
-export const calculateRenderKey = (givenDimensions: ApplicationDomOptions, axis: 'x' | 'y', type: ApplicationDomOptionTypes) => {
+/**
+ * @typedef CalculationType 
+ */
+
+/** 
+ * @function calculateRenderKey
+ * @param givenValues an object containing the `ApplicationDefinitions` dimensions or position properties
+ * @param axis should be the axis being calculcated against (eg. X or Y)
+ * @param {String} type @see {@link calculateDomRenderValue} 
+ * @returns 
+ * - `number` represnting the closest `x | y` key number. IE if your screen width is 600px and the definition declared an `x700` value, it will return `700`
+ * - `null` if no match is found 
+ * */
+export const calculateRenderKey = (givenValues: ApplicationDomOptions | ApplicationDomPositionOptions, axis: 'x' | 'y', type: ApplicationDomOptionType) => {
     let calculatedDomValue: number | null = null,
         derivedDomPropertyValue: number,
-        currentValue;
+        currentValue: number;
+
+    /** Set the derived DOM refernce value to be calculated against based on the given property */
     if (type === 'dimensions') {
         derivedDomPropertyValue = (
             axis === 'x' ? window.innerWidth : window.innerHeight
@@ -28,7 +43,7 @@ export const calculateRenderKey = (givenDimensions: ApplicationDomOptions, axis:
             axis === 'x' ? window.innerWidth : window.innerHeight
         );
     }
-    for (const axisKey in givenDimensions) {
+    for (const axisKey in givenValues) {
         if (axisKey.startsWith(axis)) {
             currentValue = parseInt(axisKey.split(axis)[1]);
             if (currentValue < derivedDomPropertyValue) {
@@ -45,148 +60,130 @@ export const calculateRenderKey = (givenDimensions: ApplicationDomOptions, axis:
         }
     }
     return calculatedDomValue
-    // return (
-    //     calculatedDomValue === undefined 
-    //         ? null 
-    //         : givenDimensions[`${axis}${calculatedDomValue}`]
-    // )
 }
 
-export const calculateDomRenderValue = (values: ApplicationDomOptions, type: ApplicationDomOptionTypes): [ApplicationDomOptionsValue,ApplicationDomOptionsValue] => {
-    const domValuesToParse = (
-        values === undefined
-            ? applicationDefaultValues[type]
-            : values as ApplicationDomOptions
+interface CalculateDomRenderValueBaseProps<T extends ApplicationDomOptionType> {
+    valueOptions: NonNullable<ApplicationDefinition[T]>;
+    additionalValue: ApplicationDomValueCalculated | null;
+    geometricType: T;
+}
+export type CalculateDomRenderValuePropsActual<T extends ApplicationDomOptionType> = (
+    T extends 'positions' 
+        ? CalculateDomRenderValueBaseProps<T> & {
+            applicationDimensions: ApplicationDomValueCalculated;
+        } 
+        : CalculateDomRenderValueBaseProps<T>
+)
+
+/**
+ * @function calculateDomRenderValue will take the predefined `dimensions` & `positions` properties in an `ApplicationDefinition` and calculate its given values based on the current window shape
+ * @param valueOptions <0> an object containing the `ApplicationDefinitions` dimensions or position properties
+ * @param additionalValue <1> If you need to check against an already existing (calculated) value, provide it here. The function will append it to the given `valueOptions` param with the key of `{x | y}${window.innerWidth}`
+ * @param geometricType <2> The property type key in `ApplicationDefinitions` (`dimensions` | `positions`). If you're using `positions`, 
+ * @param applicationDimensions <[3]> required if youre trying to calculate position. Needs to be a _parsed_ value for the application windows dimensional values (`[w, h]`)
+ * @returns a Tuple<number> with a length of 2 that will be used to render the positions or dimensions or an applications window  
+ * 
+ * @todo 
+ * - Support `y` axis calculations for dimensions
+ * - Allow previous values set by user (application resizing or dragging) to be factores into final calculation 
+ */
+export function calculateDomRenderValue<T extends ApplicationDomOptionType>(givenProps: CalculateDomRenderValuePropsActual<T>) {
+    const { valueOptions, additionalValue, geometricType } = givenProps;
+    const applicationDimensions = (
+        geometricType === 'positions' 
+            ? givenProps.applicationDimensions 
+            : undefined
     );
-    /** If the only one present is `default` do nothing */
-    if (Object.keys(domValuesToParse).length === 1) {
-        return domValuesToParse.default;
-    }
-    let renderKeyValue = calculateRenderKey(domValuesToParse, 'x', type),
-        parsedDomValues;
-    if (renderKeyValue === null) {
-        parsedDomValues = domValuesToParse.default;
-    } else {
-        parsedDomValues = domValuesToParse[`x${renderKeyValue}`]
-    }
-    
-    if (parsedDomValues === null) {
-        /** Something went wrong - throw an exception, but render using default values from config */
-        console.warn(`Failed to parse value - reverting to default`);
-        return applicationDefaultValues[type].default;
-    } else if (parsedDomValues.length !== 2) {
-        console.warn(`Parsed values exceeded acceptable length. Expected length of 2, but received ${parsedDomValues.length}. Using first two values.`)
-        console.warn([...parsedDomValues])
-        return [
-            parsedDomValues[0],
-            parsedDomValues[1]
-        ]
-    } else if (parsedDomValues.includes('default')) {
-        /** Parse the default value and insert it by key
-         * TODO add support for various key pairs
-         */
-        parsedDomValues = (
-            parsedDomValues
-                .map((value, index)=>{
-                    if (typeof(value) !== 'number' && value.indexOf('%') === -1) {
-                        /** The missing `%` sign indicates a key reference */
-                        if (domValuesToParse[value as keyof ApplicationDomOptions] === undefined) {
-                            return applicationDefaultValues[type].default[index] 
-                        }
-                        return domValuesToParse[value as keyof ApplicationDomOptions][index]
-                    } 
-                    return value
-                })
-                .filter(Boolean)
-        )
+    const handleDomCalculationConversion = (): [number, number] => {
+        let calculatedDomValue: [number, number] = null!;
+        if (geometricType === 'dimensions' || applicationDimensions === undefined) {
+            calculatedDomValue = [
+                Generic.handleDomValueConversion(parsedDomValues[0], 'x'),
+                Generic.handleDomValueConversion(parsedDomValues[1], 'y')
+            ];
+        } else {
+            calculatedDomValue = [
+                Generic.handlePositionConversion(parsedDomValues[0], 'x', applicationDimensions[0]),
+                Generic.handlePositionConversion(parsedDomValues[1], 'y', applicationDimensions[1])
+            ];
+        }
+        return calculatedDomValue
     }
     
-    return parsedDomValues as ActiveApplication[typeof type];
-
-    // else if (parsedDomValues.width && parsedDomValues.height === null) {
-    //     /** Check if the value in an array is referencing a sibling */
-    //     if (typeof(parsedDomValues.width[0]) !== 'number' && parsedDomValues.width[0].indexOf('%') === -1) {
-            
+    let // domValuesToParse = valueOptions,
+        domValuesToParse = (
+            additionalValue === null
+                ? valueOptions
+                : {...valueOptions, [`x${window.innerWidth}`]: additionalValue}
+        ),
+        parsedDomValues: ApplicationDomOptionsValue | ApplicationDomPositionOptionsValue = null!,
+        renderKeyValue = calculateRenderKey(domValuesToParse, 'x', geometricType);
+    
+    // if (additionalValue !== null) {
+    //     const getDerivedContrastValue = (givenValues: ApplicationDomValueCalculated)=> givenValues.map( (value, index)=> {
+    //         if (typeof(value) === 'string') {
+    //             if (value.indexOf('px') > -1) {
+    //                 return Generic.handleDomValueConversion(value.substring(0, value.length - 2), index === 0 ? 'x' : 'y')
+    //             }
+    //             return Generic.handleDomValueConversion(value, index === 0 ? 'x' : 'y')
+    //         }
+    //         return value
+    //     });
+    //     let derivedContrastValue,
+    //         temp;
+    //     if (geometricType === 'dimensions') { 
+    //         derivedContrastValue = getDerivedContrastValue(additionalValue)
+    //         if (derivedContrastValue[0] < window.innerWidth && derivedContrastValue[1] < window.innerHeight) {
+    //             return additionalValue
+    //         }
+    //     } else if (applicationDimensions !== undefined) {
+    //         derivedContrastValue = getDerivedContrastValue(additionalValue)
+    //         temp = getDerivedContrastValue(applicationDimensions)
+    //         if (derivedContrastValue[0] + temp[0] < window.innerWidth && derivedContrastValue[1] + temp[1] < window.innerHeight) {
+    //             return additionalValue
+    //         }
     //     }
-    // } else {
-
     // }
 
-}
-
-// export const calculateDomRenderValue = (values: ApplicationDomOptions, type: ApplicationDomOptionTypes): [ApplicationDomOptionsValue,ApplicationDomOptionsValue] => {
-//     const domValuesToParse = (
-//         values === undefined
-//             ? applicationDefaultValues[type]
-//             : values as ApplicationDomOptions
-//     )
-//     // let parsedDomValues: Record<'x' | 'y', ApplicationDomOptions[any] | null> = {
-//     //     x: null,
-//     //     y: null
-//     // };
-//     // let parsedDomValues: {
-//     //     x: ApplicationDomOptions[any],
-//     //     y: ApplicationDomOptions[any]
-//     // } = {
-//     //     x: domValuesToParse.default,
-//     //     y: null!
-//     // };    
-//     let parsedDomValues: ApplicationDomOptions[any] = ;
+    /** If the only one option present is `default` do nothing */
+    if (Object.keys(domValuesToParse).length > 1) {
+        if (typeof(renderKeyValue) !== 'number' || renderKeyValue === null) {
+            /** Unhandled exception when trying to calculate the render value - return the default value */
+            // console.warn(`Unhandled exception when attempting to calculate the DOM render options key`);
+            parsedDomValues = domValuesToParse.default;
+        } else {
+            parsedDomValues = domValuesToParse[`x${renderKeyValue}`]
+        }
+        
+        if (parsedDomValues === null) {
+            /** Something went wrong - throw an exception, but render using default values from config */
+            console.warn(`Failed to parse value - reverting to default`);
+            parsedDomValues = applicationDefaultValues[geometricType].default;
+            // return applicationDefaultValues[geometricType].default;
+        }
+        if (parsedDomValues.length !== 2) {
+            console.warn(`Parsed values exceeded acceptable length. Expected length of 2, but received ${parsedDomValues.length}. Using first two values.`);
+            parsedDomValues = [
+                parsedDomValues[0],
+                parsedDomValues[1]
+            ]
+        }
+        if (parsedDomValues.includes('default')) {
+            /** 
+             * Parse the default value and insert it by key by reversed array 
+             * so TS can correctly parse the constant length being enforced.
+             */
+            for (let i = parsedDomValues.length - 1; i >= 0; i--) {
+                if (typeof(parsedDomValues[i]) === 'string' && (parsedDomValues[i] as string).indexOf('%') === -1) {
+                    /** The missing `%` sign indicates a key reference to the initial definition */
+                    if (domValuesToParse[parsedDomValues[i] as keyof ApplicationDomOptions] !== undefined) {
+                        /** Pass in the value as a key of the initial definition and reference the correct index signature */
+                        parsedDomValues[i] = domValuesToParse[parsedDomValues[i] as keyof ApplicationDomOptions][i];
+                    }
+                }
+            }
+        }
+    }
     
-//     /** If the only one present is `default` do nothing */
-//     if (Object.keys(domValuesToParse).length === 1) {
-//         parsedDomValues = {
-//             x: domValuesToParse.default,
-//             y: null
-//         };
-//     } else if (Object.keys(domValuesToParse).length > 1) {
-//         parsedDomValues = {
-//             x: calculateRenderKey(domValuesToParse, 'x'),
-//             y: calculateRenderKey(domValuesToParse, 'y')
-//         };
-//     }
-
-//     if (parsedDomValues.x.includes('default')) {
-//         /** TODO fix the error checking happening here */
-//         // /@ts-expect-error
-//         parsedDomValues.x = (
-//             parsedDomValues.x
-//                 .map((value, index)=>{
-//                     if (index > 1) return false
-//                     if (typeof(value) !== 'number' && value.indexOf('%') === -1) {
-//                         /** The missing `%` sign indicates a key reference */
-//                         if (domValuesToParse[value as keyof ApplicationDomOptions] === undefined) {
-//                             return applicationDefaultValues[type].default[index] 
-//                         }
-//                         return domValuesToParse[value as keyof ApplicationDomOptions][index]
-//                     } 
-//                     return value
-//                 })
-//                 .filter(Boolean)
-//         )
-//     }
-
-//     if (parsedDomValues.x === null) {
-//         /** Something went wrong - throw an exception, but render using default values from config */
-//         console.warn(`Failed to parsed width value - reverting to default`);
-//         parsedDomValues.x = applicationDefaultValues[type].default;
-//     } else if (parsedDomValues.x.length !== 2) {
-//         console.warn(`Parsed values exceeded acceptable length. Expected length of 2, but received ${parsedDomValues.x.length}. Using first two values.`)
-//         console.warn([...parsedDomValues.x])
-//         return [
-//             parsedDomValues.x[0],
-//             parsedDomValues.x[1]
-//         ]
-//     }
-//     return parsedDomValues.x as ActiveApplication[typeof type];
-
-//     // else if (parsedDomValues.width && parsedDomValues.height === null) {
-//     //     /** Check if the value in an array is referencing a sibling */
-//     //     if (typeof(parsedDomValues.width[0]) !== 'number' && parsedDomValues.width[0].indexOf('%') === -1) {
-            
-//     //     }
-//     // } else {
-
-//     // }
-
-// }
+    return handleDomCalculationConversion()
+}

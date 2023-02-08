@@ -3,17 +3,43 @@ import { svg,png } from 'myriad-icons';
 import { AxiosRequestConfig } from 'axios';
 import React from "react";
 
+import { TsUtil } from '../';
 
-export type ApplicationDomOptionsValue = number | string;// `${number}%`;
+
+export type ApplicationDomOptionType = 'dimensions' | 'positions';
+export type ApplicationDomOptionsValueElement = number | `${number}%`;
+export type ApplicationDomPositionXOptionsValueElement = number | `${number}%` | 'right' |'middle' |  'left';
+export type ApplicationDomPositionYOptionsValueElement = number | `${number}%` | 'top' | 'middle' | 'bottom';
+
+export type ApplicationDomOptionsValue = (
+    TsUtil.Tuple<ApplicationDomOptionsValueElement | keyof ApplicationDomOptions, 2>
+);
+export type ApplicationDomValueCalculated = (
+    // TsUtil.Tuple<number, 2>
+    TsUtil.Tuple<ApplicationDomOptionsValueElement, 2>
+);
+// export type ApplicationDomPositionOptionsValue = [
+//     ApplicationDomPositionXOptionsValueElement | keyof ApplicationDomOptions,
+//     ApplicationDomPositionYOptionsValueElement | keyof ApplicationDomOptions
+// ];
+export type ApplicationDomPositionOptionsValue = (
+    TsUtil.Tuple<ApplicationDomPositionXOptionsValueElement | ApplicationDomPositionYOptionsValueElement | keyof ApplicationDomOptions, 2>
+);
+export type ApplicationDomPositionOptionsValueCalculated = (
+    TsUtil.Tuple<ApplicationDomPositionXOptionsValueElement | ApplicationDomPositionYOptionsValueElement, 2>
+);
+
 export type ApplicationDomOptions = {
-    default: [ApplicationDomOptionsValue, ApplicationDomOptionsValue];
+    default: ApplicationDomOptionsValue;
     /** TODO support various key references in the value */
-    [key: `${'x' | 'y'}${number}`]: [
-        ApplicationDomOptionsValue | 'default', //keyof ApplicationDomOptions, 
-        ApplicationDomOptionsValue | 'default' //keyof ApplicationDomOptions
-    ];
+    [key: `${'x' | 'y'}${number}`]: TsUtil.Tuple<ApplicationDomOptionsValueElement, 2>;
 }
-export type ApplicationDomOptionTypes = 'dimensions' | 'positions';
+
+export type ApplicationDomPositionOptions = {
+    default: ApplicationDomPositionOptionsValue;
+    /** TODO support various key references in the value */
+    [key: `${'x' | 'y'}${number}`]: ApplicationDomPositionOptionsValue;
+}
 
 export type ApplicationDefinition = {
     /** Application ID for reference */
@@ -35,10 +61,13 @@ export type ApplicationDefinition = {
      * - TODO support for `height${number}` not yet implemented
      * */
     dimensions?: ApplicationDomOptions;
-    /** Dimensions as `[ X, Y ]` 
-     * @see {@link ApplicationDefinition.dimensions}
+    /** 
+     * Positions as `[ X, Y ]` 
+     * - @see {@link ApplicationDefinition.dimensions}
+     * - X accepts 'right' |'middle' |  'left'
+     * - Y accepts 'middle' | 'top' | 'bottom
     */
-    positions?: ApplicationDomOptions;
+    positions?: ApplicationDomPositionOptions; // ApplicationDomOptions;
     // positions?: [number | string, number | string];
     /** The source URL as string for remote or local content fetch */
     readonly sourceUrl?: string;
@@ -94,16 +123,12 @@ export type ActiveApplication = {
     readonly appId: ApplicationDefinition['appId'];
     /** So we can have multiple instances of the same kind of applicaton at once in memeory */
     readonly instanceId: string;
-    /** position as `[ X, Y ]` 
-     * X accepts 'right' |'middle' |  'left'
-     * Y accepts 'middle' | 'top'
-     * TODO 'bottom'
-     */
-    positions: [ApplicationDomOptionsValue, ApplicationDomOptionsValue];
-    // positions: ApplicationDomOptions;
+    /** positions as `[ X, Y ]` */
+    positions: ApplicationDomValueCalculated; // ApplicationDomOptionsValue;
     /** dimensions as `[ W, H ]` */
-    dimensions: [ApplicationDomOptionsValue, ApplicationDomOptionsValue];
-    // dimensions: ApplicationDomOptions;
+    dimensions: ApplicationDomValueCalculated; // ApplicationDomOptionsValue;
+
+    _controlled: boolean;
     /** Application is minized or not */
     _visibility: 'MINIMIZED' | 'DEFAULT' | 'MAXIMIZED';
     /** 
