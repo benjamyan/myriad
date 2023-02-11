@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { HiDocument } from 'react-icons/hi';
-import { Button } from 'myriad-ui';
+import { Button, Action } from 'myriad-ui';
 // import {  } from 'myriad-icons'
 
 import { applications, navigation } from '../../config';
@@ -33,6 +33,10 @@ const SystemTrayButton = (props: { className?: string, icon?: IconType | string,
 
     return (
         <div className={`${BUTTON_CLASS} ${props.appId} ${props.className || ''}`}>
+            {/* <Action.Icon  
+                className={`${BUTTON_CLASS}-backdrop`}
+                icon={ props.icon || applications.appItemsById[props.appId].icon || HiDocument } 
+            /> */}
             <Button.IconButton 
                 size='INHERIT' 
                 icon={ props.icon || applications.appItemsById[props.appId].icon || HiDocument }
@@ -61,7 +65,7 @@ const SystemTrayButton = (props: { className?: string, icon?: IconType | string,
 const ActiveApplicationDockButtons = ()=> {
     const { appContextState } = useApplicationContext();
     const [ appButtons, setAppButtons ] = React.useState<ActiveApplication['appId'][]>([]);
-    
+
     React.useEffect(()=>{
         /** Initial check against each length; if theyre equal do nothing */
         if (appContextState.active.length > appButtons.length) {
@@ -79,7 +83,7 @@ const ActiveApplicationDockButtons = ()=> {
                 }
             }
         }
-    }, [ appContextState ])
+    }, [ appContextState.active ])
 
     return (
         <>
@@ -119,7 +123,43 @@ export const SystemDock = ()=> {
     const [ dockLoaded, setDockLoaded ] = React.useState<boolean>(false);
     // const [ dockWidth, setDockWidth ] = React.useState<number>(0);
     const dockRef = React.useRef<HTMLElement>(null);
-    
+
+    // const mouseMoveListener = (event: Event)=> {
+    //     try {
+    //         let appValueY,
+    //             dockValueY;
+    //         event
+    //             .composedPath()
+    //             // @ts-expect-error
+    //             .some((element: HTMLElement)=>{
+    //                 // console.log(typeof element)
+    //                 if (element.className.indexOf('app__window ') > -1) {
+    //                     // console.log(element )
+    //                     appValueY = (
+    //                         element.getBoundingClientRect().y + element.getBoundingClientRect().height
+    //                     );
+    //                     dockValueY = dockRef.current?.getBoundingClientRect().y;
+    //                     if (dockValueY && dockValueY < appValueY) {
+    //                         // console.log(appValueY - dockValueY - 21)
+    //                         dockRef.current?.setAttribute('style', `--overlap-height:${String(appValueY - dockValueY)}px`)
+    //                     }
+    //                     return true
+    //                 }
+    //                 return false
+    //             })
+    //     } catch (err) {
+    //         // console.log(err)
+    //     }
+    // }
+    // React.useEffect(()=>{
+    //     window.addEventListener('mousedown', function(event) {
+    //         window.addEventListener('mousemove', mouseMoveListener)
+    //     })
+    //     window.addEventListener('mouseup', function(event) {
+    //         window.removeEventListener('mousemove', mouseMoveListener)
+    //     })
+    // }, [])
+
     React.useEffect(()=>{
         systemTrayDefaultItems = Object.values(navigation.systemTrayItems);
         if (dockRef.current !== null && systemTrayDefaultItems.length > 0) {
@@ -127,6 +167,8 @@ export const SystemDock = ()=> {
         }
     }, []);
     
+
+
     // React.useLayoutEffect(()=>{
     //     if (dockRef.current !== null) {
     //         setDockWidth(

@@ -5,8 +5,8 @@ import { applications } from '../../config';
 import { ActiveApplication, ApplicationDomOptions, ApplicationDomValueCalculated } from '../../types';
 import { calculateDomRenderValue } from './utils/appContextUtils';
 
-const dontLog = true;
-const log = (msg: string)=> dontLog ? undefined : console.log(msg);
+const dontLog = false;
+const log = (msg: string)=> dontLog ? console.log(msg) : undefined;
 
 const handleAppContextItemUpdate  = (appToUpdate: ActiveApplication, updates: Partial<ActiveApplication>)=> {
     const appWithUpdates: ActiveApplication = {...appToUpdate};
@@ -192,13 +192,13 @@ export function appContextReducer(appContextState: AppContextState, appContextRe
                                 const appInConfig = applications.appItemsById[_appId];
                                 
                                 _state.active[activeAppIndexById].dimensions = calculateDomRenderValue({
-                                    valueOptions: appInConfig.dimensions as ApplicationDomOptions, 
+                                    valueOptions: (appInConfig.dimensions || applications.applicationDefaultValues.dimensions) as ApplicationDomOptions, 
                                     geometricType: 'dimensions', 
                                     additionalValue: null, // _state.active[activeAppIndexById].dimensions 
                                     // additionalValue: _state.active[activeAppIndexById]._controlled ? _state.active[activeAppIndexById].dimensions : null
                                 });
                                 _state.active[activeAppIndexById].positions = calculateDomRenderValue({
-                                    valueOptions: appInConfig.positions as ApplicationDomOptions, 
+                                    valueOptions: (appInConfig.positions || applications.applicationDefaultValues.positions) as ApplicationDomOptions, 
                                     additionalValue: null, // _state.active[activeAppIndexById].positions,
                                     // additionalValue: _state.active[activeAppIndexById]._controlled ? _state.active[activeAppIndexById].positions : null,
                                     geometricType: 'positions',

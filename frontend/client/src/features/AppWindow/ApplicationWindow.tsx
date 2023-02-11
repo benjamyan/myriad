@@ -274,18 +274,18 @@ export const ApplicationWrapper = ()=> {
 
     React.useEffect(()=>{
         /** TODO dont dispatch applications here */
-        // appContextDispatch({
-        //     type: 'SELECT',
-        //     payload: {
-        //         appId: applications.default.badassMf.appId
-        //     }
-        // });
         appContextDispatch({
             type: 'SELECT',
             payload: {
-                appId: applications.default.aboutMe.appId
+                appId: applications.default.badassMf.appId
             }
         });
+        // appContextDispatch({
+        //     type: 'SELECT',
+        //     payload: {
+        //         appId: applications.default.aboutMe.appId
+        //     }
+        // });
     }, [])
     
     return React.useMemo(

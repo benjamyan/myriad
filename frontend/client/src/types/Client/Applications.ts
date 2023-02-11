@@ -14,34 +14,57 @@ export type ApplicationDomPositionYOptionsValueElement = number | `${number}%` |
 export type ApplicationDomOptionsValue = (
     TsUtil.Tuple<ApplicationDomOptionsValueElement | keyof ApplicationDomOptions, 2>
 );
-export type ApplicationDomValueCalculated = (
-    // TsUtil.Tuple<number, 2>
-    TsUtil.Tuple<ApplicationDomOptionsValueElement, 2>
-);
-// export type ApplicationDomPositionOptionsValue = [
-//     ApplicationDomPositionXOptionsValueElement | keyof ApplicationDomOptions,
-//     ApplicationDomPositionYOptionsValueElement | keyof ApplicationDomOptions
-// ];
 export type ApplicationDomPositionOptionsValue = (
     TsUtil.Tuple<ApplicationDomPositionXOptionsValueElement | ApplicationDomPositionYOptionsValueElement | keyof ApplicationDomOptions, 2>
+);
+
+export type ApplicationDomValueCalculated = (
+    TsUtil.Tuple<ApplicationDomOptionsValueElement, 2>
 );
 export type ApplicationDomPositionOptionsValueCalculated = (
     TsUtil.Tuple<ApplicationDomPositionXOptionsValueElement | ApplicationDomPositionYOptionsValueElement, 2>
 );
 
+type ApplicationDomOptionsDistributed = {
+    default: [ApplicationDomOptionsValueElement, ApplicationDomOptionsValueElement]// TsUtil.Tuple<ApplicationDomOptionsValueElement, 2>;
+    [key: `${'x' | 'y'}${number}`]: [ApplicationDomOptionsValueElement | 'default', ApplicationDomOptionsValueElement | 'default' ]// TsUtil.Tuple<ApplicationDomOptionsValueElement | 'default', 2>; // TsUtil.Tuple<ApplicationDomOptionsValueElement, 2>;
+}
+/** Key/value pair
+ * - `key` will determine the screen size and axis it applies to
+ * - `value` will be a Tuple of number or string values where 0 is x and 1 is y
+ */
 export type ApplicationDomOptions = {
-    default: ApplicationDomOptionsValue;
-    /** TODO support various key references in the value */
+    [Key in keyof ApplicationDomOptionsDistributed]: ApplicationDomOptionsDistributed[Key]; 
+}
+// export type ApplicationDomOptions = {
+//     default: ApplicationDomOptionsValue;
+//     [key: `${'x' | 'y'}${number}`]: ApplicationDomOptionsValue; // TsUtil.Tuple<ApplicationDomOptionsValueElement, 2>;
+// }
+
+type ApplicationDomPositionOptionsDistributed = {
+    default: TsUtil.Tuple<ApplicationDomOptionsValueElement, 2>;
     [key: `${'x' | 'y'}${number}`]: TsUtil.Tuple<ApplicationDomOptionsValueElement, 2>;
 }
-
+/** Key/value pair
+ * - `key` will determine the screen size and axis it applies to
+ * - `value` will be a Tuple of  values where 
+ *    - 0 is x <number | string | 'right' |'middle' |  'left'>
+ *    - 1 is y <number | string | 'top' | 'middle' | 'bottom'>
+ */
 export type ApplicationDomPositionOptions = {
-    default: ApplicationDomPositionOptionsValue;
-    /** TODO support various key references in the value */
-    [key: `${'x' | 'y'}${number}`]: ApplicationDomPositionOptionsValue;
+    [Key in keyof ApplicationDomPositionOptionsDistributed]: (
+        Key extends 'default'
+            ? [ ApplicationDomPositionXOptionsValueElement, ApplicationDomPositionYOptionsValueElement ]
+            : [ ApplicationDomPositionXOptionsValueElement | 'default', ApplicationDomPositionYOptionsValueElement | 'default' ]
+    ); 
 }
+// export type ApplicationDomPositionOptions = {
+//     default: ApplicationDomPositionOptionsValue;
+//     [key: `${'x' | 'y'}${number}`]: ApplicationDomPositionOptionsValue;
+// }
 
 export type ApplicationDefinition = {
+    // [key: string]: any;// ApplicationDefinition[keyof ApplicationDefinition];
     /** Application ID for reference */
     readonly appId: string;
     /** Title/name to be shown to user */

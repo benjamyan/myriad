@@ -145,8 +145,14 @@ export function calculateDomRenderValue<T extends ApplicationDomOptionType>(give
     //     }
     // }
 
-    /** If the only one option present is `default` do nothing */
-    if (Object.keys(domValuesToParse).length > 1) {
+    if (!domValuesToParse || typeof(domValuesToParse) !== 'object') {
+        domValuesToParse = applicationDefaultValues[geometricType]
+    }
+    
+    if (Object.keys(domValuesToParse).length === 1) {
+        /** If the only one option present is `default` do nothing */
+        parsedDomValues = domValuesToParse.default;
+    } else {
         if (typeof(renderKeyValue) !== 'number' || renderKeyValue === null) {
             /** Unhandled exception when trying to calculate the render value - return the default value */
             // console.warn(`Unhandled exception when attempting to calculate the DOM render options key`);

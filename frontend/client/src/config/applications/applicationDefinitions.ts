@@ -3,6 +3,7 @@ import { ApplicationDefinition } from '../../types';
 import { WeatherApp, FileExplorerWrapper } from '../../features';
 import { AiFillFolder } from 'react-icons/ai';
 import { ImageViewer } from '../../features/ImageViewer/ImageViewer';
+import { Factory } from '../../utils';
 
 export const userSettings: ApplicationDefinition = {
     appId: 'user-settings',
@@ -10,6 +11,8 @@ export const userSettings: ApplicationDefinition = {
     sourceContent: '',
     sourceType: 'JSON'
 };
+
+
 export const aboutMe: ApplicationDefinition = {
     appId: 'about-me',
     displayName: 'About me',
@@ -68,7 +71,8 @@ export const imageViewer: ApplicationDefinition = {
         default: ['50%', '33%']
     }
 };
-export const fileExplorer: ApplicationDefinition = {
+
+export const fileExplorer: ApplicationDefinition = Factory.applicationItem({
     appId: 'file-explorer',
     displayName: 'File Explorer [Read only]',
     dimensions: {
@@ -79,7 +83,9 @@ export const fileExplorer: ApplicationDefinition = {
     sourceType: 'JSON',
     renderContent: FileExplorerWrapper,
     icon: AiFillFolder
-};
+});
+
+
 export const trashExplorer: ApplicationDefinition = {
     appId: 'trash-explorer',
     displayName: 'File Explorer [Read only]',
@@ -137,8 +143,7 @@ export const weatherApp: ApplicationDefinition = {
     dimensions: {
         default: ['33%', '33%']
     }
-}
-
+};
 export const blogArea: ApplicationDefinition = {
     appId: 'news-blog',
     displayName: 'Recents "News"',
@@ -152,47 +157,3 @@ export const appItems: ApplicationDefinition[] = [
     blogArea,
     weatherApp
 ];
-
-// type AppsById = {
-//     [key: string]: ApplicationDefinition
-// };
-// const appItemsById = function() {
-//     const appsById: AppsById = {};
-    
-//     for (const app of appItems) {
-//         appsById[app.appId] = app
-//     }
-
-//     return appsById
-// }()
-// export {
-//     appItemsById
-// }
-
-
-// export const fileExplorer: ApplicationDefinition = {
-//     icon: '/img/explorer.png',
-//     title: 'Files',
-//     name: 'file-explorer'
-// }
-
-// export const skills: ApplicationDefinition = {
-//     icon: '/img/explorer.png',
-//     title: 'Files',
-//     name: 'files'
-// }
-// export const experience: ApplicationDefinition = {
-//     icon: '/img/explorer.png',
-//     title: 'Experience',
-//     name: 'experience',
-//     id: 0
-// }
-// export const blog: ApplicationDefinition = {
-//     icon: '/img/explorer.png',
-//     title: 'Blog',
-//     name: 'blog',
-//     id: 0
-// }
-// export const taskbarMenuItems = [
-    
-// ]

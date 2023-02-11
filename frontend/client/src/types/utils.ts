@@ -24,3 +24,10 @@ export type ExtractValueByPropKey<A, T, K extends void | string = void> = (
  */
 export type Tuple<Item, Length extends number> = [Item, ...Item[]] & { length: Length };
 
+
+/**
+ * https://stackoverflow.com/a/61912075
+ */
+type EnsureNonNullable<T> = { [P in keyof T]: NonNullable<T[P]> }
+export type RequiredNonNullable<T, K extends keyof T> = T & EnsureNonNullable<Pick<T, K>>
+

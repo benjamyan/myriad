@@ -59,10 +59,10 @@ export const taskMenuItems: Record<string, SingleMenuItem> = {
         subMenu: Object.values(finderMenu),
         subMenuPosition: 'BOTTOM'
     },
-    help: {
-        menuId: 'help',
-        displayName: 'Help'
-    }
+    // help: {
+    //     menuId: 'help',
+    //     displayName: 'Help'
+    // }
 }
 
 export const utilityMenuItems: Record<string, SingleMenuItem> = {

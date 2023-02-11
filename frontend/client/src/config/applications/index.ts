@@ -5,7 +5,7 @@ import * as appItems from './applicationDefinitions';
 type AppsById = {
     [key: string]: ApplicationDefinition
 };
-const appItemsById = function() {
+const appItemsById = (function() {
     const appsById: AppsById = {};
     
     /** 
@@ -23,9 +23,9 @@ const appItemsById = function() {
     }
 
     return appsById
-}()
+})()
 
-const applications = appItems;
+// const applications = appItems;
 
 // const applications = {
 //     get appItemsById() {
