@@ -10,6 +10,7 @@ interface MyriadSaxParser extends Sax.SAXStream {
 	_myriad: {
 		start: number;
 		end: number;
+		_shouldOptimize: boolean;
 	}
 }
 
@@ -28,11 +29,13 @@ const optimizeSvg = function(file: Fs.PathLike): Promise<string | Error> {
 			.on('doctype', function() {
 				this._myriad = {
 					start: 0, 
-					end: 0
+					end: 0,
+					_shouldOptimize: false
 				};
 			})
 			.on('opentag', function(node) {
 				if (this._parser.tag.name === 'STYLE') {
+					this._myriad._shouldOptimize = true;
 					this._myriad.start = this._parser.startTagPosition;
 				}
 			})
@@ -47,7 +50,8 @@ const optimizeSvg = function(file: Fs.PathLike): Promise<string | Error> {
 			})
 			.on('end', function() {
 				try {
-					if (this._myriad.start === 0 || this._myriad.end === 0) {
+					console.log(this._myriad)
+					if (this._myriad === undefined || this._myriad.start === 0 || this._myriad.end === 0) {
 						resolve(file.toString())
 						return
 					} else {
@@ -65,7 +69,12 @@ const optimizeSvg = function(file: Fs.PathLike): Promise<string | Error> {
 									});
 								Fsp.writeFile(
 										file, 
-										content.substring(0, this._myriad.start - 1) + content.substring(this._myriad.end)
+										(
+											this._myriad._shouldOptimize
+												? content.substring(0, this._myriad.start - 1) + content.substring(this._myriad.end)
+												: content
+										)
+										
 									)
 									.then(()=>{
 										resolve(file.toString())
